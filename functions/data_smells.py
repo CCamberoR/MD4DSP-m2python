@@ -826,27 +826,24 @@ def check_suspect_date_value(data_dictionary: pd.DataFrame, min_date: str, max_d
     return True
 
 
-def check_suspect_far_date_value(data_dictionary: pd.DataFrame, date: str, field: str = None,
-                                 origin_function: str = None) -> bool:
+def check_suspect_far_date_value(data_dictionary: pd.DataFrame, field: str = None, origin_function: str = None) -> bool:
     """
-    Checks if date/datetime fields have values that are suspiciously far (more than 50 years) from a reference date.
+    Checks if date/datetime fields have values that are suspiciously far from the current date.
+    A date is considered "far" if it is more than 50 years away from the current date.
     If so, logs a warning indicating a possible data smell.
 
     :param data_dictionary: (pd.DataFrame) DataFrame containing the data
-    :param date: (str) Reference date to compare against (e.g., 'YYYY-MM-DD')
     :param field: (str) Optional field to check; if None, checks all datetime fields
     :param origin_function: (str) Optional name of the function that called this function, for logging purposes
 
-    :return: (bool) False if a smell is detected (dates too far from reference), True otherwise
+    :return: (bool) False if a smell is detected (dates too far from current date), True otherwise
     """
-    try:
-        reference_date = pd.to_datetime(date)
-    except ValueError:
-        raise ValueError("Invalid reference date format. Please use a format recognizable by pandas.to_datetime.")
-
     # Define the threshold for what constitutes a "far" date (50 years in days)
     YEARS_THRESHOLD = 50
     days_threshold = YEARS_THRESHOLD * 365
+
+    # Get current date for comparison
+    current_date = pd.Timestamp.now()
 
     def check_column(col_name):
         # Only check datetime columns
@@ -859,15 +856,18 @@ def check_suspect_far_date_value(data_dictionary: pd.DataFrame, date: str, field
             if col.dt.tz is not None:
                 col = col.dt.tz_localize(None)
 
-            # Calculate the difference in days from the reference date
-            days_difference = (col - reference_date).dt.days.abs()
+            # Calculate the difference in days from current date for each date
+            days_difference = (col - current_date).dt.days.abs()
 
             # Check if any values are beyond the threshold
             far_dates = days_difference > days_threshold
             if far_dates.any():
-                message = (f"Warning in function: {origin_function} - Possible data smell: Some dates in "
-                          f"dataField {col_name} are more than {YEARS_THRESHOLD} years away from the "
-                          f"reference date {date}")
+                far_dates_count = far_dates.sum()
+                # Get the actual far dates for better context
+                far_dates_list = col[far_dates].dt.strftime('%Y-%m-%d').tolist()
+                message = (f"Warning in function: {origin_function} - Possible data smell: Found {far_dates_count} dates in "
+                          f"dataField {col_name} that are more than {YEARS_THRESHOLD} years away from current date. "
+                          f"Far dates found: {far_dates_list}")
                 print_and_log(message, level=logging.WARN)
                 print(f"DATA SMELL DETECTED: Suspect Far Date Value in DataField {col_name}")
                 return False

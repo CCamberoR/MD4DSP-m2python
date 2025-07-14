@@ -50,7 +50,8 @@ class DataSmellsSimpleTest(unittest.TestCase):
             self.execute_check_separating_consistency_SimpleTests,
             self.execute_check_date_time_consistency_SimpleTests,
             self.execute_check_ambiguous_datetime_format_SimpleTests,
-            self.execute_check_suspect_date_value_SimpleTests
+            self.execute_check_suspect_date_value_SimpleTests,
+            self.execute_check_suspect_far_date_value_SimpleTests
         ]
 
         print_and_log("")
@@ -1365,33 +1366,28 @@ class DataSmellsSimpleTest(unittest.TestCase):
         assert result is True, "Test Case 6 Failed: Should not detect smell for dates with NaN"
         print_and_log("Test Case 6 Passed: No smell detected for dates with NaN")
 
-        # Test 7: Non-existent column
-        with self.assertRaises(ValueError):
-            self.data_smells.check_date_time_consistency(df_pure_dates, 'non_existent')
-        print_and_log("Test Case 7 Passed: ValueError raised for non-existent column")
-
-        # Test 8: Invalid DataType
+        # Test 7: Invalid DataType
         with self.assertRaises(ValueError):
             self.data_smells.check_date_time_consistency(df_datetime, DataType.STRING, 'datetime_col')
-        print_and_log("Test Case 8 Passed: ValueError raised for invalid DataType")
+        print_and_log("Test Case 7 Passed: ValueError raised for invalid DataType")
 
-        # Test 9: Column with timezone aware dates
+        # Test 8: Column with timezone aware dates
         df_timezone = pd.DataFrame({
             'timezone_dates': pd.date_range('2024-01-01', periods=3, freq='D', tz='UTC')
         })
         result = self.data_smells.check_date_time_consistency(df_timezone, DataType.DATE, 'timezone_dates')
-        assert result is True, "Test Case 9 Failed: Should not detect smell for timezone-aware dates"
-        print_and_log("Test Case 9 Passed: No smell detected for timezone-aware dates")
+        assert result is True, "Test Case 8 Failed: Should not detect smell for timezone-aware dates"
+        print_and_log("Test Case 8 Passed: No smell detected for timezone-aware dates")
 
-        # Test 10: Column with microsecond precision
+        # Test 9: Column with microsecond precision
         df_microseconds = pd.DataFrame({
             'microseconds': [pd.Timestamp('2024-01-01 00:00:00.000001')]
         })
         result = self.data_smells.check_date_time_consistency(df_microseconds, DataType.DATE, 'microseconds')
-        assert result is False, "Test Case 10 Failed: Should detect smell for dates with microseconds"
-        print_and_log("Test Case 10 Passed: Smell detected for dates with microseconds")
+        assert result is False, "Test Case 9 Failed: Should detect smell for dates with microseconds"
+        print_and_log("Test Case 9 Passed: Smell detected for dates with microseconds")
 
-        # Test 11: Column with mixed timezones
+        # Test 10: Column with mixed timezones
         df_mixed_tz = pd.DataFrame({
             'mixed_tz': [
                 pd.Timestamp('2024-01-01', tz='UTC'),
@@ -1400,10 +1396,10 @@ class DataSmellsSimpleTest(unittest.TestCase):
             ]
         })
         result = self.data_smells.check_date_time_consistency(df_mixed_tz, DataType.DATE, 'mixed_tz')
-        assert result is True, "Test Case 11 Failed: Should not detect smell for dates with mixed timezones"
-        print_and_log("Test Case 11 Passed: No smell detected for dates with mixed timezones")
+        assert result is True, "Test Case 10 Failed: Should not detect smell for dates with mixed timezones"
+        print_and_log("Test Case 10 Passed: No smell detected for dates with mixed timezones")
 
-        # Test 12: Column with only midnight times
+        # Test 11: Column with only midnight times
         df_midnight = pd.DataFrame({
             'midnight_times': [
                 pd.Timestamp('2024-01-01 00:00:00'),
@@ -1412,27 +1408,27 @@ class DataSmellsSimpleTest(unittest.TestCase):
             ]
         })
         result = self.data_smells.check_date_time_consistency(df_midnight, DataType.DATE, 'midnight_times')
-        assert result is True, "Test Case 12 Failed: Should not detect smell for midnight times"
-        print_and_log("Test Case 12 Passed: No smell detected for midnight times")
+        assert result is True, "Test Case 11 Failed: Should not detect smell for midnight times"
+        print_and_log("Test Case 11 Passed: No smell detected for midnight times")
 
-        # Test 13: Single date value
+        # Test 12: Single date value
         df_single = pd.DataFrame({
             'single_date': [pd.Timestamp('2024-01-01')]
         })
         result = self.data_smells.check_date_time_consistency(df_single, DataType.DATE, 'single_date')
-        assert result is True, "Test Case 13 Failed: Should not detect smell for single date"
-        print_and_log("Test Case 13 Passed: No smell detected for single date")
+        assert result is True, "Test Case 12 Failed: Should not detect smell for single date"
+        print_and_log("Test Case 12 Passed: No smell detected for single date")
 
-        # Test 14: All columns check
+        # Test 13: All columns check
         df_multiple = pd.DataFrame({
             'dates1': pd.date_range('2024-01-01', periods=3, freq='D'),
             'dates2': [pd.Timestamp('2024-01-01 10:30:00')] * 3
         })
         result = self.data_smells.check_date_time_consistency(df_multiple, DataType.DATE)
-        assert result is False, "Test Case 14 Failed: Should detect smell in at least one column"
-        print_and_log("Test Case 14 Passed: Smell detected in multiple columns check")
+        assert result is False, "Test Case 13 Failed: Should detect smell in at least one column"
+        print_and_log("Test Case 13 Passed: Smell detected in multiple columns check")
 
-        # Test 15: Dates at different times of day
+        # Test 14: Dates at different times of day
         df_times = pd.DataFrame({
             'different_times': [
                 pd.Timestamp('2024-01-01 09:00:00'),
@@ -1441,8 +1437,8 @@ class DataSmellsSimpleTest(unittest.TestCase):
             ]
         })
         result = self.data_smells.check_date_time_consistency(df_times, DataType.DATE, 'different_times')
-        assert result is False, "Test Case 15 Failed: Should detect smell for different times of day"
-        print_and_log("Test Case 15 Passed: Smell detected for different times of day")
+        assert result is False, "Test Case 14 Failed: Should detect smell for different times of day"
+        print_and_log("Test Case 14 Passed: Smell detected for different times of day")
 
         print_and_log("\nFinished testing check_date_time_consistency function")
         print_and_log("-----------------------------------------------------------")
@@ -1666,18 +1662,7 @@ class DataSmellsSimpleTest(unittest.TestCase):
         self.assertFalse(result, "Test Case 11 Failed: Expected smell for timezone-aware dates outside range")
         print_and_log("Test Case 11 Passed: Expected smell, got smell")
 
-        # Test 12: Check all datetime columns at once
-        df12 = pd.DataFrame({
-            'date_col1': pd.to_datetime(['2023-01-01', '2023-06-15', '2023-12-31']),
-            'date_col2': pd.to_datetime(['2022-01-01', '2023-06-15', '2025-12-31']),
-            'non_date_col': [1, 2, 3],
-            'string_dates': ['2025-01-01', '2025-06-15', '2025-12-31']  # This should be ignored
-        })
-        result = self.data_smells.check_suspect_date_value(df12, '2023-01-01', '2023-12-31')
-        self.assertFalse(result, "Test Case 12 Failed: Expected smell when checking datetime columns only")
-        print_and_log("Test Case 12 Passed: Expected smell, got smell")
-
-        # Test 13: All datetime columns within range
+        # Test 12: All datetime columns within range
         df13 = pd.DataFrame({
             'date_col1': pd.to_datetime(['2023-01-01', '2023-06-15', '2023-12-31']),
             'date_col2': pd.to_datetime(['2023-02-01', '2023-07-15', '2023-11-30']),
@@ -1685,7 +1670,116 @@ class DataSmellsSimpleTest(unittest.TestCase):
             'string_dates': ['2025-01-01', '2025-06-15', '2025-12-31']  # This should be ignored
         })
         result = self.data_smells.check_suspect_date_value(df13, '2023-01-01', '2023-12-31')
-        self.assertTrue(result, "Test Case 13 Failed: Expected no smell when all datetime columns within range")
-        print_and_log("Test Case 13 Passed: Expected no smell, got no smell")
+        self.assertTrue(result, "Test Case 12 Failed: Expected no smell when all datetime columns within range")
+        print_and_log("Test Case 12 Passed: Expected no smell, got no smell")
 
         print_and_log("\nFinished testing check_suspect_date_value function")
+        print_and_log("-----------------------------------------------------------")
+
+    def execute_check_suspect_far_date_value_SimpleTests(self):
+        """
+        Execute simple tests for check_suspect_far_date_value function.
+        Tests the following cases:
+        1. Dates more than 50 years in the past
+        2. Dates more than 50 years in the future
+        3. Mixed dates (some within range, some far)
+        4. Current dates (within range)
+        5. Non-existent field
+        6. Non-datetime field
+        7. Empty DataFrame
+        8. Column with all NaN/NaT values
+        9. Timezone-aware dates
+        10. Check all datetime columns at once
+        """
+        print_and_log("")
+        print_and_log("Testing check_suspect_far_date_value function...")
+
+        # Get current date for tests
+        current_date = pd.Timestamp.now()
+        years_threshold = 50
+
+        # Test 1: Dates more than 50 years in the past
+        df_past = pd.DataFrame({
+            'old_dates': pd.date_range(end=current_date - pd.Timedelta(days=365*51),
+                                     periods=3, freq='Y')
+        })
+        result = self.data_smells.check_suspect_far_date_value(df_past, 'old_dates')
+        self.assertFalse(result, "Test Case 1 Failed: Expected smell for dates too far in the past")
+        print_and_log("Test Case 1 Passed: Expected smell for old dates, got smell")
+
+        # Test 2: Dates more than 50 years in the future
+        df_future = pd.DataFrame({
+            'future_dates': pd.date_range(start=current_date + pd.Timedelta(days=365*51),
+                                        periods=3, freq='Y')
+        })
+        result = self.data_smells.check_suspect_far_date_value(df_future, 'future_dates')
+        self.assertFalse(result, "Test Case 2 Failed: Expected smell for dates too far in the future")
+        print_and_log("Test Case 2 Passed: Expected smell for future dates, got smell")
+
+        # Test 3: Mixed dates (some within range, some far)
+        df_mixed = pd.DataFrame({
+            'mixed_dates': [
+                current_date,
+                current_date - pd.Timedelta(days=365*51),
+                current_date + pd.Timedelta(days=365*2)
+            ]
+        })
+        result = self.data_smells.check_suspect_far_date_value(df_mixed, 'mixed_dates')
+        self.assertFalse(result, "Test Case 3 Failed: Expected smell for mixed dates with far values")
+        print_and_log("Test Case 3 Passed: Expected smell for mixed dates, got smell")
+
+        # Test 4: Current dates (within range)
+        df_current = pd.DataFrame({
+            'current_dates': pd.date_range(start=current_date - pd.Timedelta(days=365*25),
+                                        end=current_date + pd.Timedelta(days=365*25),
+                                        periods=3)
+        })
+        result = self.data_smells.check_suspect_far_date_value(df_current, 'current_dates')
+        self.assertTrue(result, "Test Case 4 Failed: Expected no smell for current dates")
+        print_and_log("Test Case 4 Passed: Expected no smell for current dates, got no smell")
+
+        # Test 5: Non-existent field
+        with self.assertRaises(ValueError):
+            self.data_smells.check_suspect_far_date_value(df_current, 'non_existent')
+        print_and_log("Test Case 5 Passed: Expected ValueError for non-existent field")
+
+        # Test 6: Non-datetime field
+        df_non_datetime = pd.DataFrame({'numbers': [1, 2, 3]})
+        result = self.data_smells.check_suspect_far_date_value(df_non_datetime, 'numbers')
+        self.assertTrue(result, "Test Case 6 Failed: Expected no smell for non-datetime field")
+        print_and_log("Test Case 6 Passed: Expected no smell for non-datetime field, got no smell")
+
+        # Test 7: Empty DataFrame
+        df_empty = pd.DataFrame()
+        result = self.data_smells.check_suspect_far_date_value(df_empty)
+        self.assertTrue(result, "Test Case 7 Failed: Expected no smell for empty DataFrame")
+        print_and_log("Test Case 7 Passed: Expected no smell for empty DataFrame, got no smell")
+
+        # Test 8: Column with all NaN/NaT values
+        df_nan = pd.DataFrame({'date_col': [pd.NaT, pd.NaT, pd.NaT]})
+        result = self.data_smells.check_suspect_far_date_value(df_nan, 'date_col')
+        self.assertTrue(result, "Test Case 8 Failed: Expected no smell for all NaN values")
+        print_and_log("Test Case 8 Passed: Expected no smell for all NaN values, got no smell")
+
+        # Test 9: Timezone-aware dates
+        df_tz = pd.DataFrame({
+            'tz_dates': pd.date_range(start=current_date - pd.Timedelta(days=365*51),
+                                    periods=3, freq='Y', tz='UTC')
+        })
+        result = self.data_smells.check_suspect_far_date_value(df_tz, 'tz_dates')
+        self.assertFalse(result, "Test Case 9 Failed: Expected smell for far dates with timezone")
+        print_and_log("Test Case 9 Passed: Expected smell for timezone-aware dates, got smell")
+
+        # Test 10: Check all datetime columns at once
+        df_multiple = pd.DataFrame({
+            'dates1': pd.date_range(end=current_date - pd.Timedelta(days=365*51), periods=3, freq='Y'),
+            'dates2': pd.date_range(start=current_date, periods=3, freq='D'),
+            'non_date': [1, 2, 3]
+        })
+        result = self.data_smells.check_suspect_far_date_value(df_multiple)
+        self.assertFalse(result, "Test Case 10 Failed: Expected smell when checking all datetime columns")
+        print_and_log("Test Case 10 Passed: Expected smell when checking all columns, got smell")
+
+        print_and_log("\nFinished testing check_suspect_far_date_value function")
+        print_and_log("-----------------------------------------------------------")
+

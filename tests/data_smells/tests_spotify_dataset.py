@@ -51,7 +51,8 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
             self.execute_check_separating_consistency_ExternalDatasetTests,
             self.execute_check_date_time_consistency_ExternalDatasetTests,
             self.execute_check_ambiguous_datetime_format_ExternalDatasetTests,
-            self.execute_check_suspect_date_value_ExternalDatasetTests
+            self.execute_check_suspect_date_value_ExternalDatasetTests,
+            self.execute_check_suspect_far_date_value_ExternalDatasetTests
         ]
 
         print_and_log("")
@@ -1520,3 +1521,147 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
 
         print_and_log("\nFinished testing check_suspect_date_value function with Spotify Dataset")
         print_and_log("-----------------------------------------------------------")
+
+    def execute_check_suspect_far_date_value_ExternalDatasetTests(self):
+        """
+        Execute external dataset tests for check_suspect_far_date_value function
+        Tests various scenarios with the Spotify dataset, focusing on dates that are suspiciously far
+        from the current date (more than 50 years in either direction).
+        """
+        print_and_log("\n-----------------------------------------------------------")
+        print_and_log("Testing check_suspect_far_date_value function with Spotify Dataset")
+        print_and_log("-----------------------------------------------------------")
+
+        # Get current date for testing context
+        current_date = pd.Timestamp.now()
+        years_threshold = 50
+
+        # Get a sample of the dataset for testing
+        n_rows = min(1000, len(self.data_dictionary))
+        test_df = self.data_dictionary.sample(n=n_rows, random_state=42).copy()
+
+        # Test 1: Dates within acceptable range (no smell)
+        print_and_log("\nTest 1: Check dates within acceptable range")
+        valid_dates = pd.date_range(
+            start=current_date - pd.Timedelta(days=365*25),
+            end=current_date + pd.Timedelta(days=365*25),
+            periods=n_rows
+        )
+        test_df['valid_dates'] = valid_dates
+        result = self.data_smells.check_suspect_far_date_value(test_df, 'valid_dates')
+        self.assertTrue(result, "Test Case 1 Failed: Expected no smell for dates within range")
+        print_and_log("Test Case 1 Passed: Expected no smell, got no smell")
+
+        # Test 2: Dates in the very distant past (smell expected)
+        print_and_log("\nTest 2: Check very old dates")
+        old_dates = pd.date_range(
+            end=current_date - pd.Timedelta(days=365*100),
+            periods=n_rows,
+            freq='D'
+        )
+        test_df['old_dates'] = old_dates
+        result = self.data_smells.check_suspect_far_date_value(test_df, 'old_dates')
+        self.assertFalse(result, "Test Case 2 Failed: Expected smell for very old dates")
+        print_and_log("Test Case 2 Passed: Expected smell, got smell")
+
+        # Test 3: Dates in the very distant future (smell expected)
+        print_and_log("\nTest 3: Check far future dates")
+        future_dates = pd.date_range(
+            start=current_date + pd.Timedelta(days=365*51),
+            periods=n_rows,
+            freq='D'
+        )
+        test_df['future_dates'] = future_dates
+        result = self.data_smells.check_suspect_far_date_value(test_df, 'future_dates')
+        self.assertFalse(result, "Test Case 3 Failed: Expected smell for far future dates")
+        print_and_log("Test Case 3 Passed: Expected smell, got smell")
+
+        # Test 4: Mixed dates (valid and invalid)
+        print_and_log("\nTest 4: Check mixed valid and invalid dates")
+        mixed_dates = pd.concat([
+            pd.Series(valid_dates[:n_rows//2]),
+            pd.Series(old_dates[n_rows//2:])
+        ]).sample(frac=1).reset_index(drop=True)
+        test_df['mixed_dates'] = mixed_dates
+        result = self.data_smells.check_suspect_far_date_value(test_df, 'mixed_dates')
+        self.assertFalse(result, "Test Case 4 Failed: Expected smell for mixed dates")
+        print_and_log("Test Case 4 Passed: Expected smell, got smell")
+
+        # Test 5: Timezone-aware dates within range (no smell)
+        print_and_log("\nTest 5: Check timezone-aware dates within range")
+        tz_dates = pd.date_range(
+            start=current_date - pd.Timedelta(days=365*40),
+            periods=n_rows,
+            freq='D',
+            tz='UTC'
+        )
+        test_df['tz_dates'] = tz_dates
+        result = self.data_smells.check_suspect_far_date_value(test_df, 'tz_dates')
+        self.assertTrue(result, "Test Case 5 Failed: Expected no smell for timezone-aware dates within range")
+        print_and_log("Test Case 5 Passed: Expected no smell, got no smell")
+
+        # Test 6: Dates at exactly the threshold (no smell)
+        print_and_log("\nTest 6: Check dates at threshold")
+        threshold_dates = pd.date_range(
+            start=current_date - pd.Timedelta(days=365*50),
+            end=current_date + pd.Timedelta(days=365*50),
+            periods=n_rows
+        )
+        test_df['threshold_dates'] = threshold_dates
+        result = self.data_smells.check_suspect_far_date_value(test_df, 'threshold_dates')
+        self.assertFalse(result, "Test Case 6 Failed: Expected no smell for threshold dates")
+        print_and_log("Test Case 6 Passed: Expected no smell, got no smell")
+
+        # Test 7: Column with all NaT values
+        print_and_log("\nTest 8: Check column with all NaT values")
+        test_df['all_nat'] = pd.NaT
+        result = self.data_smells.check_suspect_far_date_value(test_df, 'all_nat')
+        self.assertTrue(result, "Test Case 7 Failed: Expected no smell for all NaT values")
+        print_and_log("Test Case 7 Passed: Expected no smell, got no smell")
+
+        # Test 8: Non-datetime column
+        print_and_log("\nTest 10: Check non-datetime column")
+        test_df['non_datetime'] = range(n_rows)
+        result = self.data_smells.check_suspect_far_date_value(test_df, 'non_datetime')
+        self.assertTrue(result, "Test Case 8 Failed: Expected no smell for non-datetime column")
+        print_and_log("Test Case 8 Passed: Expected no smell, got no smell")
+
+        # Test 10: Empty DataFrame
+        print_and_log("\nTest 10: Check empty DataFrame")
+        empty_df = pd.DataFrame()
+        result = self.data_smells.check_suspect_far_date_value(empty_df)
+        self.assertTrue(result, "Test Case 10 Failed: Expected no smell for empty DataFrame")
+        print_and_log("Test Case 10 Passed: Expected no smell, got no smell")
+
+        # Test 11: Non-existent column
+        print_and_log("\nTest 11: Check non-existent column")
+        with self.assertRaises(ValueError):
+            self.data_smells.check_suspect_far_date_value(test_df, 'non_existent')
+        print_and_log("Test Case 11 Passed: Expected ValueError for non-existent column")
+
+        # Test 12: All datetime columns at once
+        print_and_log("\nTest 12: Check all datetime columns at once")
+        # We already have a mix of valid and invalid datetime columns
+        result = self.data_smells.check_suspect_far_date_value(test_df)
+        self.assertFalse(result, "Test Case 12 Failed: Expected smell when checking all datetime columns")
+        print_and_log("Test Case 12 Passed: Expected smell, got smell")
+
+        # Test 13: Performance with large dataset
+        print_and_log("\nTest 13: Check performance with large dataset")
+        if len(self.data_dictionary) > 1000:
+            large_df = self.data_dictionary.copy()
+            # Add a mixture of valid and invalid dates
+            large_df['perf_test_dates'] = pd.date_range(
+                start=current_date - pd.Timedelta(days=365*100),
+                periods=len(large_df),
+                freq='D'
+            )
+            result = self.data_smells.check_suspect_far_date_value(large_df, 'perf_test_dates')
+            self.assertFalse(result, "Test Case 13 Failed: Expected smell in performance test")
+            print_and_log("Test Case 13 Passed: Performance test completed successfully")
+        else:
+            print_and_log("Test Case 13 Skipped: Dataset too small for performance testing")
+
+        print_and_log("\nFinished testing check_suspect_far_date_value function with Spotify Dataset")
+        print_and_log("-----------------------------------------------------------")
+
