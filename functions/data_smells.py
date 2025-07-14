@@ -826,3 +826,66 @@ def check_suspect_date_value(data_dictionary: pd.DataFrame, min_date: str, max_d
     return True
 
 
+def check_suspect_far_date_value(data_dictionary: pd.DataFrame, date: str, field: str = None,
+                                 origin_function: str = None) -> bool:
+    """
+    Checks if date/datetime fields have values that are suspiciously far (more than 50 years) from a reference date.
+    If so, logs a warning indicating a possible data smell.
+
+    :param data_dictionary: (pd.DataFrame) DataFrame containing the data
+    :param date: (str) Reference date to compare against (e.g., 'YYYY-MM-DD')
+    :param field: (str) Optional field to check; if None, checks all datetime fields
+    :param origin_function: (str) Optional name of the function that called this function, for logging purposes
+
+    :return: (bool) False if a smell is detected (dates too far from reference), True otherwise
+    """
+    try:
+        reference_date = pd.to_datetime(date)
+    except ValueError:
+        raise ValueError("Invalid reference date format. Please use a format recognizable by pandas.to_datetime.")
+
+    # Define the threshold for what constitutes a "far" date (50 years in days)
+    YEARS_THRESHOLD = 50
+    days_threshold = YEARS_THRESHOLD * 365
+
+    def check_column(col_name):
+        # Only check datetime columns
+        if pd.api.types.is_datetime64_any_dtype(data_dictionary[col_name]):
+            col = data_dictionary[col_name].dropna()
+            if col.empty:
+                return True
+
+            # If the column is timezone-aware, convert to naive for comparison
+            if col.dt.tz is not None:
+                col = col.dt.tz_localize(None)
+
+            # Calculate the difference in days from the reference date
+            days_difference = (col - reference_date).dt.days.abs()
+
+            # Check if any values are beyond the threshold
+            far_dates = days_difference > days_threshold
+            if far_dates.any():
+                message = (f"Warning in function: {origin_function} - Possible data smell: Some dates in "
+                          f"dataField {col_name} are more than {YEARS_THRESHOLD} years away from the "
+                          f"reference date {date}")
+                print_and_log(message, level=logging.WARN)
+                print(f"DATA SMELL DETECTED: Suspect Far Date Value in DataField {col_name}")
+                return False
+        return True
+
+    if field is not None:
+        if field not in data_dictionary.columns:
+            raise ValueError(f"DataField '{field}' does not exist in the DataFrame.")
+        return check_column(field)
+    else:
+        # If DataFrame is empty, return True (no smell)
+        if data_dictionary.empty:
+            return True
+        # Check all datetime columns
+        datetime_fields = data_dictionary.select_dtypes(
+            include=['datetime64[ns]', 'datetime64[ns, UTC]', 'datetime']).columns
+        for col in datetime_fields:
+            result = check_column(col)
+            if not result:
+                return result  # Return on the first smell found
+    return True
