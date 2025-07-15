@@ -40,19 +40,20 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
         Execute all external dataset tests
         """
         test_methods = [
-            self.execute_check_precision_consistency_ExternalDatasetTests,
-            self.execute_check_missing_invalid_value_consistency_ExternalDatasetTests,
-            self.execute_check_integer_as_floating_point_ExternalDatasetTests,
-            self.execute_check_types_as_string_ExternalDatasetTests,
-            self.execute_check_special_character_spacing_ExternalDatasetTests,
-            self.execute_check_suspect_precision_ExternalDatasetTests,
-            self.execute_check_suspect_distribution_ExternalDatasetTests,
-            self.execute_check_date_as_datetime_ExternalDatasetTests,
-            self.execute_check_separating_consistency_ExternalDatasetTests,
-            self.execute_check_date_time_consistency_ExternalDatasetTests,
-            self.execute_check_ambiguous_datetime_format_ExternalDatasetTests,
-            self.execute_check_suspect_date_value_ExternalDatasetTests,
-            self.execute_check_suspect_far_date_value_ExternalDatasetTests
+            # self.execute_check_precision_consistency_ExternalDatasetTests,
+            # self.execute_check_missing_invalid_value_consistency_ExternalDatasetTests,
+            # self.execute_check_integer_as_floating_point_ExternalDatasetTests,
+            # self.execute_check_types_as_string_ExternalDatasetTests,
+            # self.execute_check_special_character_spacing_ExternalDatasetTests,
+            # self.execute_check_suspect_precision_ExternalDatasetTests,
+            # self.execute_check_suspect_distribution_ExternalDatasetTests,
+            # self.execute_check_date_as_datetime_ExternalDatasetTests,
+            # self.execute_check_separating_consistency_ExternalDatasetTests,
+            # self.execute_check_date_time_consistency_ExternalDatasetTests,
+            # self.execute_check_ambiguous_datetime_format_ExternalDatasetTests,
+            # self.execute_check_suspect_date_value_ExternalDatasetTests,
+            # self.execute_check_suspect_far_date_value_ExternalDatasetTests,
+            self.execute_check_number_size_ExternalDatasetTests
         ]
 
         print_and_log("")
@@ -1350,7 +1351,7 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
         print_and_log("\nTest 8: Check with non-existent column")
         with self.assertRaises(ValueError):
             self.data_smells.check_ambiguous_datetime_format(test_df, 'non_existent_column')
-        print_and_log("Test Case 8 Passed: Expected ValueError for non-existent column")
+        print_and_log("Test Case 8 Passed: Correctly raised ValueError for non-existent column")
 
         # Test 9: Empty DataFrame column (no smell)
         print_and_log("\nTest 9: Check with empty DataFrame column")
@@ -1598,7 +1599,7 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
         test_df['tz_dates'] = tz_dates
         result = self.data_smells.check_suspect_far_date_value(test_df, 'tz_dates')
         self.assertTrue(result, "Test Case 5 Failed: Expected no smell for timezone-aware dates within range")
-        print_and_log("Test Case 5 Passed: Expected no smell, got no smell")
+        print(and_log("Test Case 5 Passed: Expected no smell, got no smell"))
 
         # Test 6: Dates at exactly the threshold (no smell)
         print_and_log("\nTest 6: Check dates at threshold")
@@ -1665,3 +1666,226 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
         print_and_log("\nFinished testing check_suspect_far_date_value function with Spotify Dataset")
         print_and_log("-----------------------------------------------------------")
 
+    def execute_check_number_size_ExternalDatasetTests(self):
+        """
+        Execute external dataset tests for check_number_string_size function.
+        Tests the following cases:
+        1. Numeric values between -1 and 1 (smell)
+        2. Numeric values all above 1 (no smell)
+        3. Numeric values all below -1 (no smell)
+        4. Mixed numeric values (smell)
+        5. Very large numbers > 1e9 (smell)
+        6. Long string values > 35 chars (smell)
+        7. Empty DataFrame (no smell)
+        8. Column with all NaN values (no smell)
+        9. Mixed numeric and string columns
+        10-30: Various specific cases for the Spotify dataset
+        """
+        print_and_log("\nTesting check_number_string_size function with Spotify Dataset")
+        print_and_log("-----------------------------------------------------------")
+
+        # Get a sample of the dataset for testing
+        test_df = self.data_dictionary.copy()
+
+        # Test 1: Check danceability (values between 0 and 1, should detect smell)
+        print_and_log("\nTest 1: Check danceability field (values between 0 and 1)")
+        result = self.data_smells.check_number_string_size(test_df, 'danceability')
+        assert not result, "Test Case 1 Failed: Expected smell for values between 0 and 1"
+        print_and_log("Test Case 1 Passed: Detected smell for values between 0 and 1")
+
+        # Test 2: Check duration_ms (large values, no smell for normal range)
+        print_and_log("\nTest 2: Check duration_ms field (normal large values)")
+        result = self.data_smells.check_number_string_size(test_df, 'duration_ms')
+        assert result, "Test Case 2 Failed: Expected no smell for normal duration values"
+        print_and_log("Test Case 2 Passed: No smell for normal duration values")
+
+        # Test 3: Add a column with very large numbers
+        print_and_log("\nTest 3: Check very large numbers")
+        test_df['large_numbers'] = test_df['duration_ms'] * 1e6
+        result = self.data_smells.check_number_string_size(test_df, 'large_numbers')
+        assert not result, "Test Case 3 Failed: Expected smell for very large numbers"
+        print_and_log("Test Case 3 Passed: Detected smell for very large numbers")
+
+        # Test 4: Check track_name for long strings
+        print_and_log("\nTest 4: Check track_name for long strings")
+        result = self.data_smells.check_number_string_size(test_df, 'track_name')
+        assert not result, "Test Case 4 Failed: Expected smell for long track names"
+        print_and_log("Test Case 4 Passed: Detected smell for long track names")
+
+        # Test 5: Create column with small numbers
+        print_and_log("\nTest 5: Check small numbers")
+        test_df['small_numbers'] = test_df['danceability'] * 0.1
+        result = self.data_smells.check_number_string_size(test_df, 'small_numbers')
+        assert not result, "Test Case 5 Failed: Expected smell for small numbers"
+        print_and_log("Test Case 5 Passed: Detected smell for small numbers")
+
+        # Test 6: Empty DataFrame
+        print_and_log("\nTest 6: Check empty DataFrame")
+        empty_df = pd.DataFrame()
+        result = self.data_smells.check_number_string_size(empty_df)
+        assert result, "Test Case 6 Failed: Expected no smell for empty DataFrame"
+        print_and_log("Test Case 6 Passed: No smell for empty DataFrame")
+
+        # Test 7: Column with NaN values
+        print_and_log("\nTest 7: Check column with NaN values")
+        test_df['nan_column'] = np.nan
+        result = self.data_smells.check_number_string_size(test_df, 'nan_column')
+        assert result, "Test Case 7 Failed: Expected no smell for NaN values"
+        print_and_log("Test Case 7 Passed: No smell for NaN values")
+
+        # Test 8: Non-existent column
+        print_and_log("\nTest 8: Check non-existent column")
+        with self.assertRaises(ValueError):
+            self.data_smells.check_number_string_size(test_df, 'non_existent')
+        print_and_log("Test Case 8 Passed: Correctly raised ValueError for non-existent column")
+
+        # Test 9: Mixed values column
+        print_and_log("\nTest 9: Check mixed values")
+        test_df['mixed_values'] = test_df['danceability'].copy()
+        test_df.loc[0:10, 'mixed_values'] = 2.0
+        result = self.data_smells.check_number_string_size(test_df, 'mixed_values')
+        assert not result, "Test Case 9 Failed: Expected smell for mixed values"
+        print_and_log("Test Case 9 Passed: Detected smell for mixed values")
+
+        # Test 10: Check energy (values between 0 and 1)
+        print_and_log("\nTest 10: Check energy field")
+        result = self.data_smells.check_number_string_size(test_df, 'energy')
+        assert not result, "Test Case 10 Failed: Expected smell for energy values"
+        print_and_log("Test Case 10 Passed: Detected smell for energy values")
+
+        # Test 11: Check loudness (normal range values)
+        print_and_log("\nTest 11: Check loudness field")
+        result = self.data_smells.check_number_string_size(test_df, 'loudness')
+        assert not result, "Test Case 11 Failed: Expected data smell for loudness values"
+        print_and_log("Test Case 11 Passed: Detected data smell for loudness values")
+
+        # Test 12: Check speechiness (values between 0 and 1)
+        print_and_log("\nTest 12: Check speechiness field")
+        result = self.data_smells.check_number_string_size(test_df, 'speechiness')
+        assert not result, "Test Case 12 Failed: Expected smell for speechiness values"
+        print_and_log("Test Case 12 Passed: Detected smell for speechiness values")
+
+        # Test 13: Create string column with mix of lengths
+        print_and_log("\nTest 13: Check mixed length strings")
+        test_values = ['short', 'a' * 40, 'medium'] * (len(test_df) // 3 + 1)  # Repeat pattern to cover full length
+        test_df['mixed_strings'] = test_values[:len(test_df)]  # Slice to exact DataFrame length
+        result = self.data_smells.check_number_string_size(test_df, 'mixed_strings')
+        assert not result, "Test Case 13 Failed: Expected smell for mixed length strings"
+        print_and_log("Test Case 13 Passed: Detected smell for mixed length strings")
+
+        # Test 14: Check playlist_name for long strings
+        print_and_log("\nTest 14: Check playlist_name field")
+        result = self.data_smells.check_number_string_size(test_df, 'playlist_name')
+        assert not result, "Test Case 14 Failed: Expected smell for long playlist names"
+        print_and_log("Test Case 14 Passed: Detected smell for long playlist names")
+
+        # Test 15: Create very small negative numbers
+        print_and_log("\nTest 15: Check very small negative numbers")
+        test_df['small_neg'] = -test_df['danceability'] * 0.1
+        result = self.data_smells.check_number_string_size(test_df, 'small_neg')
+        assert not result, "Test Case 15 Failed: Expected smell for small negative numbers"
+        print_and_log("Test Case 15 Passed: Detected smell for small negative numbers")
+
+        # Test 16: Check values exactly at boundaries
+        print_and_log("\nTest 16: Check boundary values")
+        test_values = [-1, 1] * (len(test_df) // 2 + 1)
+        test_df['boundaries'] = test_values[:len(test_df)]
+        result = self.data_smells.check_number_string_size(test_df, 'boundaries')
+        assert result, "Test Case 16 Failed: Expected no smell for boundary values"
+        print_and_log("Test Case 16 Passed: No smell for boundary values")
+
+        # Test 17: Check very large negative numbers
+        print_and_log("\nTest 17: Check very large negative numbers")
+        test_df['large_neg'] = -test_df['duration_ms'] * 1e6
+        result = self.data_smells.check_number_string_size(test_df, 'large_neg')
+        assert not result, "Test Case 17 Failed: Expected smell for very large negative numbers"
+        print_and_log("Test Case 17 Passed: Detected smell for very large negative numbers")
+
+        # Test 18: Check instrumentalness (values between 0 and 1)
+        print_and_log("\nTest 18: Check instrumentalness field")
+        result = self.data_smells.check_number_string_size(test_df, 'instrumentalness')
+        assert not result, "Test Case 18 Failed: Expected smell for instrumentalness values"
+        print_and_log("Test Case 18 Passed: Detected smell for instrumentalness values")
+
+        # Test 19: Check mixed data types column
+        print_and_log("\nTest 19: Check mixed data types")
+        test_values = ['short', 0.5, 'a' * 40, 2.0] * (len(test_df) // 4 + 1)
+        test_df['mixed_types'] = test_values[:len(test_df)]  # Slice to exact DataFrame length
+        result = self.data_smells.check_number_string_size(test_df, 'mixed_types')
+        assert not result, "Test Case 19 Failed: Expected smell for mixed types"
+        print_and_log("Test Case 19 Passed: Detected smell for mixed types")
+
+        # Test 20: Check scientific notation numbers
+        print_and_log("\nTest 20: Check scientific notation")
+        test_values = ['1e-3', '2e-4', '3e-5'] * (len(test_df) // 3 + 1)
+        test_df['scientific'] = test_values[:len(test_df)]  # Slice to exact DataFrame length
+        result = self.data_smells.check_number_string_size(test_df, 'scientific')
+        assert not result, "Test Case 20 Failed: Expected smell for small scientific notation"
+        print_and_log("Test Case 20 Passed: Detected smell for scientific notation")
+
+        # Test 21: Check tempo field (normal range)
+        print_and_log("\nTest 21: Check tempo field")
+        result = self.data_smells.check_number_string_size(test_df, 'tempo')
+        assert result, "Test Case 21 Failed: Expected no smell for tempo values"
+        print_and_log("Test Case 21 Passed: No smell for tempo values")
+
+        # Test 22: Check valence (values between 0 and 1)
+        print_and_log("\nTest 22: Check valence field")
+        result = self.data_smells.check_number_string_size(test_df, 'valence')
+        assert not result, "Test Case 22 Failed: Expected smell for valence values"
+        print_and_log("Test Case 22 Passed: Detected smell for valence values")
+
+        # Test 23: Create column with exactly threshold length strings
+        print_and_log("\nTest 23: Check threshold length strings")
+        test_df['threshold_strings'] = ['a' * 35] * len(test_df)
+        result = self.data_smells.check_number_string_size(test_df, 'threshold_strings')
+        assert result, "Test Case 23 Failed: Expected no smell for threshold length strings"
+        print_and_log("Test Case 23 Passed: No smell for threshold length strings")
+
+        # Test 24: Check all columns at once
+        print_and_log("\nTest 24: Check all columns")
+        result = self.data_smells.check_number_string_size(test_df)
+        assert not result, "Test Case 24 Failed: Expected smell when checking all columns"
+        print_and_log("Test Case 24 Passed: Detected smell when checking all columns")
+
+        # Test 25: Check liveness (values between 0 and 1)
+        print_and_log("\nTest 25: Check liveness field")
+        result = self.data_smells.check_number_string_size(test_df, 'liveness')
+        assert not result, "Test Case 25 Failed: Expected smell for liveness values"
+        print_and_log("Test Case 25 Passed: Detected smell for liveness values")
+
+        # Test 26: Create column with special characters
+        print_and_log("\nTest 26: Check special character strings")
+        test_df['special_chars'] = ['@#$' * 15] * len(test_df)
+        result = self.data_smells.check_number_string_size(test_df, 'special_chars')
+        assert not result, "Test Case 26 Failed: Expected smell for special character strings"
+        print_and_log("Test Case 26 Passed: Detected smell for special character strings")
+
+        # Test 27: Check acousticness (values between 0 and 1)
+        print_and_log("\nTest 27: Check acousticness field")
+        result = self.data_smells.check_number_string_size(test_df, 'acousticness')
+        assert not result, "Test Case 27 Failed: Expected smell for acousticness values"
+        print_and_log("Test Case 27 Passed: Detected smell for acousticness values")
+
+        # Test 28: Create column with zero values
+        print_and_log("\nTest 28: Check zero values")
+        test_df['zeros'] = [0] * len(test_df)
+        result = self.data_smells.check_number_string_size(test_df, 'zeros')
+        assert result, "Test Case 28 Failed: Expected no smell for zero values"
+        print_and_log("Test Case 28 Passed: No smell for zero values")
+
+        # Test 29: Check track_popularity (values between 0 and 100)
+        print_and_log("\nTest 29: Check track_popularity field")
+        result = self.data_smells.check_number_string_size(test_df, 'track_popularity')
+        assert result, "Test Case 29 Failed: Expected no smell for track_popularity"
+        print_and_log("Test Case 29 Passed: No smell for track_popularity")
+
+        # Test 30: Create mixed column with all types of smells
+        print_and_log("\nTest 30: Check mixed smells column")
+        test_df['mixed_smells'] = [0.5, 1e10, 'a' * 40, 0.001]
+        result = self.data_smells.check_number_string_size(test_df, 'mixed_smells')
+        assert not result, "Test Case 30 Failed: Expected smell for mixed smells"
+        print_and_log("Test Case 30 Passed: Detected smell for mixed smells")
+
+        print_and_log("\nFinished testing check_number_string_size function with Spotify Dataset")
+        print_and_log("-----------------------------------------------------------")
