@@ -826,3 +826,182 @@ def check_suspect_date_value(data_dictionary: pd.DataFrame, min_date: str, max_d
     return True
 
 
+def check_suspect_far_date_value(data_dictionary: pd.DataFrame, field: str = None, origin_function: str = None) -> bool:
+    """
+    Checks if date/datetime fields have values that are suspiciously far from the current date.
+    A date is considered "far" if it is more than 50 years away from the current date.
+    If so, logs a warning indicating a possible data smell.
+
+    :param data_dictionary: (pd.DataFrame) DataFrame containing the data
+    :param field: (str) Optional field to check; if None, checks all datetime fields
+    :param origin_function: (str) Optional name of the function that called this function, for logging purposes
+
+    :return: (bool) False if a smell is detected (dates too far from current date), True otherwise
+    """
+    # Define the threshold for what constitutes a "far" date (50 years in days)
+    YEARS_THRESHOLD = 50
+    days_threshold = YEARS_THRESHOLD * 365
+
+    # Get current date for comparison
+    current_date = pd.Timestamp.now()
+
+    def check_column(col_name):
+        # Only check datetime columns
+        if pd.api.types.is_datetime64_any_dtype(data_dictionary[col_name]):
+            col = data_dictionary[col_name].dropna()
+            if col.empty:
+                return True
+
+            # If the column is timezone-aware, convert to naive for comparison
+            if col.dt.tz is not None:
+                col = col.dt.tz_localize(None)
+
+            # Calculate the difference in days from current date for each date
+            days_difference = (col - current_date).dt.days.abs()
+
+            # Check if any values are beyond the threshold
+            far_dates = days_difference > days_threshold
+            if far_dates.any():
+                far_dates_count = far_dates.sum()
+                # Get the actual far dates for better context
+                far_dates_list = col[far_dates].dt.strftime('%Y-%m-%d').tolist()
+                message = (f"Warning in function: {origin_function} - Possible data smell: Found {far_dates_count} dates in "
+                          f"dataField {col_name} that are more than {YEARS_THRESHOLD} years away from current date. "
+                          f"Far dates found: {far_dates_list}")
+                print_and_log(message, level=logging.WARN)
+                print(f"DATA SMELL DETECTED: Suspect Far Date Value in DataField {col_name}")
+                return False
+        return True
+
+    if field is not None:
+        if field not in data_dictionary.columns:
+            raise ValueError(f"DataField '{field}' does not exist in the DataFrame.")
+        return check_column(field)
+    else:
+        # If DataFrame is empty, return True (no smell)
+        if data_dictionary.empty:
+            return True
+        # Check all datetime columns
+        datetime_fields = data_dictionary.select_dtypes(
+            include=['datetime64[ns]', 'datetime64[ns, UTC]', 'datetime']).columns
+        for col in datetime_fields:
+            result = check_column(col)
+            if not result:
+                return result  # Return on the first smell found
+    return True
+
+
+def check_number_string_size(data_dictionary: pd.DataFrame, field: str = None, origin_function: str = None) -> bool:
+    """
+    Checks if numeric or text fields have potential data smells related to their size:
+    - For numeric fields: checks for small numbers (values between -1 and 1)
+    - For string fields that contain scientific notation: checks for small or large numbers
+    - For all fields: checks for long data values that might be too difficult to understand
+
+    :param data_dictionary: (pd.DataFrame) DataFrame containing the data
+    :param field: (str) Optional field to check; if None, checks all applicable fields
+    :param origin_function: (str) Optional name of the function that called this function, for logging purposes
+
+    :return: (bool) False if any smell is detected, True otherwise
+    """
+    def is_scientific_notation(x):
+        try:
+            return 'e' in str(x).lower()
+        except:
+            return False
+
+    def check_column(col_name):
+        has_smell = False
+        # Check for small numbers in numeric columns
+        if pd.api.types.is_numeric_dtype(data_dictionary[col_name]):
+            col = data_dictionary[col_name].dropna()
+            if not col.empty:
+                # Check for values between -1 and 1 (excluding -1 and 1)
+                small_numbers = (col > -1) & (col < 1) & (col != 0)  # exclude zero as it's a common valid value
+                if small_numbers.any():
+                    small_numbers_count = small_numbers.sum()
+                    small_numbers_list = col[small_numbers].tolist()
+                    message = (f"Warning in function: {origin_function} - Possible data smell: Found {small_numbers_count} "
+                              f"small values (between -1 and 1) in dataField {col_name}. "
+                              f"Small numbers found: {small_numbers_list}")
+                    print_and_log(message, level=logging.WARN)
+                    print(f"DATA SMELL DETECTED: Small Number in DataField {col_name}")
+                    has_smell = True
+
+                # Check for very large numbers (over 1 billion as an example threshold)
+                large_numbers = abs(col) > 1e9
+                if large_numbers.any():
+                    large_numbers_count = large_numbers.sum()
+                    large_numbers_list = col[large_numbers].tolist()
+                    message = (f"Warning in function: {origin_function} - Possible data smell: Found {large_numbers_count} "
+                              f"very large values in dataField {col_name}. "
+                              f"Large numbers found: {large_numbers_list}")
+                    print_and_log(message, level=logging.WARN)
+                    print(f"DATA SMELL DETECTED: Long Data Value in DataField {col_name}")
+                    has_smell = True
+
+        # Check for string values that might be scientific notation or long strings
+        if pd.api.types.is_string_dtype(data_dictionary[col_name]) or data_dictionary[col_name].dtype == 'object':
+            col = data_dictionary[col_name].dropna()
+            if not col.empty:
+                # Check for scientific notation values
+                scientific_values = col[col.astype(str).apply(is_scientific_notation)]
+                if not scientific_values.empty:
+                    try:
+                        numeric_values = scientific_values.apply(float)
+                        # Check for small values in scientific notation
+                        small_scientific = (numeric_values > -1) & (numeric_values < 1) & (numeric_values != 0)
+                        if small_scientific.any():
+                            small_count = small_scientific.sum()
+                            small_list = scientific_values[small_scientific].tolist()
+                            message = (f"Warning in function: {origin_function} - Possible data smell: Found {small_count} "
+                                      f"small values in scientific notation in dataField {col_name}. "
+                                      f"Small values found: {small_list}")
+                            print_and_log(message, level=logging.WARN)
+                            print(f"DATA SMELL DETECTED: Small Number in Scientific Notation in DataField {col_name}")
+                            has_smell = True
+
+                        # Check for large values in scientific notation
+                        large_scientific = abs(numeric_values) > 1e9
+                        if large_scientific.any():
+                            large_count = large_scientific.sum()
+                            large_list = scientific_values[large_scientific].tolist()
+                            message = (f"Warning in function: {origin_function} - Possible data smell: Found {large_count} "
+                                      f"large values in scientific notation in dataField {col_name}. "
+                                      f"Large values found: {large_list}")
+                            print_and_log(message, level=logging.WARN)
+                            print(f"DATA SMELL DETECTED: Long Data Value in Scientific Notation in DataField {col_name}")
+                            has_smell = True
+                    except (ValueError, TypeError):
+                        pass  # Ignore values that can't be converted to float
+
+                # Check for strings longer than 35 characters
+                long_strings = col.astype(str).str.len() > 35
+                if long_strings.any():
+                    long_strings_count = long_strings.sum()
+                    long_strings_list = col[long_strings].tolist()
+                    message = (f"Warning in function: {origin_function} - Possible data smell: Found {long_strings_count} "
+                              f"very long text values in dataField {col_name}. "
+                              f"Long values found: {long_strings_list}")
+                    print_and_log(message, level=logging.WARN)
+                    print(f"DATA SMELL DETECTED: Long Data Value in DataField {col_name}")
+                    has_smell = True
+
+        return not has_smell
+
+    if field is not None:
+        if field not in data_dictionary.columns:
+            raise ValueError(f"DataField '{field}' does not exist in the DataFrame.")
+        return check_column(field)
+    else:
+        # If DataFrame is empty, return True (no smell)
+        if data_dictionary.empty:
+            return True
+        # Check all applicable columns (numeric and string/object types)
+        all_fields = data_dictionary.select_dtypes(
+            include=['number', 'float64', 'float32', 'int64', 'int32', 'object', 'string']).columns
+        for col in all_fields:
+            result = check_column(col)
+            if not result:
+                return result  # Return on the first smell found
+    return True
