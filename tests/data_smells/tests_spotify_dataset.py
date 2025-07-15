@@ -1599,7 +1599,7 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
         test_df['tz_dates'] = tz_dates
         result = self.data_smells.check_suspect_far_date_value(test_df, 'tz_dates')
         self.assertTrue(result, "Test Case 5 Failed: Expected no smell for timezone-aware dates within range")
-        print(and_log("Test Case 5 Passed: Expected no smell, got no smell"))
+        print_and_log("Test Case 5 Passed: Expected no smell, got no smell")
 
         # Test 6: Dates at exactly the threshold (no smell)
         print_and_log("\nTest 6: Check dates at threshold")
@@ -1882,7 +1882,8 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
 
         # Test 30: Create mixed column with all types of smells
         print_and_log("\nTest 30: Check mixed smells column")
-        test_df['mixed_smells'] = [0.5, 1e10, 'a' * 40, 0.001]
+        test_values = ['short', 1e10, 'a' * 40, -0.5] * (len(test_df) // 4 + 1)
+        test_df['mixed_smells'] = test_values[:len(test_df)]
         result = self.data_smells.check_number_string_size(test_df, 'mixed_smells')
         assert not result, "Test Case 30 Failed: Expected smell for mixed smells"
         print_and_log("Test Case 30 Passed: Detected smell for mixed smells")
