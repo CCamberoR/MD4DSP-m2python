@@ -1005,3 +1005,106 @@ def check_number_string_size(data_dictionary: pd.DataFrame, field: str = None, o
             if not result:
                 return result  # Return on the first smell found
     return True
+
+
+def check_string_casing(data_dictionary: pd.DataFrame, field: str = None, origin_function: str = None) -> bool:
+    """
+    Checks for casing inconsistencies and unusual casing patterns in string fields.
+    Detects three types of issues:
+    1. Inconsistent capitalization across values (e.g., "USA", "usa", "Usa")
+    2. Mixed case within single values (e.g., "GoOD MorNiNg")
+    3. Inconsistent sentence casing (e.g., "How are you?", "fine.", "and you? Great.")
+
+    :param data_dictionary: (pd.DataFrame) DataFrame containing the data
+    :param field: (str) Optional field to check; if None, checks all string fields
+    :param origin_function: (str) Optional name of the function that called this function, for logging purposes
+
+    :return: (bool) False if any smell is detected, True otherwise
+    """
+    def is_mixed_case(text: str) -> bool:
+        """Check if a string has unusual mixed case patterns"""
+        if not isinstance(text, str):
+            return False
+        # Ignore strings with less than 3 characters
+        if len(text) < 3:
+            return False
+        # Count case changes
+        case_changes = sum(1 for i in range(1, len(text))
+                         if text[i].isupper() != text[i-1].isupper()
+                         and text[i].isalpha() and text[i-1].isalpha())
+        # More than 3 case changes in a single word is considered unusual (JavaScript is not considered mixedCase as
+        # it has 2 case changes)
+        return case_changes > 3
+
+    def is_sentence_case(text: str) -> bool:
+        """Check if a string follows proper sentence case rules"""
+        if not isinstance(text, str) or not text.strip():
+            return False
+        # Should start with uppercase and not be all uppercase
+        return text[0].isupper() and not text.isupper()
+
+    def check_column(col_name: str) -> bool:
+        if not pd.api.types.is_string_dtype(data_dictionary[col_name]) and data_dictionary[col_name].dtype != 'object':
+            return True
+
+        col = data_dictionary[col_name].dropna()
+        if col.empty:
+            return True
+
+        has_smell = False
+        unique_values = col.unique()
+
+        # 1. Check for inconsistent capitalization across values
+        for value in unique_values:
+            if not isinstance(value, str):
+                continue
+            # Find all variations of the same text with different casing
+            variations = [v for v in unique_values
+                        if isinstance(v, str) and v.lower() == value.lower() and v != value]
+            if variations:
+                message = (f"Warning in function: {origin_function} - Possible data smell: Found inconsistent "
+                           f"capitalization for the same value in dataField {col_name}. "
+                           f"Variations found: {[value] + variations}")
+                print_and_log(message, level=logging.WARN)
+                print(f"DATA SMELL DETECTED: Casing Inconsistency in DataField {col_name}")
+                has_smell = True
+
+        # 2. Check for an unusual mixed case within values
+        mixed_case_values = [v for v in unique_values if isinstance(v, str) and is_mixed_case(v)]
+        if mixed_case_values:
+            message = (f"Warning in function: {origin_function} - Possible data smell: Found values with "
+                       f"unusual mixed case patterns in dataField {col_name}. "
+                       f"Examples: {mixed_case_values[:5]}")
+            print_and_log(message, level=logging.WARN)
+            print(f"DATA SMELL DETECTED: Unusual Mixed Case in DataField {col_name}")
+            has_smell = True
+
+        # 3. Check for inconsistent sentence casing in text content
+        if len(unique_values) > 1:  # Only check if there are multiple values
+            sentence_case_values = [v for v in unique_values if isinstance(v, str) and is_sentence_case(v)]
+            if 0 < len(sentence_case_values) < len(unique_values):
+                # Some values follow sentence case while others don't
+                message = (f"Warning in function: {origin_function} - Possible data smell: Inconsistent "
+                           f"sentence casing in dataField {col_name}. Some values follow sentence case "
+                           f"while others don't.")
+                print_and_log(message, level=logging.WARN)
+                print(f"DATA SMELL DETECTED: Inconsistent Sentence Casing in DataField {col_name}")
+                has_smell = True
+
+        return not has_smell
+
+    if field is not None:
+        if field not in data_dictionary.columns:
+            raise ValueError(f"DataField '{field}' does not exist in the DataFrame.")
+        return check_column(field)
+    else:
+        # If DataFrame is empty, return True (no smell)
+        if data_dictionary.empty:
+            return True
+        # Check all string/object columns
+        string_fields = data_dictionary.select_dtypes(include=['object', 'string']).columns
+        for col in string_fields:
+            result = check_column(col)
+            if not result:
+                return result  # Return on the first smell found
+    return True

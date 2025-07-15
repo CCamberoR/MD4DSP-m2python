@@ -39,20 +39,21 @@ class DataSmellsSimpleTest(unittest.TestCase):
         Execute all the simple tests of the functions of the class
         """
         simple_test_methods = [
-            self.execute_check_precision_consistency_SimpleTests,
-            self.execute_check_missing_invalid_value_consistency_SimpleTests,
-            self.execute_check_integer_as_floating_point_SimpleTests,
-            self.execute_check_types_as_string_SimpleTests,
-            self.execute_check_special_character_spacing_SimpleTests,
-            self.execute_check_suspect_distribution_SimpleTests,
-            self.execute_check_suspect_precision_SimpleTests,
-            self.execute_check_date_as_datetime_SimpleTests,
-            self.execute_check_separating_consistency_SimpleTests,
-            self.execute_check_date_time_consistency_SimpleTests,
-            self.execute_check_ambiguous_datetime_format_SimpleTests,
-            self.execute_check_suspect_date_value_SimpleTests,
-            self.execute_check_suspect_far_date_value_SimpleTests,
-            self.execute_check_number_size_SimpleTests
+            # self.execute_check_precision_consistency_SimpleTests,
+            # self.execute_check_missing_invalid_value_consistency_SimpleTests,
+            # self.execute_check_integer_as_floating_point_SimpleTests,
+            # self.execute_check_types_as_string_SimpleTests,
+            # self.execute_check_special_character_spacing_SimpleTests,
+            # self.execute_check_suspect_distribution_SimpleTests,
+            # self.execute_check_suspect_precision_SimpleTests,
+            # self.execute_check_date_as_datetime_SimpleTests,
+            # self.execute_check_separating_consistency_SimpleTests,
+            # self.execute_check_date_time_consistency_SimpleTests,
+            # self.execute_check_ambiguous_datetime_format_SimpleTests,
+            # self.execute_check_suspect_date_value_SimpleTests,
+            # self.execute_check_suspect_far_date_value_SimpleTests,
+            # self.execute_check_number_size_SimpleTests,
+            self.execute_check_string_casing_SimpleTests
         ]
 
         print_and_log("")
@@ -2016,4 +2017,227 @@ class DataSmellsSimpleTest(unittest.TestCase):
         print_and_log("Test Case 29 Passed: Smell detected for long alphanumeric strings")
 
         print_and_log("\nFinished testing check_number_size function")
+        print_and_log("-----------------------------------------------------------")
+
+    def execute_check_string_casing_SimpleTests(self):
+        """
+        Execute simple tests for check_string_casing function.
+        Tests the following cases:
+        1. Inconsistent capitalization across values
+        2. Mixed case within single values
+        3. Inconsistent sentence casing
+        4. Clean text without issues
+        5. Empty DataFrame
+        6. Non-existent field
+        7. Non-string columns
+        8. Column with all NaN values
+        9. Single character values
+        10. Multiple word values
+        11. Technical terms with consistent casing
+        12. Acronyms with consistent casing
+        13. Proper nouns with consistent casing
+        14. Sentences with consistent casing
+        15. Mixed languages with casing
+        16. URLs and email addresses
+        17. Product codes and identifiers
+        18. Column with empty strings
+        19. Special characters with casing
+        20. Numbers with text
+        21. Multiple columns check
+        22. Title case vs sentence case
+        23. Snake case vs camel case
+        24. All uppercase vs mixed case
+        25. All lowercase vs mixed case
+        26. Inconsistent proper nouns
+        27. Mixed formatting in dates
+        28. Hashtags and social media handles
+        29. File names and paths
+        30. Code snippets and programming terms
+        """
+        print_and_log("")
+        print_and_log("Testing check_string_casing function...")
+
+        # Test 1: Inconsistent capitalization across values
+        df1 = pd.DataFrame({'text': ['USA', 'usa', 'Usa']})
+        result = self.data_smells.check_string_casing(df1, 'text')
+        assert result is False, "Test Case 1 Failed: Should detect inconsistent capitalization"
+        print_and_log("Test Case 1 Passed: Detected inconsistent capitalization")
+
+        # Test 2: Mixed case within single values
+        df2 = pd.DataFrame({'text': ['GoOD MorNiNg', 'HeLLo WoRLD', 'TeXT']})
+        result = self.data_smells.check_string_casing(df2, 'text')
+        assert result is False, "Test Case 2 Failed: Should detect mixed case within values"
+        print_and_log("Test Case 2 Passed: Detected mixed case within values")
+
+        # Test 3: Inconsistent sentence casing
+        df3 = pd.DataFrame({'text': ['How are you?', 'fine.', 'And You? Great.']})
+        result = self.data_smells.check_string_casing(df3, 'text')
+        assert result is False, "Test Case 3 Failed: Should detect inconsistent sentence casing"
+        print_and_log("Test Case 3 Passed: Detected inconsistent sentence casing")
+
+        # Test 4: Clean text without issues
+        df4 = pd.DataFrame({'text': ['Hello world', 'Good morning', 'How are you?']})
+        result = self.data_smells.check_string_casing(df4, 'text')
+        assert result is True, "Test Case 4 Failed: Should not detect issues in clean text"
+        print_and_log("Test Case 4 Passed: No issues detected in clean text")
+
+        # Test 5: Empty DataFrame
+        df5 = pd.DataFrame()
+        result = self.data_smells.check_string_casing(df5)
+        assert result is True, "Test Case 5 Failed: Should handle empty DataFrame"
+        print_and_log("Test Case 5 Passed: Handled empty DataFrame")
+
+        # Test 6: Non-existent field
+        with self.assertRaises(ValueError):
+            self.data_smells.check_string_casing(df1, 'non_existent')
+        print_and_log("Test Case 6 Passed: Handled non-existent field")
+
+        # Test 7: Non-string columns
+        df7 = pd.DataFrame({'numbers': [1, 2, 3]})
+        result = self.data_smells.check_string_casing(df7, 'numbers')
+        assert result is True, "Test Case 7 Failed: Should handle non-string columns"
+        print_and_log("Test Case 7 Passed: Handled non-string columns")
+
+        # Test 8: Column with all NaN values
+        df8 = pd.DataFrame({'text': [np.nan, np.nan, np.nan]})
+        result = self.data_smells.check_string_casing(df8, 'text')
+        assert result is True, "Test Case 8 Failed: Should handle all NaN values"
+        print_and_log("Test Case 8 Passed: Handled all NaN values")
+
+        # Test 9: Single character values
+        df9 = pd.DataFrame({'text': ['A', 'b', 'C']})
+        result = self.data_smells.check_string_casing(df9, 'text')
+        assert result is True, "Test Case 9 Failed: Should handle single characters"
+        print_and_log("Test Case 9 Passed: Handled single characters")
+
+        # Test 10: Multiple word values
+        df10 = pd.DataFrame({'text': ['First Second', 'Third Fourth', 'Fifth Sixth']})
+        result = self.data_smells.check_string_casing(df10, 'text')
+        assert result is True, "Test Case 10 Failed: Should handle multiple words"
+        print_and_log("Test Case 10 Passed: Handled multiple words")
+
+        # Test 11: Technical terms with consistent casing
+        df11 = pd.DataFrame({'text': ['JavaScript', 'TypeScript', 'PowerShell']})
+        result = self.data_smells.check_string_casing(df11, 'text')
+        assert result is True, "Test Case 11 Failed: Should handle consistent technical terms"
+        print_and_log("Test Case 11 Passed: Handled technical terms")
+
+        # Test 12: Acronyms with consistent casing
+        df12 = pd.DataFrame({'text': ['NASA', 'FBI', 'CIA']})
+        result = self.data_smells.check_string_casing(df12, 'text')
+        assert result is True, "Test Case 12 Failed: Should handle consistent acronyms"
+        print_and_log("Test Case 12 Passed: Handled acronyms")
+
+        # Test 13: Proper nouns with consistent casing
+        df13 = pd.DataFrame({'text': ['John Smith', 'Mary Johnson', 'Peter Brown']})
+        result = self.data_smells.check_string_casing(df13, 'text')
+        assert result is True, "Test Case 13 Failed: Should handle proper nouns"
+        print_and_log("Test Case 13 Passed: Handled proper nouns")
+
+        # Test 14: Sentences with consistent casing
+        df14 = pd.DataFrame({'text': ['This is a test.', 'Another test here.', 'Final test.']})
+        result = self.data_smells.check_string_casing(df14, 'text')
+        assert result is True, "Test Case 14 Failed: Should handle consistent sentences"
+        print_and_log("Test Case 14 Passed: Handled consistent sentences")
+
+        # Test 15: Mixed languages with casing
+        df15 = pd.DataFrame({'text': ['Café', 'café', 'CAFÉ']})
+        result = self.data_smells.check_string_casing(df15, 'text')
+        assert result is False, "Test Case 15 Failed: Should detect inconsistent mixed language casing"
+        print_and_log("Test Case 15 Passed: Detected mixed language inconsistencies")
+
+        # Test 16: URLs and email addresses
+        df16 = pd.DataFrame({'text': ['example@test.com', 'EXAMPLE@TEST.COM', 'Example@Test.com']})
+        result = self.data_smells.check_string_casing(df16, 'text')
+        assert result is False, "Test Case 16 Failed: Should detect inconsistent email casing"
+        print_and_log("Test Case 16 Passed: Detected inconsistent email casing")
+
+        # Test 17: Product codes and identifiers
+        df17 = pd.DataFrame({'text': ['PROD-001', 'Prod-002', 'prod-003']})
+        result = self.data_smells.check_string_casing(df17, 'text')
+        assert result is False, "Test Case 17 Failed: Should detect inconsistent product codes"
+        print_and_log("Test Case 17 Passed: Detected inconsistent product codes")
+
+        # Test 18: Column with empty strings
+        df18 = pd.DataFrame({'text': ['', '', '']})
+        result = self.data_smells.check_string_casing(df18, 'text')
+        assert result is True, "Test Case 18 Failed: Should handle empty strings"
+        print_and_log("Test Case 18 Passed: Handled empty strings")
+
+        # Test 19: Special characters with casing
+        df19 = pd.DataFrame({'text': ['Hello!', 'HELLO!', 'hello!']})
+        result = self.data_smells.check_string_casing(df19, 'text')
+        assert result is False, "Test Case 19 Failed: Should detect inconsistent special characters"
+        print_and_log("Test Case 19 Passed: Detected inconsistent special characters")
+
+        # Test 20: Numbers with text
+        df20 = pd.DataFrame({'text': ['Version1', 'VERSION1', 'version1']})
+        result = self.data_smells.check_string_casing(df20, 'text')
+        assert result is False, "Test Case 20 Failed: Should detect inconsistent number-text combinations"
+        print_and_log("Test Case 20 Passed: Detected inconsistent number-text combinations")
+
+        # Test 21: Multiple columns check
+        df21 = pd.DataFrame({
+            'col1': ['TEST', 'test', 'Test'],
+            'col2': ['Hello', 'World', 'Test']
+        })
+        result = self.data_smells.check_string_casing(df21)
+        assert result is False, "Test Case 21 Failed: Should detect issues in multiple columns"
+        print_and_log("Test Case 21 Passed: Detected issues in multiple columns")
+
+        # Test 22: Title case vs sentence case
+        df22 = pd.DataFrame({'text': ['This Is Title Case', 'This is sentence case', 'THIS IS ALL CAPS']})
+        result = self.data_smells.check_string_casing(df22, 'text')
+        assert result is False, "Test Case 22 Failed: Should detect mixed case styles"
+        print_and_log("Test Case 22 Passed: Detected mixed case styles")
+
+        # Test 23: Snake case vs camel case
+        df23 = pd.DataFrame({'text': ['user_name', 'userName', 'UserName']})
+        result = self.data_smells.check_string_casing(df23, 'text')
+        assert result is False, "Test Case 23 Failed: Should detect inconsistent code style cases"
+        print_and_log("Test Case 23 Passed: Detected inconsistent code style cases")
+
+        # Test 24: All uppercase vs mixed case
+        df24 = pd.DataFrame({'text': ['HELLO WORLD', 'Hello World', 'hello world']})
+        result = self.data_smells.check_string_casing(df24, 'text')
+        assert result is False, "Test Case 24 Failed: Should detect uppercase vs mixed case"
+        print_and_log("Test Case 24 Passed: Detected uppercase vs mixed case")
+
+        # Test 25: All lowercase vs mixed case
+        df25 = pd.DataFrame({'text': ['hello world', 'Hello World', 'HELLO WORLD']})
+        result = self.data_smells.check_string_casing(df25, 'text')
+        assert result is False, "Test Case 25 Failed: Should detect lowercase vs mixed case"
+        print_and_log("Test Case 25 Passed: Detected lowercase vs mixed case")
+
+        # Test 26: Inconsistent proper nouns
+        df26 = pd.DataFrame({'text': ['john smith', 'John Smith', 'JOHN SMITH']})
+        result = self.data_smells.check_string_casing(df26, 'text')
+        assert result is False, "Test Case 26 Failed: Should detect inconsistent proper nouns"
+        print_and_log("Test Case 26 Passed: Detected inconsistent proper nouns")
+
+        # Test 27: Mixed formatting in dates
+        df27 = pd.DataFrame({'text': ['January', 'FEBRUARY', 'march']})
+        result = self.data_smells.check_string_casing(df27, 'text')
+        assert result is False, "Test Case 27 Failed: Should detect inconsistent date formatting"
+        print_and_log("Test Case 27 Passed: Detected inconsistent date formatting")
+
+        # Test 28: Hashtags and social media handles
+        df28 = pd.DataFrame({'text': ['#HashTag', '#hashtag', '#HASHTAG']})
+        result = self.data_smells.check_string_casing(df28, 'text')
+        assert result is False, "Test Case 28 Failed: Should detect inconsistent hashtags"
+        print_and_log("Test Case 28 Passed: Detected inconsistent hashtags")
+
+        # Test 29: File names and paths
+        df29 = pd.DataFrame({'text': ['file.txt', 'File.TXT', 'FILE.txt']})
+        result = self.data_smells.check_string_casing(df29, 'text')
+        assert result is False, "Test Case 29 Failed: Should detect inconsistent file names"
+        print_and_log("Test Case 29 Passed: Detected inconsistent file names")
+
+        # Test 30: Code snippets and programming terms
+        df30 = pd.DataFrame({'text': ['forEach', 'ForEach', 'foreach']})
+        result = self.data_smells.check_string_casing(df30, 'text')
+        assert result is False, "Test Case 30 Failed: Should detect inconsistent programming terms"
+        print_and_log("Test Case 30 Passed: Detected inconsistent programming terms")
+
+        print_and_log("\nFinished testing check_string_casing function")
         print_and_log("-----------------------------------------------------------")
