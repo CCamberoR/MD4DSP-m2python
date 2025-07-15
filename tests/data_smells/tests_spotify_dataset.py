@@ -40,19 +40,19 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
         Execute all external dataset tests
         """
         test_methods = [
-            # self.execute_check_precision_consistency_ExternalDatasetTests,
-            # self.execute_check_missing_invalid_value_consistency_ExternalDatasetTests,
-            # self.execute_check_integer_as_floating_point_ExternalDatasetTests,
-            # self.execute_check_types_as_string_ExternalDatasetTests,
-            # self.execute_check_special_character_spacing_ExternalDatasetTests,
-            # self.execute_check_suspect_precision_ExternalDatasetTests,
-            # self.execute_check_suspect_distribution_ExternalDatasetTests,
-            # self.execute_check_date_as_datetime_ExternalDatasetTests,
-            # self.execute_check_separating_consistency_ExternalDatasetTests,
-            # self.execute_check_date_time_consistency_ExternalDatasetTests,
-            # self.execute_check_ambiguous_datetime_format_ExternalDatasetTests,
-            # self.execute_check_suspect_date_value_ExternalDatasetTests,
-            # self.execute_check_suspect_far_date_value_ExternalDatasetTests,
+            self.execute_check_precision_consistency_ExternalDatasetTests,
+            self.execute_check_missing_invalid_value_consistency_ExternalDatasetTests,
+            self.execute_check_integer_as_floating_point_ExternalDatasetTests,
+            self.execute_check_types_as_string_ExternalDatasetTests,
+            self.execute_check_special_character_spacing_ExternalDatasetTests,
+            self.execute_check_suspect_precision_ExternalDatasetTests,
+            self.execute_check_suspect_distribution_ExternalDatasetTests,
+            self.execute_check_date_as_datetime_ExternalDatasetTests,
+            self.execute_check_separating_consistency_ExternalDatasetTests,
+            self.execute_check_date_time_consistency_ExternalDatasetTests,
+            self.execute_check_ambiguous_datetime_format_ExternalDatasetTests,
+            self.execute_check_suspect_date_value_ExternalDatasetTests,
+            self.execute_check_suspect_far_date_value_ExternalDatasetTests,
             self.execute_check_number_size_ExternalDatasetTests
         ]
 
