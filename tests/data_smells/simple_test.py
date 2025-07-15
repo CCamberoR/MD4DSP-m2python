@@ -50,7 +50,9 @@ class DataSmellsSimpleTest(unittest.TestCase):
             self.execute_check_separating_consistency_SimpleTests,
             self.execute_check_date_time_consistency_SimpleTests,
             self.execute_check_ambiguous_datetime_format_SimpleTests,
-            self.execute_check_suspect_date_value_SimpleTests
+            self.execute_check_suspect_date_value_SimpleTests,
+            self.execute_check_suspect_far_date_value_SimpleTests,
+            self.execute_check_number_size_SimpleTests
         ]
 
         print_and_log("")
@@ -1365,33 +1367,28 @@ class DataSmellsSimpleTest(unittest.TestCase):
         assert result is True, "Test Case 6 Failed: Should not detect smell for dates with NaN"
         print_and_log("Test Case 6 Passed: No smell detected for dates with NaN")
 
-        # Test 7: Non-existent column
-        with self.assertRaises(ValueError):
-            self.data_smells.check_date_time_consistency(df_pure_dates, 'non_existent')
-        print_and_log("Test Case 7 Passed: ValueError raised for non-existent column")
-
-        # Test 8: Invalid DataType
+        # Test 7: Invalid DataType
         with self.assertRaises(ValueError):
             self.data_smells.check_date_time_consistency(df_datetime, DataType.STRING, 'datetime_col')
-        print_and_log("Test Case 8 Passed: ValueError raised for invalid DataType")
+        print_and_log("Test Case 7 Passed: ValueError raised for invalid DataType")
 
-        # Test 9: Column with timezone aware dates
+        # Test 8: Column with timezone-aware dates
         df_timezone = pd.DataFrame({
             'timezone_dates': pd.date_range('2024-01-01', periods=3, freq='D', tz='UTC')
         })
         result = self.data_smells.check_date_time_consistency(df_timezone, DataType.DATE, 'timezone_dates')
-        assert result is True, "Test Case 9 Failed: Should not detect smell for timezone-aware dates"
-        print_and_log("Test Case 9 Passed: No smell detected for timezone-aware dates")
+        assert result is True, "Test Case 8 Failed: Should not detect smell for timezone-aware dates"
+        print_and_log("Test Case 8 Passed: No smell detected for timezone-aware dates")
 
-        # Test 10: Column with microsecond precision
+        # Test 9: Column with microsecond precision
         df_microseconds = pd.DataFrame({
             'microseconds': [pd.Timestamp('2024-01-01 00:00:00.000001')]
         })
         result = self.data_smells.check_date_time_consistency(df_microseconds, DataType.DATE, 'microseconds')
-        assert result is False, "Test Case 10 Failed: Should detect smell for dates with microseconds"
-        print_and_log("Test Case 10 Passed: Smell detected for dates with microseconds")
+        assert result is False, "Test Case 9 Failed: Should detect smell for dates with microseconds"
+        print_and_log("Test Case 9 Passed: Smell detected for dates with microseconds")
 
-        # Test 11: Column with mixed timezones
+        # Test 10: Column with mixed timezones
         df_mixed_tz = pd.DataFrame({
             'mixed_tz': [
                 pd.Timestamp('2024-01-01', tz='UTC'),
@@ -1400,10 +1397,10 @@ class DataSmellsSimpleTest(unittest.TestCase):
             ]
         })
         result = self.data_smells.check_date_time_consistency(df_mixed_tz, DataType.DATE, 'mixed_tz')
-        assert result is True, "Test Case 11 Failed: Should not detect smell for dates with mixed timezones"
-        print_and_log("Test Case 11 Passed: No smell detected for dates with mixed timezones")
+        assert result is True, "Test Case 10 Failed: Should not detect smell for dates with mixed timezones"
+        print_and_log("Test Case 10 Passed: No smell detected for dates with mixed timezones")
 
-        # Test 12: Column with only midnight times
+        # Test 11: Column with only midnight times
         df_midnight = pd.DataFrame({
             'midnight_times': [
                 pd.Timestamp('2024-01-01 00:00:00'),
@@ -1412,27 +1409,30 @@ class DataSmellsSimpleTest(unittest.TestCase):
             ]
         })
         result = self.data_smells.check_date_time_consistency(df_midnight, DataType.DATE, 'midnight_times')
-        assert result is True, "Test Case 12 Failed: Should not detect smell for midnight times"
-        print_and_log("Test Case 12 Passed: No smell detected for midnight times")
+        assert result is True, "Test Case 11 Failed: Should not detect smell for midnight times"
+        print_and_log("Test Case 11 Passed: No smell detected for midnight times")
 
-        # Test 13: Single date value
+        # Test 12: Single date value
         df_single = pd.DataFrame({
             'single_date': [pd.Timestamp('2024-01-01')]
         })
         result = self.data_smells.check_date_time_consistency(df_single, DataType.DATE, 'single_date')
-        assert result is True, "Test Case 13 Failed: Should not detect smell for single date"
-        print_and_log("Test Case 13 Passed: No smell detected for single date")
+        assert result is True, "Test Case 12 Failed: Should not detect smell for single date"
+        print_and_log("Test Case 12 Passed: No smell detected for single date")
 
-        # Test 14: All columns check
+        current_date = pd.Timestamp.now()
+
+        # Test 13: All columns check
         df_multiple = pd.DataFrame({
-            'dates1': pd.date_range('2024-01-01', periods=3, freq='D'),
-            'dates2': [pd.Timestamp('2024-01-01 10:30:00')] * 3
+            'dates1': pd.date_range(end=current_date - pd.Timedelta(days=365*51), periods=3, freq='Y'),
+            'dates2': pd.date_range(start=current_date, periods=3, freq='D'),
+            'non_date': [1, 2, 3]
         })
         result = self.data_smells.check_date_time_consistency(df_multiple, DataType.DATE)
-        assert result is False, "Test Case 14 Failed: Should detect smell in at least one column"
-        print_and_log("Test Case 14 Passed: Smell detected in multiple columns check")
+        assert result is False, "Test Case 13 Failed: Should detect smell in at least one column"
+        print_and_log("Test Case 13 Passed: Smell detected in multiple columns check")
 
-        # Test 15: Dates at different times of day
+        # Test 14: Dates at different times of day
         df_times = pd.DataFrame({
             'different_times': [
                 pd.Timestamp('2024-01-01 09:00:00'),
@@ -1441,8 +1441,8 @@ class DataSmellsSimpleTest(unittest.TestCase):
             ]
         })
         result = self.data_smells.check_date_time_consistency(df_times, DataType.DATE, 'different_times')
-        assert result is False, "Test Case 15 Failed: Should detect smell for different times of day"
-        print_and_log("Test Case 15 Passed: Smell detected for different times of day")
+        assert result is False, "Test Case 14 Failed: Should detect smell for different times of day"
+        print_and_log("Test Case 14 Passed: Smell detected for different times of day")
 
         print_and_log("\nFinished testing check_date_time_consistency function")
         print_and_log("-----------------------------------------------------------")
@@ -1666,18 +1666,7 @@ class DataSmellsSimpleTest(unittest.TestCase):
         self.assertFalse(result, "Test Case 11 Failed: Expected smell for timezone-aware dates outside range")
         print_and_log("Test Case 11 Passed: Expected smell, got smell")
 
-        # Test 12: Check all datetime columns at once
-        df12 = pd.DataFrame({
-            'date_col1': pd.to_datetime(['2023-01-01', '2023-06-15', '2023-12-31']),
-            'date_col2': pd.to_datetime(['2022-01-01', '2023-06-15', '2025-12-31']),
-            'non_date_col': [1, 2, 3],
-            'string_dates': ['2025-01-01', '2025-06-15', '2025-12-31']  # This should be ignored
-        })
-        result = self.data_smells.check_suspect_date_value(df12, '2023-01-01', '2023-12-31')
-        self.assertFalse(result, "Test Case 12 Failed: Expected smell when checking datetime columns only")
-        print_and_log("Test Case 12 Passed: Expected smell, got smell")
-
-        # Test 13: All datetime columns within range
+        # Test 12: All datetime columns within range
         df13 = pd.DataFrame({
             'date_col1': pd.to_datetime(['2023-01-01', '2023-06-15', '2023-12-31']),
             'date_col2': pd.to_datetime(['2023-02-01', '2023-07-15', '2023-11-30']),
@@ -1685,7 +1674,346 @@ class DataSmellsSimpleTest(unittest.TestCase):
             'string_dates': ['2025-01-01', '2025-06-15', '2025-12-31']  # This should be ignored
         })
         result = self.data_smells.check_suspect_date_value(df13, '2023-01-01', '2023-12-31')
-        self.assertTrue(result, "Test Case 13 Failed: Expected no smell when all datetime columns within range")
-        print_and_log("Test Case 13 Passed: Expected no smell, got no smell")
+        self.assertTrue(result, "Test Case 12 Failed: Expected no smell when all datetime columns within range")
+        print_and_log("Test Case 12 Passed: Expected no smell, got no smell")
 
         print_and_log("\nFinished testing check_suspect_date_value function")
+        print_and_log("-----------------------------------------------------------")
+
+    def execute_check_suspect_far_date_value_SimpleTests(self):
+        """
+        Execute simple tests for check_suspect_far_date_value function.
+        Tests the following cases:
+        1. Dates more than 50 years in the past
+        2. Dates more than 50 years in the future
+        3. Mixed dates (some within range, some far)
+        4. Current dates (within range)
+        5. Non-existent field
+        6. Non-datetime field
+        7. Empty DataFrame
+        8. Column with all NaN/NaT values
+        9. Timezone-aware dates
+        10. Check all datetime columns at once
+        """
+        print_and_log("")
+        print_and_log("Testing check_suspect_far_date_value function...")
+
+        # Get current date for tests
+        current_date = pd.Timestamp.now()
+        years_threshold = 50
+
+        # Test 1: Dates more than 50 years in the past
+        df_past = pd.DataFrame({
+            'old_dates': pd.date_range(end=current_date - pd.Timedelta(days=365*51),
+                                     periods=3, freq='Y')
+        })
+        result = self.data_smells.check_suspect_far_date_value(df_past, 'old_dates')
+        self.assertFalse(result, "Test Case 1 Failed: Expected smell for dates too far in the past")
+        print_and_log("Test Case 1 Passed: Expected smell for old dates, got smell")
+
+        # Test 2: Dates more than 50 years in the future
+        df_future = pd.DataFrame({
+            'future_dates': pd.date_range(start=current_date + pd.Timedelta(days=365*51),
+                                        periods=3, freq='Y')
+        })
+        result = self.data_smells.check_suspect_far_date_value(df_future, 'future_dates')
+        self.assertFalse(result, "Test Case 2 Failed: Expected smell for dates too far in the future")
+        print_and_log("Test Case 2 Passed: Expected smell for future dates, got smell")
+
+        # Test 3: Mixed dates (some within range, some far)
+        df_mixed = pd.DataFrame({
+            'mixed_dates': [
+                current_date,
+                current_date - pd.Timedelta(days=365*51),
+                current_date + pd.Timedelta(days=365*2)
+            ]
+        })
+        result = self.data_smells.check_suspect_far_date_value(df_mixed, 'mixed_dates')
+        self.assertFalse(result, "Test Case 3 Failed: Expected smell for mixed dates with far values")
+        print_and_log("Test Case 3 Passed: Expected smell for mixed dates, got smell")
+
+        # Test 4: Current dates (within range)
+        df_current = pd.DataFrame({
+            'current_dates': pd.date_range(start=current_date - pd.Timedelta(days=365*25),
+                                        end=current_date + pd.Timedelta(days=365*25),
+                                        periods=3)
+        })
+        result = self.data_smells.check_suspect_far_date_value(df_current, 'current_dates')
+        self.assertTrue(result, "Test Case 4 Failed: Expected no smell for current dates")
+        print_and_log("Test Case 4 Passed: Expected no smell for current dates, got no smell")
+
+        # Test 5: Non-existent field
+        with self.assertRaises(ValueError):
+            self.data_smells.check_suspect_far_date_value(df_current, 'non_existent')
+        print_and_log("Test Case 5 Passed: Expected ValueError for non-existent field")
+
+        # Test 6: Non-datetime field
+        df_non_datetime = pd.DataFrame({'numbers': [1, 2, 3]})
+        result = self.data_smells.check_suspect_far_date_value(df_non_datetime, 'numbers')
+        self.assertTrue(result, "Test Case 6 Failed: Expected no smell for non-datetime field")
+        print_and_log("Test Case 6 Passed: Expected no smell for non-datetime field, got no smell")
+
+        # Test 7: Empty DataFrame
+        df_empty = pd.DataFrame()
+        result = self.data_smells.check_suspect_far_date_value(df_empty)
+        self.assertTrue(result, "Test Case 7 Failed: Expected no smell for empty DataFrame")
+        print_and_log("Test Case 7 Passed: Expected no smell for empty DataFrame, got no smell")
+
+        # Test 8: Column with all NaN/NaT values
+        df_nan = pd.DataFrame({'date_col': [pd.NaT, pd.NaT, pd.NaT]})
+        result = self.data_smells.check_suspect_far_date_value(df_nan, 'date_col')
+        self.assertTrue(result, "Test Case 8 Failed: Expected no smell for all NaN values")
+        print_and_log("Test Case 8 Passed: Expected no smell for all NaN values, got no smell")
+
+        # Test 9: Timezone-aware dates
+        df_tz = pd.DataFrame({
+            'tz_dates': pd.date_range(start=current_date - pd.Timedelta(days=365*51),
+                                    periods=3, freq='Y', tz='UTC')
+        })
+        result = self.data_smells.check_suspect_far_date_value(df_tz, 'tz_dates')
+        self.assertFalse(result, "Test Case 9 Failed: Expected smell for far dates with timezone")
+        print_and_log("Test Case 9 Passed: Expected smell for timezone-aware dates, got smell")
+
+        # Test 10: Check all datetime columns at once
+        df_multiple = pd.DataFrame({
+            'dates1': pd.date_range(end=current_date - pd.Timedelta(days=365*51), periods=3, freq='Y'),
+            'dates2': pd.date_range(start=current_date, periods=3, freq='D'),
+            'non_date': [1, 2, 3]
+        })
+        result = self.data_smells.check_suspect_far_date_value(df_multiple)
+        self.assertFalse(result, "Test Case 10 Failed: Expected smell when checking all datetime columns")
+        print_and_log("Test Case 10 Passed: Expected smell when checking all columns, got smell")
+
+        print_and_log("\nFinished testing check_suspect_far_date_value function")
+        print_and_log("-----------------------------------------------------------")
+
+    def execute_check_number_size_SimpleTests(self):
+        """
+        Execute simple tests for check_number_size function.
+        Tests the following cases:
+        1. Values all above 1 (no smell)
+        2. Values all below 1 (smell)
+        3. Mixed values above and below 1 (smell)
+        4. Non-numeric column (no smell)
+        5. Empty DataFrame
+        6. Non-existent field
+        7. Column with NaN values
+        8. Zero values (smell)
+        9. Negative values below -1 (no smell)
+        10. Values exactly at 1 (no smell)
+        11. Very small positive values (smell)
+        12. Mixed numeric types
+        13. Single column with small number
+        14. Multiple columns check
+        15. Integer column with no small numbers
+        16. Very large numbers (smell)
+        17. Mixed large and normal numbers (smell)
+        18. Large negative numbers (smell)
+        19. Scientific notation large numbers (smell)
+        20. Long string values (smell)
+        21. Mixed length strings (smell)
+        22. Long string with special characters (smell)
+        23. Very long single word (smell)
+        24. Multiple long strings columns (smell)
+        25. Maximum integer values (smell)
+        26. Large floating point values (smell)
+        27. Mixed large numbers and long strings (smell)
+        28. Large numbers in string format (no smell for numbers)
+        29. Long technical terms (smell)
+        30. Long alphanumeric strings (smell)
+        """
+        print_and_log("")
+        print_and_log("Testing check_number_size function...")
+
+        # Test 1: Values all above 1 (no smell)
+        df_above = pd.DataFrame({'numbers': [1.5, 2.0, 3.5]})
+        result = self.data_smells.check_number_string_size(df_above, 'numbers')
+        assert result is True, "Test Case 1 Failed: Expected no smell for values above 1"
+        print_and_log("Test Case 1 Passed: No smell detected for values above 1")
+
+        # Test 2: Values all below 1 (smell)
+        df_below = pd.DataFrame({'numbers': [0.1, 0.2, 0.3]})
+        result = self.data_smells.check_number_string_size(df_below, 'numbers')
+        assert result is False, "Test Case 2 Failed: Expected smell for values below 1"
+        print_and_log("Test Case 2 Passed: Smell detected for values below 1")
+
+        # Test 3: Mixed values above and below 1 (smell)
+        df_mixed = pd.DataFrame({'numbers': [0.5, 1.5, 2.0]})
+        result = self.data_smells.check_number_string_size(df_mixed, 'numbers')
+        assert result is False, "Test Case 3 Failed: Expected smell for mixed values"
+        print_and_log("Test Case 3 Passed: Smell detected for mixed values")
+
+        # Test 4: Non-numeric column (no smell)
+        df_non_numeric = pd.DataFrame({'strings': ['0.5', '1.5', '2.0']})
+        result = self.data_smells.check_number_string_size(df_non_numeric, 'strings')
+        assert result is True, "Test Case 4 Failed: Expected no smell for non-numeric column"
+        print_and_log("Test Case 4 Passed: No smell detected for non-numeric column")
+
+        # Test 5: Empty DataFrame
+        df_empty = pd.DataFrame()
+        result = self.data_smells.check_number_string_size(df_empty)
+        assert result is True, "Test Case 5 Failed: Expected no smell for empty DataFrame"
+        print_and_log("Test Case 5 Passed: No smell detected for empty DataFrame")
+
+        # Test 6: Non-existent field
+        df = pd.DataFrame({'numbers': [1.5, 2.0, 3.5]})
+        with self.assertRaises(ValueError):
+            self.data_smells.check_number_string_size(df, 'non_existent')
+        print_and_log("Test Case 6 Passed: ValueError raised for non-existent field")
+
+        # Test 7: Column with NaN values
+        df_nan = pd.DataFrame({'numbers': [0.5, np.nan, 2.0]})
+        result = self.data_smells.check_number_string_size(df_nan, 'numbers')
+        assert result is False, "Test Case 7 Failed: Expected smell for column with small numbers and NaN"
+        print_and_log("Test Case 7 Passed: Smell detected for column with small numbers and NaN")
+
+        # Test 9: Negative values below -1 (no smell for being below 1)
+        df_negative = pd.DataFrame({'numbers': [-1.5, -2.0, -3.5]})
+        result = self.data_smells.check_number_string_size(df_negative, 'numbers')
+        assert result is True, "Test Case 9 Failed: Expected no smell for negative values below -1"
+        print_and_log("Test Case 9 Passed: No smell detected for negative values below -1")
+
+        # Test 10: Values exactly at 1 (no smell)
+        df_exact = pd.DataFrame({'numbers': [1.0, 1, 1.0]})
+        result = self.data_smells.check_number_string_size(df_exact, 'numbers')
+        assert result is True, "Test Case 10 Failed: Expected no smell for values exactly at 1"
+        print_and_log("Test Case 10 Passed: No smell detected for values exactly at 1")
+
+        # Test 11: Very small positive values (smell)
+        df_tiny = pd.DataFrame({'numbers': [0.001, 0.0001, 0.00001]})
+        result = self.data_smells.check_number_string_size(df_tiny, 'numbers')
+        assert result is False, "Test Case 11 Failed: Expected smell for very small positive values"
+        print_and_log("Test Case 11 Passed: Smell detected for very small positive values")
+
+        # Test 12: Mixed numeric types
+        df_mixed_types = pd.DataFrame({
+            'integers': [1, 2, 3],
+            'floats': [0.5, 1.5, 2.5]
+        })
+        result = self.data_smells.check_number_string_size(df_mixed_types)
+        assert result is False, "Test Case 12 Failed: Expected smell for mixed numeric types with small values"
+        print_and_log("Test Case 12 Passed: Smell detected for mixed numeric types")
+
+        # Test 13: Single column with small number
+        df_single = pd.DataFrame({'numbers': [0.1]})
+        result = self.data_smells.check_number_string_size(df_single, 'numbers')
+        assert result is False, "Test Case 13 Failed: Expected smell for single small number"
+        print_and_log("Test Case 13 Passed: Smell detected for single small number")
+
+        # Test 14: Multiple columns check
+        df_multi = pd.DataFrame({
+            'col1': [1.5, 2.0, 3.0],
+            'col2': [0.5, 1.5, 2.0],
+            'col3': [1.0, 2.0, 3.0]
+        })
+        result = self.data_smells.check_number_string_size(df_multi)
+        assert result is False, "Test Case 14 Failed: Expected smell when checking multiple columns"
+        print_and_log("Test Case 14 Passed: Smell detected when checking multiple columns")
+
+        # Test 15: Very large numbers (smell)
+        df_large = pd.DataFrame({'numbers': [1e10, 2e10, 3e10]})
+        result = self.data_smells.check_number_string_size(df_large, 'numbers')
+        assert result is False, "Test Case 15 Failed: Expected smell for very large numbers"
+        print_and_log("Test Case 15 Passed: Smell detected for very large numbers")
+
+        # Test 16: Mixed large and normal numbers (smell)
+        df_mixed_large = pd.DataFrame({'numbers': [1000, 2e9, 3000]})
+        result = self.data_smells.check_number_string_size(df_mixed_large, 'numbers')
+        assert result is False, "Test Case 16 Failed: Expected smell for mixed large numbers"
+        print_and_log("Test Case 16 Passed: Smell detected for mixed large numbers")
+
+        # Test 17: Large negative numbers (smell)
+        df_large_neg = pd.DataFrame({'numbers': [-1e9, -2e9, -3e9]})
+        result = self.data_smells.check_number_string_size(df_large_neg, 'numbers')
+        assert result is False, "Test Case 17 Failed: Expected smell for large negative numbers"
+        print_and_log("Test Case 17 Passed: Smell detected for large negative numbers")
+
+        # Test 18: Scientific notation large numbers (smell)
+        df_scientific = pd.DataFrame({'numbers': [1.5e10, 2.7e11, 3.9e12]})
+        result = self.data_smells.check_number_string_size(df_scientific, 'numbers')
+        assert result is False, "Test Case 18 Failed: Expected smell for scientific notation large numbers"
+        print_and_log("Test Case 18 Passed: Smell detected for scientific notation large numbers")
+
+        # Test 19: Long string values (smell)
+        df_long_str = pd.DataFrame({'text': ['a' * 60, 'b' * 55, 'c' * 70]})
+        result = self.data_smells.check_number_string_size(df_long_str, 'text')
+        assert result is False, "Test Case 19 Failed: Expected smell for long strings"
+        print_and_log("Test Case 19 Passed: Smell detected for long strings")
+
+        # Test 20: Mixed length strings (smell)
+        df_mixed_str = pd.DataFrame({'text': ['short', 'a' * 60, 'medium']})
+        result = self.data_smells.check_number_string_size(df_mixed_str, 'text')
+        assert result is False, "Test Case 20 Failed: Expected smell for mixed length strings"
+        print_and_log("Test Case 20 Passed: Smell detected for mixed length strings")
+
+        # Test 21: Long string with special characters (smell)
+        df_special = pd.DataFrame({'text': ['@#$' * 20, '&*()' * 15, '!@#$' * 18]})
+        result = self.data_smells.check_number_string_size(df_special, 'text')
+        assert result is False, "Test Case 21 Failed: Expected smell for long strings with special characters"
+        print_and_log("Test Case 21 Passed: Smell detected for long strings with special characters")
+
+        # Test 22: Very long single word (smell)
+        df_long_word = pd.DataFrame({'text': ['Pneumonoultramicroscopicsilicovolcanoconiosis']})
+        result = self.data_smells.check_number_string_size(df_long_word, 'text')
+        assert result is False, "Test Case 22 Failed: Expected smell for very long single word"
+        print_and_log("Test Case 22 Passed: Smell detected for very long single word")
+
+        # Test 23: Multiple long strings columns (smell)
+        df_multi_long = pd.DataFrame({
+            'text1': ['a' * 60, 'b' * 55],
+            'text2': ['c' * 70, 'd' * 65],
+            'text3': ['short', 'text']
+        })
+        result = self.data_smells.check_number_string_size(df_multi_long)
+        assert result is False, "Test Case 23 Failed: Expected smell for multiple columns with long strings"
+        print_and_log("Test Case 23 Passed: Smell detected for multiple columns with long strings")
+
+        # Test 24: Maximum integer values (smell)
+        df_max_int = pd.DataFrame({'numbers': [2**31-1, 2**32-1, 2**33-1]})
+        result = self.data_smells.check_number_string_size(df_max_int, 'numbers')
+        assert result is False, "Test Case 24 Failed: Expected smell for maximum integer values"
+        print_and_log("Test Case 24 Passed: Smell detected for maximum integer values")
+
+        # Test 25: Large floating point values (smell)
+        df_large_float = pd.DataFrame({'numbers': [1.23e15, 4.56e16, 7.89e17]})
+        result = self.data_smells.check_number_string_size(df_large_float, 'numbers')
+        assert result is False, "Test Case 25 Failed: Expected smell for large floating point values"
+        print_and_log("Test Case 25 Passed: Smell detected for large floating point values")
+
+        # Test 26: Mixed large numbers and long strings (smell)
+        df_mixed_types_large = pd.DataFrame({
+            'numbers': [1e10, 2e11, 3e12],
+            'text': ['a' * 60, 'b' * 55, 'c' * 70]
+        })
+        result = self.data_smells.check_number_string_size(df_mixed_types_large)
+        assert result is False, "Test Case 26 Failed: Expected smell for mixed large numbers and long strings"
+        print_and_log("Test Case 26 Passed: Smell detected for mixed large numbers and long strings")
+
+        # Test 27: Large numbers in string format (no smell for numbers, but smell for long strings)
+        df_str_large = pd.DataFrame({'text': ['1234567890' * 6, '9876543210' * 5]})
+        result = self.data_smells.check_number_string_size(df_str_large, 'text')
+        assert result is False, "Test Case 27 Failed: Expected smell for long numeric strings"
+        print_and_log("Test Case 27 Passed: Smell detected for long numeric strings")
+
+        # Test 28: Long technical terms (smell)
+        df_technical = pd.DataFrame({'text': [
+            'Methylenedioxymethamphetamine',
+            'Supercalifragilisticexpialidocious',
+            'Hippopotomonstrosesquippedaliophobia'
+        ]})
+        result = self.data_smells.check_number_string_size(df_technical, 'text')
+        assert result is False, "Test Case 28 Failed: Expected smell for long technical terms"
+        print_and_log("Test Case 28 Passed: Smell detected for long technical terms")
+
+        # Test 29: Long alphanumeric strings (smell)
+        df_alphanum = pd.DataFrame({'text': [
+            'A1B2C3' * 10,
+            'X9Y8Z7' * 12,
+            'M5N6P7' * 11
+        ]})
+        result = self.data_smells.check_number_string_size(df_alphanum, 'text')
+        assert result is False, "Test Case 29 Failed: Expected smell for long alphanumeric strings"
+        print_and_log("Test Case 29 Passed: Smell detected for long alphanumeric strings")
+
+        print_and_log("\nFinished testing check_number_size function")
+        print_and_log("-----------------------------------------------------------")
