@@ -114,7 +114,7 @@ def check_missing_invalid_value_consistency(data_dictionary: pd.DataFrame, missi
         # Convert column values to string and get unique values
         unique_values = set(data_dictionary[field_name].unique())
 
-        # Find values that are in common list but not in model definition
+        # Find values that are in the common list but not in the model definition
         undefined_values = unique_values.intersection(common_set) - missing_invalid_set
 
         if undefined_values:
@@ -149,10 +149,10 @@ def check_integer_as_floating_point(data_dictionary: pd.DataFrame, field: str = 
     def check_column(col_name):
         # First, check if the column is of a float type
         if pd.api.types.is_float_dtype(data_dictionary[col_name]):
-            col = data_dictionary[col_name].dropna()
-            if not col.empty:
+            column = data_dictionary[col_name].dropna()
+            if not column.empty:
                 # Check if all values in the column are integers
-                if np.all((col.values == np.floor(col.values))):
+                if np.all((column.values == np.floor(column.values))):
                     message = (f"Warning in function: {origin_function} - Possible data smell: DataField '{col_name}' "
                                f"may be an integer disguised as a float.")
                     print_and_log(message, level=logging.WARN)
@@ -179,9 +179,9 @@ def check_integer_as_floating_point(data_dictionary: pd.DataFrame, field: str = 
 def check_types_as_string(data_dictionary: pd.DataFrame, field: str,
                           expected_type: DataType, origin_function: str = None) -> bool:
     """
-    Check if a column defined as String actually contains only integers, floats, times, dates, or datetimes as string representations.
+    Check if a column defined as String actually contains only integers, floats, times, dates, or datetime as string representations.
     If the expected type is not String, check that the values match the expected type.
-    Issues a warning if a data smell is detected, or raises an exception if the type does not match the model.
+    Issues a warning if a data smell is detected or raises an exception if the type does not match the model.
 
     :param data_dictionary: (pd.DataFrame) DataFrame containing the data
     :param field: (str) Name of the field (column) to check
@@ -244,7 +244,7 @@ def check_types_as_string(data_dictionary: pd.DataFrame, field: str,
         # Type checkers for each expected type
         type_checkers = {
             DataType.INTEGER: lambda v: pd.api.types.is_integer_dtype(data_dictionary[field]) or (
-                        pd.api.types.is_numeric_dtype(v) and v.apply(lambda x: float(x).is_integer()).all()),
+                    pd.api.types.is_numeric_dtype(v) and v.apply(lambda x: float(x).is_integer()).all()),
             DataType.FLOAT: lambda v: pd.api.types.is_float_dtype(
                 data_dictionary[field]) or pd.api.types.is_numeric_dtype(v),
             DataType.DOUBLE: lambda v: pd.api.types.is_float_dtype(
@@ -298,13 +298,13 @@ def check_special_character_spacing(data_dictionary: pd.DataFrame, field: str = 
     def check_column(col_name):
         # Only check string columns
         if pd.api.types.is_string_dtype(data_dictionary[col_name]) or data_dictionary[col_name].dtype == 'object':
-            col = data_dictionary[col_name].dropna()
-            if not col.empty:
+            column = data_dictionary[col_name].dropna()
+            if not column.empty:
                 # Apply cleaning function to all values
-                cleaned_values = col.apply(clean_text)
+                cleaned_values = column.apply(clean_text)
 
-                # Check if any value changed after cleaning (indicating presence of special chars, spaces, etc.)
-                if not (col == cleaned_values).all():
+                # Check if any value changed after cleaning (indicating the presence of special chars, spaces, etc.)
+                if not (column == cleaned_values).all():
                     message = (f"Warning in function: {origin_function} - Possible data smell: the values "
                                f"in {col_name} contain accents, uppercase letters, extra spaces, or special "
                                f"characters that do not align with the recommended data format for string operations.")
@@ -334,7 +334,7 @@ def check_suspect_precision(data_dictionary: pd.DataFrame, field: str = None, or
     """
     Check if float columns contain non-significant digits (suspect precision).
     This function validates if the values in float columns remain the same after removing non-significant digits
-    using the 'g' format specifier. For example:
+    using the 'g' format specifier. For example,
     - 1.0000 -> 1 (has non-significant digits)
     - 1.2300 -> 1.23 (has non-significant digits)
     - 1.23 -> 1.23 (no non-significant digits)
@@ -349,8 +349,8 @@ def check_suspect_precision(data_dictionary: pd.DataFrame, field: str = None, or
     def check_column(col_name):
         # Check if the column is of a float type
         if pd.api.types.is_float_dtype(data_dictionary[col_name]):
-            col = data_dictionary[col_name]
-            for v in col:
+            column = data_dictionary[col_name]
+            for v in column:
                 if v is None or (isinstance(v, float) and np.isnan(v)):
                     continue
                 try:
@@ -360,7 +360,7 @@ def check_suspect_precision(data_dictionary: pd.DataFrame, field: str = None, or
                                       f"non-significant digits: {v} -> {float(format(v, 'g'))}", level=logging.WARN)
                         print(f"DATA SMELL DETECTED: Suspect Precision in DataField {col_name}")
                         return False
-                except Exception:
+                except (ValueError, TypeError):
                     continue
         return True
 
@@ -404,10 +404,10 @@ def check_suspect_distribution(data_dictionary: pd.DataFrame, min_value: float, 
     def check_column(col_name):
         # Only check numeric columns (continuous data)
         if pd.api.types.is_numeric_dtype(data_dictionary[col_name]):
-            col = data_dictionary[col_name].dropna()
-            if not col.empty:
+            column = data_dictionary[col_name].dropna()
+            if not column.empty:
                 # Check if any values are outside the defined range
-                out_of_range = (col < min_value) | (col > max_value)
+                out_of_range = (column < min_value) | (column > max_value)
                 if out_of_range.any():
                     message = (f"Warning in function: {origin_function} - Possible data smell: The range of values of "
                                f"dataField {col_name} do not align with the definitions in the data-model")
@@ -455,12 +455,13 @@ def check_date_as_datetime(data_dictionary: pd.DataFrame, field: str = None, ori
         if not pd.api.types.is_datetime64_any_dtype(data_dictionary[col_name]):
             return True
 
-        col = data_dictionary[col_name].dropna()
-        if col.empty:
+        column = data_dictionary[col_name].dropna()
+        if column.empty:
             return True
 
         # Check if all times are 00:00:00.000000 in their respective timezone
-        if np.all((col.dt.hour == 0) & (col.dt.minute == 0) & (col.dt.second == 0) & (col.dt.microsecond == 0)):
+        if np.all((column.dt.hour == 0) & (column.dt.minute == 0) & (column.dt.second == 0) & (
+                column.dt.microsecond == 0)):
             message = (f"Warning in function: {origin_function} - Possible data smell: the values in {col_name} appear "
                        f"to be date, but the expected type in the data model is dateTime")
             print_and_log(message, level=logging.WARN)
@@ -502,18 +503,18 @@ def check_separating_consistency(data_dictionary: pd.DataFrame, decimal_sep: str
     def split_scientific_notation(val: str):
         """
         Helper function to split scientific notation into mantissa and exponent.
-        Returns the mantissa part and exponent part (if exists)
+        Returns the mantissa part and exponent part (if it exists)
         """
         parts = val.lower().split('e')
         return parts[0], parts[1] if len(parts) > 1 else None
 
-    def is_valid_number_format(val: str, decimal_sep: str, thousands_sep: str) -> bool:
+    def is_valid_number_format(val: str, dec_sep: str, thds_sep: str) -> bool:
         """
         Helper function to check if a string value follows the correct number format.
 
         :param val: (str) Value to check
-        :param decimal_sep: (str) Expected decimal separator
-        :param thousands_sep: (str) Expected thousands separator
+        :param dec_sep: (str) Expected decimal separator
+        :param thds_sep: (str) Expected thousands separator
         :return: bool indicating if the format is valid
         """
         # Handle scientific notation: check only mantissa part
@@ -524,7 +525,7 @@ def check_separating_consistency(data_dictionary: pd.DataFrame, decimal_sep: str
             return True
 
         # Split mantissa by decimal separator
-        parts = mantissa.split(decimal_sep)
+        parts = mantissa.split(dec_sep)
 
         # Must have exactly one integer part and one decimal part
         if len(parts) != 2:
@@ -532,16 +533,16 @@ def check_separating_consistency(data_dictionary: pd.DataFrame, decimal_sep: str
 
         integer_part, decimal_part = parts
 
-        # Verify that decimal part contains only digits
+        # Verify that the decimal part contains only digits
         if not decimal_part.isdigit():
             return False
 
         # If there's a thousands separator, verify its format
-        if thousands_sep:
+        if thds_sep:
             # Only process integer part for thousands separator
-            groups = integer_part.split(thousands_sep)
+            groups = integer_part.split(thds_sep)
 
-            # First group can have 1-3 digits, rest must have exactly 3
+            # The first group can have 1-3 digits, the rest must have exactly 3
             if not groups[0].replace('-', '').isdigit() or not all(len(g) == 3 and g.isdigit() for g in groups[1:]):
                 return False
         else:
@@ -565,10 +566,10 @@ def check_separating_consistency(data_dictionary: pd.DataFrame, decimal_sep: str
             if len(parts) != 2:  # Must have exactly one 'e' for scientific notation
                 return False
             mantissa, exp = parts
-            # Exponente puede estar vacío o ser un número
+            # Check if mantissa is a valid number and exponent is a valid integer
             return mantissa.isdigit() and (exp.isdigit() or exp == '')
 
-        # Si no hay notación científica, debe ser un número simple
+        # If scientific notation is not used, check if the cleaned value is a digit
         return cleaned.isdigit()
 
     def check_column(col_name):
@@ -595,7 +596,7 @@ def check_separating_consistency(data_dictionary: pd.DataFrame, decimal_sep: str
             used_seps = {sep for sep in possible_seps if sep in mantissa}
 
             if thousands_sep:
-                # If there's a thousands separator, it must be present and use correct format
+                # If there's a thousands separator, it must be present and use the correct format
                 if thousands_sep not in mantissa:
                     # It's valid to have numbers without thousands separator
                     if decimal_sep in mantissa and not is_valid_number_format(val, decimal_sep, ''):
@@ -616,7 +617,7 @@ def check_separating_consistency(data_dictionary: pd.DataFrame, decimal_sep: str
                     return False
 
             else:
-                # Without thousands separator, verify decimal format is correct
+                # Without thousand separator, verify a decimal format is correct
                 if used_seps - {decimal_sep}:  # If there are separators different from decimal
                     print_and_log(
                         f"Warning in function: {origin_function} - Possible data smell: wrong decimal separator used "
@@ -658,21 +659,21 @@ def check_date_time_consistency(data_dictionary: pd.DataFrame, expected_type: Da
                                 field: str = None, origin_function: str = None) -> bool:
     """
     Check if datetime/date fields comply with the expected format according to the data model.
-    For fields defined as Date type, it checks that no time information is present.
-    For fields defined as DateTime type, it verifies proper datetime format.
+    For fields defined as a Date type, it checks that no time information is present.
+    For fields defined as DateTime type, it verifies a proper datetime format.
 
     :param data_dictionary: (pd.DataFrame) DataFrame containing the data
     :param expected_type: (DataType) Expected data type (Date or DateTime)
     :param field: (str) Optional field to check; if None, checks all datetime fields
     :param origin_function: (str) Optional name of the function that called this function, for logging purposes
 
-    :return: (bool) True if format is consistent, False otherwise
+    :return: (bool) True if a format is consistent, False otherwise
     """
     if expected_type not in [DataType.DATE, DataType.DATETIME]:
         raise ValueError("expected_type must be either DataType.DATE or DataType.DATETIME")
 
     def check_column(col_name):
-        # Check if column exists
+        # Check if a column exists
         if col_name not in data_dictionary.columns:
             raise ValueError(f"DataField '{col_name}' does not exist in the DataFrame")
 
@@ -691,9 +692,9 @@ def check_date_time_consistency(data_dictionary: pd.DataFrame, expected_type: Da
         if expected_type == DataType.DATE:
             # For Date type, check that no time information is present (all times should be midnight)
             has_time = not ((col_data.dt.hour == 0) &
-                          (col_data.dt.minute == 0) &
-                          (col_data.dt.second == 0) &
-                          (col_data.dt.microsecond == 0)).all()
+                            (col_data.dt.minute == 0) &
+                            (col_data.dt.second == 0) &
+                            (col_data.dt.microsecond == 0)).all()
 
             if has_time:
                 message = (f"Warning in function: {origin_function} - Possible data smell: The format of date of "
@@ -727,17 +728,18 @@ def check_ambiguous_datetime_format(data_dictionary: pd.DataFrame, field: str = 
     """
 
     def check_column(col_name):
-        # Check if the column contains datetime-like strings that suggest 12-hour format
+        # Check if the column contains datetime-like strings that suggest a 12-hour format
         if pd.api.types.is_string_dtype(data_dictionary[col_name]) or data_dictionary[col_name].dtype == 'object':
-            col = data_dictionary[col_name].dropna()
-            if not col.empty:
+            column = data_dictionary[col_name].dropna()
+            if not column.empty:
                 # Convert to string and check for 12-hour format patterns
-                str_values = col.astype(str)
+                str_values = column.astype(str)
                 # Look for common 12-hour format indicators (AM/PM, a.m./p.m.)
                 has_am_pm = str_values.str.contains(r'\b(?:AM|PM|am|pm|a\.m\.|p\.m\.)\b', regex=True, na=False).any()
                 # Also check for time patterns that commonly indicate 12-hour format
                 # Like times starting with 1-12: followed by AM/PM context
-                twelve_hour_indicators = str_values.str.contains(r'\b(?:1[0-2]|0?[1-9]):[0-5][0-9]\s*(?:AM|PM|am|pm|a\.m\.|p\.m\.)', regex=True, na=False).any()
+                twelve_hour_indicators = str_values.str.contains(
+                    r'\b(?:1[0-2]|0?[1-9]):[0-5][0-9]\s*(?:AM|PM|am|pm|a\.m\.|p\.m\.)', regex=True, na=False).any()
                 if has_am_pm or twelve_hour_indicators:
                     message = (f"Warning in function: {origin_function} - Possible data smell: The format of date "
                                f"of dataField {col_name} is represented in 12-hour clock format")
@@ -790,16 +792,16 @@ def check_suspect_date_value(data_dictionary: pd.DataFrame, min_date: str, max_d
     def check_column(col_name):
         # Only check datetime columns
         if pd.api.types.is_datetime64_any_dtype(data_dictionary[col_name]):
-            col = data_dictionary[col_name].dropna()
-            if col.empty:
+            column = data_dictionary[col_name].dropna()
+            if column.empty:
                 return True
 
-            # If column is timezone-aware, convert to naive for comparison to avoid errors
-            if col.dt.tz is not None:
-                col = col.dt.tz_localize(None)
+            # If the column is timezone-aware, convert to naive for comparison to avoid errors
+            if column.dt.tz is not None:
+                column = column.dt.tz_localize(None)
 
             # Check if any values are outside the defined range
-            out_of_range = (col < min_date_dt) | (col > max_date_dt)
+            out_of_range = (column < min_date_dt) | (column > max_date_dt)
             if out_of_range.any():
                 message = (f"Warning in function: {origin_function} - Possible data smell: The range of date of "
                            f"dataField {col_name} do not align with the definitions in the data-model")
@@ -836,38 +838,39 @@ def check_suspect_far_date_value(data_dictionary: pd.DataFrame, field: str = Non
     :param field: (str) Optional field to check; if None, checks all datetime fields
     :param origin_function: (str) Optional name of the function that called this function, for logging purposes
 
-    :return: (bool) False if a smell is detected (dates too far from current date), True otherwise
+    :return: (bool) False if a smell is detected (dates too far from the current date), True otherwise
     """
     # Define the threshold for what constitutes a "far" date (50 years in days)
     YEARS_THRESHOLD = 50
     days_threshold = YEARS_THRESHOLD * 365
 
-    # Get current date for comparison
+    # Get the current date for comparison
     current_date = pd.Timestamp.now()
 
     def check_column(col_name):
         # Only check datetime columns
         if pd.api.types.is_datetime64_any_dtype(data_dictionary[col_name]):
-            col = data_dictionary[col_name].dropna()
-            if col.empty:
+            column = data_dictionary[col_name].dropna()
+            if column.empty:
                 return True
 
             # If the column is timezone-aware, convert to naive for comparison
-            if col.dt.tz is not None:
-                col = col.dt.tz_localize(None)
+            if column.dt.tz is not None:
+                column = column.dt.tz_localize(None)
 
-            # Calculate the difference in days from current date for each date
-            days_difference = (col - current_date).dt.days.abs()
+            # Calculate the difference in days from the current date for each date
+            days_difference = (column - current_date).dt.days.abs()
 
             # Check if any values are beyond the threshold
             far_dates = days_difference > days_threshold
             if far_dates.any():
                 far_dates_count = far_dates.sum()
                 # Get the actual far dates for better context
-                far_dates_list = col[far_dates].dt.strftime('%Y-%m-%d').tolist()
-                message = (f"Warning in function: {origin_function} - Possible data smell: Found {far_dates_count} dates in "
-                          f"dataField {col_name} that are more than {YEARS_THRESHOLD} years away from current date. "
-                          f"Far dates found: {far_dates_list}")
+                far_dates_list = column[far_dates].dt.strftime('%Y-%m-%d').tolist()
+                message = (
+                    f"Warning in function: {origin_function} - Possible data smell: Found {far_dates_count} dates in "
+                    f"dataField {col_name} that are more than {YEARS_THRESHOLD} years away from current date. "
+                    f"Far dates found: {far_dates_list}")
                 print_and_log(message, level=logging.WARN)
                 print(f"DATA SMELL DETECTED: Suspect Far Date Value in DataField {col_name}")
                 return False
@@ -896,7 +899,7 @@ def check_number_string_size(data_dictionary: pd.DataFrame, field: str = None, o
     Checks if numeric or text fields have potential data smells related to their size:
     - For numeric fields: checks for small numbers (values between -1 and 1)
     - For string fields that contain scientific notation: checks for small or large numbers
-    - For all fields: checks for long data values that might be too difficult to understand
+    - For all fields: checks for long data values that might be too challenging to understand
 
     :param data_dictionary: (pd.DataFrame) DataFrame containing the data
     :param field: (str) Optional field to check; if None, checks all applicable fields
@@ -904,48 +907,51 @@ def check_number_string_size(data_dictionary: pd.DataFrame, field: str = None, o
 
     :return: (bool) False if any smell is detected, True otherwise
     """
+
     def is_scientific_notation(x):
         try:
             return 'e' in str(x).lower()
-        except:
+        except Exception:
             return False
 
     def check_column(col_name):
         has_smell = False
         # Check for small numbers in numeric columns
         if pd.api.types.is_numeric_dtype(data_dictionary[col_name]):
-            col = data_dictionary[col_name].dropna()
-            if not col.empty:
+            column = data_dictionary[col_name].dropna()
+            if not column.empty:
                 # Check for values between -1 and 1 (excluding -1 and 1)
-                small_numbers = (col > -1) & (col < 1) & (col != 0)  # exclude zero as it's a common valid value
+                small_numbers = (column > -1) & (column < 1) & (column != 0)  # exclude zero as it's a common valid value
                 if small_numbers.any():
                     small_numbers_count = small_numbers.sum()
-                    small_numbers_list = col[small_numbers].tolist()
-                    message = (f"Warning in function: {origin_function} - Possible data smell: Found {small_numbers_count} "
-                              f"small values (between -1 and 1) in dataField {col_name}. "
-                              f"Small numbers found: {small_numbers_list}")
+                    small_numbers_list = column[small_numbers].tolist()
+                    message = (
+                        f"Warning in function: {origin_function} - Possible data smell: Found {small_numbers_count} "
+                        f"small values (between -1 and 1) in dataField {col_name}. "
+                        f"Small numbers found: {small_numbers_list}")
                     print_and_log(message, level=logging.WARN)
                     print(f"DATA SMELL DETECTED: Small Number in DataField {col_name}")
                     has_smell = True
 
                 # Check for very large numbers (over 1 billion as an example threshold)
-                large_numbers = abs(col) > 1e9
+                large_numbers = abs(column) > 1e9
                 if large_numbers.any():
                     large_numbers_count = large_numbers.sum()
-                    large_numbers_list = col[large_numbers].tolist()
-                    message = (f"Warning in function: {origin_function} - Possible data smell: Found {large_numbers_count} "
-                              f"very large values in dataField {col_name}. "
-                              f"Large numbers found: {large_numbers_list}")
+                    large_numbers_list = column[large_numbers].tolist()
+                    message = (
+                        f"Warning in function: {origin_function} - Possible data smell: Found {large_numbers_count} "
+                        f"very large values in dataField {col_name}. "
+                        f"Large numbers found: {large_numbers_list}")
                     print_and_log(message, level=logging.WARN)
                     print(f"DATA SMELL DETECTED: Long Data Value in DataField {col_name}")
                     has_smell = True
 
         # Check for string values that might be scientific notation or long strings
         if pd.api.types.is_string_dtype(data_dictionary[col_name]) or data_dictionary[col_name].dtype == 'object':
-            col = data_dictionary[col_name].dropna()
-            if not col.empty:
+            column = data_dictionary[col_name].dropna()
+            if not column.empty:
                 # Check for scientific notation values
-                scientific_values = col[col.astype(str).apply(is_scientific_notation)]
+                scientific_values = column[column.astype(str).apply(is_scientific_notation)]
                 if not scientific_values.empty:
                     try:
                         numeric_values = scientific_values.apply(float)
@@ -954,9 +960,10 @@ def check_number_string_size(data_dictionary: pd.DataFrame, field: str = None, o
                         if small_scientific.any():
                             small_count = small_scientific.sum()
                             small_list = scientific_values[small_scientific].tolist()
-                            message = (f"Warning in function: {origin_function} - Possible data smell: Found {small_count} "
-                                      f"small values in scientific notation in dataField {col_name}. "
-                                      f"Small values found: {small_list}")
+                            message = (
+                                f"Warning in function: {origin_function} - Possible data smell: Found {small_count} "
+                                f"small values in scientific notation in dataField {col_name}. "
+                                f"Small values found: {small_list}")
                             print_and_log(message, level=logging.WARN)
                             print(f"DATA SMELL DETECTED: Small Number in Scientific Notation in DataField {col_name}")
                             has_smell = True
@@ -966,23 +973,26 @@ def check_number_string_size(data_dictionary: pd.DataFrame, field: str = None, o
                         if large_scientific.any():
                             large_count = large_scientific.sum()
                             large_list = scientific_values[large_scientific].tolist()
-                            message = (f"Warning in function: {origin_function} - Possible data smell: Found {large_count} "
-                                      f"large values in scientific notation in dataField {col_name}. "
-                                      f"Large values found: {large_list}")
+                            message = (
+                                f"Warning in function: {origin_function} - Possible data smell: Found {large_count} "
+                                f"large values in scientific notation in dataField {col_name}. "
+                                f"Large values found: {large_list}")
                             print_and_log(message, level=logging.WARN)
-                            print(f"DATA SMELL DETECTED: Long Data Value in Scientific Notation in DataField {col_name}")
+                            print(
+                                f"DATA SMELL DETECTED: Long Data Value in Scientific Notation in DataField {col_name}")
                             has_smell = True
                     except (ValueError, TypeError):
                         pass  # Ignore values that can't be converted to float
 
                 # Check for strings longer than 35 characters
-                long_strings = col.astype(str).str.len() > 35
+                long_strings = column.astype(str).str.len() > 35
                 if long_strings.any():
                     long_strings_count = long_strings.sum()
-                    long_strings_list = col[long_strings].tolist()
-                    message = (f"Warning in function: {origin_function} - Possible data smell: Found {long_strings_count} "
-                              f"very long text values in dataField {col_name}. "
-                              f"Long values found: {long_strings_list}")
+                    long_strings_list = column[long_strings].tolist()
+                    message = (
+                        f"Warning in function: {origin_function} - Possible data smell: Found {long_strings_count} "
+                        f"very long text values in dataField {col_name}. "
+                        f"Long values found: {long_strings_list}")
                     print_and_log(message, level=logging.WARN)
                     print(f"DATA SMELL DETECTED: Long Data Value in DataField {col_name}")
                     has_smell = True
@@ -1013,7 +1023,7 @@ def check_string_casing(data_dictionary: pd.DataFrame, field: str = None, origin
     Detects three types of issues:
     1. Inconsistent capitalization across values (e.g., "USA", "usa", "Usa")
     2. Mixed case within single values (e.g., "GoOD MorNiNg")
-    3. Inconsistent sentence casing (e.g., "How are you?", "fine.", "and you? Great.")
+    3. Inconsistent sentence casing (e.g., "How are you?", "fine.", "and you are? Great.")
 
     :param data_dictionary: (pd.DataFrame) DataFrame containing the data
     :param field: (str) Optional field to check; if None, checks all string fields
@@ -1021,6 +1031,7 @@ def check_string_casing(data_dictionary: pd.DataFrame, field: str = None, origin
 
     :return: (bool) False if any smell is detected, True otherwise
     """
+
     def is_mixed_case(text: str) -> bool:
         """Check if a string has unusual mixed case patterns"""
         if not isinstance(text, str):
@@ -1030,9 +1041,9 @@ def check_string_casing(data_dictionary: pd.DataFrame, field: str = None, origin
             return False
         # Count case changes
         case_changes = sum(1 for i in range(1, len(text))
-                         if text[i].isupper() != text[i-1].isupper()
-                         and text[i].isalpha() and text[i-1].isalpha())
-        # More than 3 case changes in a single word is considered unusual (JavaScript is not considered mixedCase as
+                           if text[i].isupper() != text[i - 1].isupper()
+                           and text[i].isalpha() and text[i - 1].isalpha())
+        # More than 3 case changes in a single word are considered unusual (JavaScript is not considered mixedCase as
         # it has 2 case changes)
         return case_changes > 3
 
@@ -1047,12 +1058,12 @@ def check_string_casing(data_dictionary: pd.DataFrame, field: str = None, origin
         if not pd.api.types.is_string_dtype(data_dictionary[col_name]) and data_dictionary[col_name].dtype != 'object':
             return True
 
-        col = data_dictionary[col_name].dropna()
-        if col.empty:
+        column = data_dictionary[col_name].dropna()
+        if column.empty:
             return True
 
         has_smell = False
-        unique_values = col.unique()
+        unique_values = column.unique()
 
         # 1. Check for inconsistent capitalization across values
         for value in unique_values:
@@ -1060,7 +1071,7 @@ def check_string_casing(data_dictionary: pd.DataFrame, field: str = None, origin
                 continue
             # Find all variations of the same text with different casing
             variations = [v for v in unique_values
-                        if isinstance(v, str) and v.lower() == value.lower() and v != value]
+                          if isinstance(v, str) and v.lower() == value.lower() and v != value]
             if variations:
                 message = (f"Warning in function: {origin_function} - Possible data smell: Found inconsistent "
                            f"capitalization for the same value in dataField {col_name}. "
@@ -1083,7 +1094,7 @@ def check_string_casing(data_dictionary: pd.DataFrame, field: str = None, origin
         if len(unique_values) > 1:  # Only check if there are multiple values
             sentence_case_values = [v for v in unique_values if isinstance(v, str) and is_sentence_case(v)]
             if 0 < len(sentence_case_values) < len(unique_values):
-                # Some values follow sentence case while others don't
+                # Some values follow a sentence case while others don't
                 message = (f"Warning in function: {origin_function} - Possible data smell: Inconsistent "
                            f"sentence casing in dataField {col_name}. Some values follow sentence case "
                            f"while others don't.")

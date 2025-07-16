@@ -39,20 +39,20 @@ class DataSmellsSimpleTest(unittest.TestCase):
         Execute all the simple tests of the functions of the class
         """
         simple_test_methods = [
-            # self.execute_check_precision_consistency_SimpleTests,
-            # self.execute_check_missing_invalid_value_consistency_SimpleTests,
-            # self.execute_check_integer_as_floating_point_SimpleTests,
-            # self.execute_check_types_as_string_SimpleTests,
-            # self.execute_check_special_character_spacing_SimpleTests,
-            # self.execute_check_suspect_distribution_SimpleTests,
-            # self.execute_check_suspect_precision_SimpleTests,
-            # self.execute_check_date_as_datetime_SimpleTests,
-            # self.execute_check_separating_consistency_SimpleTests,
-            # self.execute_check_date_time_consistency_SimpleTests,
-            # self.execute_check_ambiguous_datetime_format_SimpleTests,
-            # self.execute_check_suspect_date_value_SimpleTests,
-            # self.execute_check_suspect_far_date_value_SimpleTests,
-            # self.execute_check_number_size_SimpleTests,
+            self.execute_check_precision_consistency_SimpleTests,
+            self.execute_check_missing_invalid_value_consistency_SimpleTests,
+            self.execute_check_integer_as_floating_point_SimpleTests,
+            self.execute_check_types_as_string_SimpleTests,
+            self.execute_check_special_character_spacing_SimpleTests,
+            self.execute_check_suspect_distribution_SimpleTests,
+            self.execute_check_suspect_precision_SimpleTests,
+            self.execute_check_date_as_datetime_SimpleTests,
+            self.execute_check_separating_consistency_SimpleTests,
+            self.execute_check_date_time_consistency_SimpleTests,
+            self.execute_check_ambiguous_datetime_format_SimpleTests,
+            self.execute_check_suspect_date_value_SimpleTests,
+            self.execute_check_suspect_far_date_value_SimpleTests,
+            self.execute_check_number_size_SimpleTests,
             self.execute_check_string_casing_SimpleTests
         ]
 
@@ -973,7 +973,7 @@ class DataSmellsSimpleTest(unittest.TestCase):
         assert result is True, "Test Case 21 Failed: Should not detect smell for very small numbers"
         print_and_log("Test Case 21 Passed: Very small numbers handled correctly")
 
-        # Test 22: Numbers requiring high precision arithmetic
+        # Test 22: Numbers requiring high-precision arithmetic
         df_high_precision = pd.DataFrame({
             'high_precision': [np.pi, np.e, np.sqrt(2)]
         })

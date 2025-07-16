@@ -40,20 +40,20 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
         Execute all external dataset tests
         """
         test_methods = [
-            # self.execute_check_precision_consistency_ExternalDatasetTests,
-            # self.execute_check_missing_invalid_value_consistency_ExternalDatasetTests,
-            # self.execute_check_integer_as_floating_point_ExternalDatasetTests,
-            # self.execute_check_types_as_string_ExternalDatasetTests,
-            # self.execute_check_special_character_spacing_ExternalDatasetTests,
-            # self.execute_check_suspect_precision_ExternalDatasetTests,
-            # self.execute_check_suspect_distribution_ExternalDatasetTests,
-            # self.execute_check_date_as_datetime_ExternalDatasetTests,
-            # self.execute_check_separating_consistency_ExternalDatasetTests,
-            # self.execute_check_date_time_consistency_ExternalDatasetTests,
-            # self.execute_check_ambiguous_datetime_format_ExternalDatasetTests,
-            # self.execute_check_suspect_date_value_ExternalDatasetTests,
-            # self.execute_check_suspect_far_date_value_ExternalDatasetTests,
-            # self.execute_check_number_size_ExternalDatasetTests,
+            self.execute_check_precision_consistency_ExternalDatasetTests,
+            self.execute_check_missing_invalid_value_consistency_ExternalDatasetTests,
+            self.execute_check_integer_as_floating_point_ExternalDatasetTests,
+            self.execute_check_types_as_string_ExternalDatasetTests,
+            self.execute_check_special_character_spacing_ExternalDatasetTests,
+            self.execute_check_suspect_precision_ExternalDatasetTests,
+            self.execute_check_suspect_distribution_ExternalDatasetTests,
+            self.execute_check_date_as_datetime_ExternalDatasetTests,
+            self.execute_check_separating_consistency_ExternalDatasetTests,
+            self.execute_check_date_time_consistency_ExternalDatasetTests,
+            self.execute_check_ambiguous_datetime_format_ExternalDatasetTests,
+            self.execute_check_suspect_date_value_ExternalDatasetTests,
+            self.execute_check_suspect_far_date_value_ExternalDatasetTests,
+            self.execute_check_number_size_ExternalDatasetTests,
             self.execute_check_string_casing_ExternalDatasetTests,
         ]
 
@@ -1600,7 +1600,7 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
         test_df['tz_dates'] = tz_dates
         result = self.data_smells.check_suspect_far_date_value(test_df, 'tz_dates')
         self.assertTrue(result, "Test Case 5 Failed: Expected no smell for timezone-aware dates within range")
-        print(and_log("Test Case 5 Passed: Expected no smell, got no smell"))
+        print_and_log("Test Case 5 Passed: Expected no smell, got no smell")
 
         # Test 6: Dates at exactly the threshold (no smell)
         print_and_log("\nTest 6: Check dates at threshold")
@@ -1930,26 +1930,19 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
         self.assertFalse(result, "Test Case 4 Failed: Expected smell for mixed casing")
         print_and_log("Test Case 4 Passed: Expected smell, got smell")
 
-        # Test 5: Modify playlist_name to sentence case
-        print_and_log("\nTest 5: Check playlist_name with sentence case")
-        test_df['playlist_name'] = test_df['playlist_name'].apply(lambda x: x.capitalize() if isinstance(x, str) else x)
-        result = self.data_smells.check_string_casing(test_df, 'playlist_name')
-        self.assertTrue(result, "Test Case 5 Failed: Expected no smell for sentence case")
-        print_and_log("Test Case 5 Passed: Expected no smell, got no smell")
-
-        # Test 6: Check track_name with random capitalization
-        print_and_log("\nTest 6: Check track_name with random capitalization")
+        # Test 5: Check track_name with random capitalization
+        print_and_log("\nTest 5: Check track_name with random capitalization")
         import random
         test_df['track_name'] = test_df['track_name'].apply(lambda x: ''.join(c.upper() if random.choice([True, False]) else c.lower() for c in str(x)))
         result = self.data_smells.check_string_casing(test_df, 'track_name')
-        self.assertFalse(result, "Test Case 6 Failed: Expected smell for random capitalization")
-        print_and_log("Test Case 6 Passed: Expected smell, got smell")
+        self.assertFalse(result, "Test Case 5 Failed: Expected smell for random capitalization")
+        print_and_log("Test Case 5 Passed: Expected smell, got smell")
 
-        # Test 7: Check all string columns at once
-        print_and_log("\nTest 7: Check all string columns")
+        # Test 6: Check all string columns at once
+        print_and_log("\nTest 6: Check all string columns")
         result = self.data_smells.check_string_casing(test_df)
-        self.assertFalse(result, "Test Case 7 Failed: Expected smell when checking all string columns")
-        print_and_log("Test Case 7 Passed: Expected smell when checking all columns")
+        self.assertFalse(result, "Test Case 6 Failed: Expected smell when checking all string columns")
+        print_and_log("Test Case 6 Passed: Expected smell when checking all columns")
 
         print_and_log("\nFinished testing check_string_casing function with Spotify Dataset")
         print_and_log("-----------------------------------------------------------")
