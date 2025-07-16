@@ -53,7 +53,8 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
             self.execute_check_ambiguous_datetime_format_ExternalDatasetTests,
             self.execute_check_suspect_date_value_ExternalDatasetTests,
             self.execute_check_suspect_far_date_value_ExternalDatasetTests,
-            self.execute_check_number_size_ExternalDatasetTests
+            self.execute_check_number_size_ExternalDatasetTests,
+            self.execute_check_string_casing_ExternalDatasetTests,
         ]
 
         print_and_log("")
@@ -1889,4 +1890,59 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
         print_and_log("Test Case 30 Passed: Detected smell for mixed smells")
 
         print_and_log("\nFinished testing check_number_string_size function with Spotify Dataset")
+        print_and_log("-----------------------------------------------------------")
+
+    def execute_check_string_casing_ExternalDatasetTests(self):
+        """
+        Execute the external dataset tests for check_string_casing function
+        Tests various scenarios with the Spotify dataset.
+        """
+        print_and_log("Testing check_string_casing Function with Spotify Dataset")
+        print_and_log("")
+
+        # Create a copy of the dataset for modifications
+        test_df = self.data_dictionary.copy()
+
+        # Test 1: Check original track_name (likely has mixed casing)
+        print_and_log("\nTest 1: Check track_name field")
+        result = self.data_smells.check_string_casing(test_df, 'track_name')
+        self.assertFalse(result, "Test Case 1 Failed: Expected smell for track_name mixed casing")
+        print_and_log("Test Case 1 Passed: Expected smell, got smell")
+
+        # Test 2: Modify track_name to consistent lowercase
+        print_and_log("\nTest 2: Check track_name converted to lowercase")
+        test_df['track_name'] = test_df['track_name'].str.lower()
+        result = self.data_smells.check_string_casing(test_df, 'track_name')
+        self.assertTrue(result, "Test Case 2 Failed: Expected no smell for consistent lowercase")
+        print_and_log("Test Case 2 Passed: Expected no smell, got no smell")
+
+        # Test 3: Modify track_name to consistent uppercase
+        print_and_log("\nTest 3: Check track_name converted to uppercase")
+        test_df['track_name'] = test_df['track_name'].str.upper()
+        result = self.data_smells.check_string_casing(test_df, 'track_name')
+        self.assertTrue(result, "Test Case 3 Failed: Expected no smell for consistent uppercase")
+        print_and_log("Test Case 3 Passed: Expected no smell, got no smell")
+
+        # Test 4: Modify track_artist with mixed casing
+        print_and_log("\nTest 4: Check track_artist with mixed casing")
+        test_df['track_artist'] = test_df['track_artist'].apply(lambda x: ''.join(c.upper() if i % 2 == 0 else c.lower() for i, c in enumerate(str(x))))
+        result = self.data_smells.check_string_casing(test_df, 'track_artist')
+        self.assertFalse(result, "Test Case 4 Failed: Expected smell for mixed casing")
+        print_and_log("Test Case 4 Passed: Expected smell, got smell")
+
+        # Test 5: Check track_name with random capitalization
+        print_and_log("\nTest 5: Check track_name with random capitalization")
+        import random
+        test_df['track_name'] = test_df['track_name'].apply(lambda x: ''.join(c.upper() if random.choice([True, False]) else c.lower() for c in str(x)))
+        result = self.data_smells.check_string_casing(test_df, 'track_name')
+        self.assertFalse(result, "Test Case 5 Failed: Expected smell for random capitalization")
+        print_and_log("Test Case 5 Passed: Expected smell, got smell")
+
+        # Test 6: Check all string columns at once
+        print_and_log("\nTest 6: Check all string columns")
+        result = self.data_smells.check_string_casing(test_df)
+        self.assertFalse(result, "Test Case 6 Failed: Expected smell when checking all string columns")
+        print_and_log("Test Case 6 Passed: Expected smell when checking all columns")
+
+        print_and_log("\nFinished testing check_string_casing function with Spotify Dataset")
         print_and_log("-----------------------------------------------------------")

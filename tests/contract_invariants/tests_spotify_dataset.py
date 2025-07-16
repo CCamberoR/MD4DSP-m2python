@@ -7238,8 +7238,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df, math_op=MathOperator(0),
-                                                          firstOperand='danceability', isFieldFirst=True,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          first_operand='danceability', is_field_first=True,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
@@ -7254,8 +7254,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='danceability', isFieldFirst=True,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(0), first_operand='danceability', is_field_first=True,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
@@ -7269,8 +7269,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='danceability', isFieldFirst=True,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(1), first_operand='danceability', is_field_first=True,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
@@ -7285,9 +7285,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='danceability',
-                                                          isFieldFirst=True,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(1), first_operand='danceability',
+                                                          is_field_first=True,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
@@ -7301,8 +7301,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='danceability', isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(0), first_operand='danceability', is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -7315,8 +7315,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='danceability', isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(0), first_operand='danceability', is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -7329,8 +7329,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='danceability', isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(1), first_operand='danceability', is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -7344,8 +7344,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='danceability', isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(1), first_operand='danceability', is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -7358,8 +7358,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
@@ -7373,8 +7373,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
@@ -7388,8 +7388,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
@@ -7404,8 +7404,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
@@ -7419,8 +7419,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -7434,8 +7434,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -7448,8 +7448,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -7462,8 +7462,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -7477,8 +7477,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='danceability', isFieldFirst=True,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(0), first_operand='danceability', is_field_first=True,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
@@ -7493,8 +7493,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='danceability', isFieldFirst=True,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(0), first_operand='danceability', is_field_first=True,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
@@ -7508,8 +7508,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='danceability', isFieldFirst=True,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(1), first_operand='danceability', is_field_first=True,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
@@ -7524,8 +7524,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='danceability', isFieldFirst=True,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(1), first_operand='danceability', is_field_first=True,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
@@ -7539,8 +7539,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='danceability', isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(0), first_operand='danceability', is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -7554,8 +7554,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='danceability', isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(0), first_operand='danceability', is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -7568,8 +7568,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='danceability', isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(1), first_operand='danceability', is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -7582,8 +7582,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='danceability', isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(1), first_operand='danceability', is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -7596,8 +7596,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
@@ -7611,8 +7611,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
@@ -7626,8 +7626,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
@@ -7642,8 +7642,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
@@ -7657,8 +7657,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -7672,8 +7672,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -7686,8 +7686,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -7701,8 +7701,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -7717,12 +7717,12 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception):
             self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
-                                                              data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(1), firstOperand=5,
-                                                              isFieldFirst=False,
-                                                              secondOperand=2, isFieldSecond=False,
-                                                              belong_op_out=Belong(0),
-                                                              field_in=None, field_out='loudness')
+                                                     data_dictionary_out=expected_df,
+                                                     math_op=MathOperator(1), first_operand=5,
+                                                     is_field_first=False,
+                                                     second_operand=2, is_field_second=False,
+                                                     belong_op_out=Belong(0),
+                                                     field_in=None, field_out='loudness')
         print_and_log("Test Case 33 Passed: Expected ValueError, got ValueError")
 
         # Caso 34
@@ -7732,12 +7732,12 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception):
             self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
-                                                              data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(1), firstOperand=5,
-                                                              isFieldFirst=False,
-                                                              secondOperand=2, isFieldSecond=False,
-                                                              belong_op_out=Belong(0),
-                                                              field_in='loudness', field_out=None)
+                                                     data_dictionary_out=expected_df,
+                                                     math_op=MathOperator(1), first_operand=5,
+                                                     is_field_first=False,
+                                                     second_operand=2, is_field_second=False,
+                                                     belong_op_out=Belong(0),
+                                                     field_in='loudness', field_out=None)
         print_and_log("Test Case 34 Passed: Expected ValueError, got ValueError")
 
         # Caso 35
@@ -7747,12 +7747,12 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception):
             self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
-                                                              data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(1), firstOperand=5,
-                                                              isFieldFirst=False,
-                                                              secondOperand=2, isFieldSecond=False,
-                                                              belong_op_out=Belong(0),
-                                                              field_in='J', field_out='loudness')
+                                                     data_dictionary_out=expected_df,
+                                                     math_op=MathOperator(1), first_operand=5,
+                                                     is_field_first=False,
+                                                     second_operand=2, is_field_second=False,
+                                                     belong_op_out=Belong(0),
+                                                     field_in='J', field_out='loudness')
         print_and_log("Test Case 35 Passed: Expected ValueError, got ValueError")
 
         # Caso 36
@@ -7762,12 +7762,12 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception):
             self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
-                                                              data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(1), firstOperand=5,
-                                                              isFieldFirst=False,
-                                                              secondOperand=2, isFieldSecond=False,
-                                                              belong_op_out=Belong(0),
-                                                              field_in='loudness', field_out='J')
+                                                     data_dictionary_out=expected_df,
+                                                     math_op=MathOperator(1), first_operand=5,
+                                                     is_field_first=False,
+                                                     second_operand=2, is_field_second=False,
+                                                     belong_op_out=Belong(0),
+                                                     field_in='loudness', field_out='J')
         print_and_log("Test Case 36 Passed: Expected ValueError, got ValueError")
 
         # Caso 37
@@ -7777,12 +7777,12 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception):
             self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
-                                                              data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(0), firstOperand='P',
-                                                              isFieldFirst=True,
-                                                              secondOperand='energy', isFieldSecond=True,
-                                                              belong_op_out=Belong(0),
-                                                              field_in='loudness', field_out='loudness')
+                                                     data_dictionary_out=expected_df,
+                                                     math_op=MathOperator(0), first_operand='P',
+                                                     is_field_first=True,
+                                                     second_operand='energy', is_field_second=True,
+                                                     belong_op_out=Belong(0),
+                                                     field_in='loudness', field_out='loudness')
         print_and_log("Test Case 37 Passed: Expected ValueError, got ValueError")
 
         # Caso 38
@@ -7792,12 +7792,12 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception):
             self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
-                                                              data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(0), firstOperand='danceability',
-                                                              isFieldFirst=True,
-                                                              secondOperand='Y', isFieldSecond=True,
-                                                              belong_op_out=Belong(0),
-                                                              field_in='loudness', field_out='loudness')
+                                                     data_dictionary_out=expected_df,
+                                                     math_op=MathOperator(0), first_operand='danceability',
+                                                     is_field_first=True,
+                                                     second_operand='Y', is_field_second=True,
+                                                     belong_op_out=Belong(0),
+                                                     field_in='loudness', field_out='loudness')
         print_and_log("Test Case 38 Passed: Expected ValueError, got ValueError")
 
         # Caso 39
@@ -7807,12 +7807,12 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception):
             self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
-                                                              data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(0), firstOperand='track_name',
-                                                              isFieldFirst=True,
-                                                              secondOperand='energy', isFieldSecond=True,
-                                                              belong_op_out=Belong(0),
-                                                              field_in='loudness', field_out='loudness')
+                                                     data_dictionary_out=expected_df,
+                                                     math_op=MathOperator(0), first_operand='track_name',
+                                                     is_field_first=True,
+                                                     second_operand='energy', is_field_second=True,
+                                                     belong_op_out=Belong(0),
+                                                     field_in='loudness', field_out='loudness')
         print_and_log("Test Case 39 Passed: Expected ValueError, got ValueError")
 
         # Caso 40
@@ -7822,12 +7822,12 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception):
             self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
-                                                              data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(0), firstOperand='energy',
-                                                              isFieldFirst=True,
-                                                              secondOperand='track_name', isFieldSecond=True,
-                                                              belong_op_out=Belong(0),
-                                                              field_in='loudness', field_out='loudness')
+                                                     data_dictionary_out=expected_df,
+                                                     math_op=MathOperator(0), first_operand='energy',
+                                                     is_field_first=True,
+                                                     second_operand='track_name', is_field_second=True,
+                                                     belong_op_out=Belong(0),
+                                                     field_in='loudness', field_out='loudness')
         print_and_log("Test Case 40 Passed: Expected ValueError, got ValueError")
 
         # Caso 41
@@ -7837,12 +7837,12 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception):
             self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
-                                                              data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(0), firstOperand='Hola',
-                                                              isFieldFirst=False,
-                                                              secondOperand='danceability', isFieldSecond=True,
-                                                              belong_op_out=Belong(0),
-                                                              field_in='loudness', field_out='loudness')
+                                                     data_dictionary_out=expected_df,
+                                                     math_op=MathOperator(0), first_operand='Hola',
+                                                     is_field_first=False,
+                                                     second_operand='danceability', is_field_second=True,
+                                                     belong_op_out=Belong(0),
+                                                     field_in='loudness', field_out='loudness')
         print_and_log("Test Case 41 Passed: Expected ValueError, got ValueError")
 
         # Caso 42
@@ -7852,12 +7852,12 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception):
             self.invariants.check_inv_math_operation(data_dictionary_in=self.small_batch_dataset.copy(),
-                                                              data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(0), firstOperand='energy',
-                                                              isFieldFirst=True,
-                                                              secondOperand='Carlos', isFieldSecond=False,
-                                                              belong_op_out=Belong(0),
-                                                              field_in='loudness', field_out='loudness')
+                                                     data_dictionary_out=expected_df,
+                                                     math_op=MathOperator(0), first_operand='energy',
+                                                     is_field_first=True,
+                                                     second_operand='Carlos', is_field_second=False,
+                                                     belong_op_out=Belong(0),
+                                                     field_in='loudness', field_out='loudness')
         print_and_log("Test Case 42 Passed: Expected ValueError, got ValueError")
 
         # Test Case 43: Correct multiplication of two dataset columns (danceability * energy)
@@ -7867,8 +7867,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.small_batch_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.MULTIPLY,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.BELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -7884,8 +7884,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.small_batch_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.MULTIPLY,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.BELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -7900,8 +7900,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.small_batch_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.MULTIPLY,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand=constant, isFieldSecond=False,
+            first_operand='danceability', is_field_first=True,
+            second_operand=constant, is_field_second=False,
             belong_op_out=Belong.BELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -7916,8 +7916,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.small_batch_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.MULTIPLY,
-            firstOperand=constant, isFieldFirst=False,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand=constant, is_field_first=False,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.BELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -7931,8 +7931,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.small_batch_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.MULTIPLY,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.NOTBELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -7946,8 +7946,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
                 data_dictionary_in=self.small_batch_dataset.copy(),
                 data_dictionary_out=expected_df.copy(),
                 math_op=MathOperator.MULTIPLY,
-                firstOperand='danceability', isFieldFirst=True,
-                secondOperand='energy', isFieldSecond=True,
+                first_operand='danceability', is_field_first=True,
+                second_operand='energy', is_field_second=True,
                 belong_op_out=Belong.BELONG,
                 field_in=None, field_out='loudness'
             )
@@ -7961,8 +7961,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
                 data_dictionary_in=self.small_batch_dataset.copy(),
                 data_dictionary_out=expected_df.copy(),
                 math_op=MathOperator.MULTIPLY,
-                firstOperand='danceability', isFieldFirst=True,
-                secondOperand='energy', isFieldSecond=True,
+                first_operand='danceability', is_field_first=True,
+                second_operand='energy', is_field_second=True,
                 belong_op_out=Belong.BELONG,
                 field_in='loudness', field_out=None
             )
@@ -7977,8 +7977,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.small_batch_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.BELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -7994,8 +7994,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.small_batch_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.BELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -8010,8 +8010,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.small_batch_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand=constant, isFieldSecond=False,
+            first_operand='danceability', is_field_first=True,
+            second_operand=constant, is_field_second=False,
             belong_op_out=Belong.BELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -8026,8 +8026,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.small_batch_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand=constant, isFieldFirst=False,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand=constant, is_field_first=False,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.BELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -8041,8 +8041,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.small_batch_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.NOTBELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -8055,8 +8055,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
                 data_dictionary_in=self.small_batch_dataset.copy(),
                 data_dictionary_out=expected_df.copy(),
                 math_op=MathOperator.DIVIDE,
-                firstOperand='danceability', isFieldFirst=True,
-                secondOperand='energy', isFieldSecond=True,
+                first_operand='danceability', is_field_first=True,
+                second_operand='energy', is_field_second=True,
                 belong_op_out=Belong.BELONG,
                 field_in=None, field_out='loudness'
             )
@@ -8070,8 +8070,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
                 data_dictionary_in=self.small_batch_dataset.copy(),
                 data_dictionary_out=expected_df.copy(),
                 math_op=MathOperator.DIVIDE,
-                firstOperand='danceability', isFieldFirst=True,
-                secondOperand='energy', isFieldSecond=True,
+                first_operand='danceability', is_field_first=True,
+                second_operand='energy', is_field_second=True,
                 belong_op_out=Belong.BELONG,
                 field_in='loudness', field_out=None
             )
@@ -8086,8 +8086,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.small_batch_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.NOTBELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -8104,8 +8104,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.small_batch_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.NOTBELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -8121,8 +8121,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.small_batch_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand=constant, isFieldSecond=False,
+            first_operand='danceability', is_field_first=True,
+            second_operand=constant, is_field_second=False,
             belong_op_out=Belong.NOTBELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -8138,8 +8138,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.small_batch_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand=constant, isFieldFirst=False,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand=constant, is_field_first=False,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.NOTBELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -8158,8 +8158,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.small_batch_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.NOTBELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -8173,8 +8173,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
                 data_dictionary_in=self.small_batch_dataset.copy(),
                 data_dictionary_out=expected_df.copy(),
                 math_op=MathOperator.DIVIDE,
-                firstOperand='danceability', isFieldFirst=True,
-                secondOperand='energy', isFieldSecond=True,
+                first_operand='danceability', is_field_first=True,
+                second_operand='energy', is_field_second=True,
                 belong_op_out=Belong.NOTBELONG,
                 field_in=None, field_out='loudness'
             )
@@ -8188,8 +8188,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
                 data_dictionary_in=self.small_batch_dataset.copy(),
                 data_dictionary_out=expected_df.copy(),
                 math_op=MathOperator.DIVIDE,
-                firstOperand='danceability', isFieldFirst=True,
-                secondOperand='energy', isFieldSecond=True,
+                first_operand='danceability', is_field_first=True,
+                second_operand='energy', is_field_second=True,
                 belong_op_out=Belong.NOTBELONG,
                 field_in='loudness', field_out=None
             )
@@ -8206,8 +8206,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df, math_op=MathOperator(0),
-                                                          firstOperand='danceability', isFieldFirst=True,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          first_operand='danceability', is_field_first=True,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
@@ -8222,9 +8222,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='danceability',
-                                                          isFieldFirst=True,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(0), first_operand='danceability',
+                                                          is_field_first=True,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
@@ -8238,9 +8238,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='danceability',
-                                                          isFieldFirst=True,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(1), first_operand='danceability',
+                                                          is_field_first=True,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
@@ -8255,9 +8255,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='danceability',
-                                                          isFieldFirst=True,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(1), first_operand='danceability',
+                                                          is_field_first=True,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
@@ -8271,9 +8271,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='danceability',
-                                                          isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(0), first_operand='danceability',
+                                                          is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -8286,9 +8286,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='danceability',
-                                                          isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(0), first_operand='danceability',
+                                                          is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -8301,9 +8301,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='danceability',
-                                                          isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(1), first_operand='danceability',
+                                                          is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -8317,9 +8317,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='danceability',
-                                                          isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(1), first_operand='danceability',
+                                                          is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -8332,8 +8332,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
@@ -8347,8 +8347,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
@@ -8362,8 +8362,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
@@ -8378,8 +8378,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
@@ -8393,8 +8393,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -8408,8 +8408,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -8422,8 +8422,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -8436,8 +8436,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -8451,9 +8451,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='danceability',
-                                                          isFieldFirst=True,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(0), first_operand='danceability',
+                                                          is_field_first=True,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
@@ -8468,9 +8468,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='danceability',
-                                                          isFieldFirst=True,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(0), first_operand='danceability',
+                                                          is_field_first=True,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
@@ -8484,9 +8484,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='danceability',
-                                                          isFieldFirst=True,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(1), first_operand='danceability',
+                                                          is_field_first=True,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
@@ -8501,9 +8501,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='danceability',
-                                                          isFieldFirst=True,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(1), first_operand='danceability',
+                                                          is_field_first=True,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
@@ -8517,9 +8517,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='danceability',
-                                                          isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(0), first_operand='danceability',
+                                                          is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -8533,9 +8533,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='danceability',
-                                                          isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(0), first_operand='danceability',
+                                                          is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -8548,9 +8548,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='danceability',
-                                                          isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(1), first_operand='danceability',
+                                                          is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -8563,9 +8563,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='danceability',
-                                                          isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(1), first_operand='danceability',
+                                                          is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -8578,8 +8578,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
@@ -8593,8 +8593,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
@@ -8608,8 +8608,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
@@ -8624,8 +8624,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='energy', isFieldSecond=True,
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand='energy', is_field_second=True,
                                                           belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
@@ -8639,8 +8639,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -8654,8 +8654,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -8668,8 +8668,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -8683,8 +8683,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                           data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='loudness', field_out='loudness')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -8700,9 +8700,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         with self.assertRaises(expected_exception):
             result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                               data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(1), firstOperand=5,
-                                                              isFieldFirst=False,
-                                                              secondOperand=2, isFieldSecond=False,
+                                                              math_op=MathOperator(1), first_operand=5,
+                                                              is_field_first=False,
+                                                              second_operand=2, is_field_second=False,
                                                               belong_op_out=Belong(0),
                                                               field_in=None, field_out='loudness')
         print_and_log("Test Case 33 Passed: Expected ValueError, got ValueError")
@@ -8715,9 +8715,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         with self.assertRaises(expected_exception):
             result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                               data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(1), firstOperand=5,
-                                                              isFieldFirst=False,
-                                                              secondOperand=2, isFieldSecond=False,
+                                                              math_op=MathOperator(1), first_operand=5,
+                                                              is_field_first=False,
+                                                              second_operand=2, is_field_second=False,
                                                               belong_op_out=Belong(0),
                                                               field_in='loudness', field_out=None)
         print_and_log("Test Case 34 Passed: Expected ValueError, got ValueError")
@@ -8730,9 +8730,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         with self.assertRaises(expected_exception):
             result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                               data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(1), firstOperand=5,
-                                                              isFieldFirst=False,
-                                                              secondOperand=2, isFieldSecond=False,
+                                                              math_op=MathOperator(1), first_operand=5,
+                                                              is_field_first=False,
+                                                              second_operand=2, is_field_second=False,
                                                               belong_op_out=Belong(0),
                                                               field_in='J', field_out='loudness')
         print_and_log("Test Case 35 Passed: Expected ValueError, got ValueError")
@@ -8745,9 +8745,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         with self.assertRaises(expected_exception):
             result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                               data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(1), firstOperand=5,
-                                                              isFieldFirst=False,
-                                                              secondOperand=2, isFieldSecond=False,
+                                                              math_op=MathOperator(1), first_operand=5,
+                                                              is_field_first=False,
+                                                              second_operand=2, is_field_second=False,
                                                               belong_op_out=Belong(0),
                                                               field_in='loudness', field_out='J')
         print_and_log("Test Case 36 Passed: Expected ValueError, got ValueError")
@@ -8760,9 +8760,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         with self.assertRaises(expected_exception):
             result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                               data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(0), firstOperand='P',
-                                                              isFieldFirst=True,
-                                                              secondOperand='energy', isFieldSecond=True,
+                                                              math_op=MathOperator(0), first_operand='P',
+                                                              is_field_first=True,
+                                                              second_operand='energy', is_field_second=True,
                                                               belong_op_out=Belong(0),
                                                               field_in='loudness', field_out='loudness')
         print_and_log("Test Case 37 Passed: Expected ValueError, got ValueError")
@@ -8775,9 +8775,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         with self.assertRaises(expected_exception):
             result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                               data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(0), firstOperand='danceability',
-                                                              isFieldFirst=True,
-                                                              secondOperand='Y', isFieldSecond=True,
+                                                              math_op=MathOperator(0), first_operand='danceability',
+                                                              is_field_first=True,
+                                                              second_operand='Y', is_field_second=True,
                                                               belong_op_out=Belong(0),
                                                               field_in='loudness', field_out='loudness')
         print_and_log("Test Case 38 Passed: Expected ValueError, got ValueError")
@@ -8790,9 +8790,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         with self.assertRaises(expected_exception):
             result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                               data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(0), firstOperand='track_name',
-                                                              isFieldFirst=True,
-                                                              secondOperand='energy', isFieldSecond=True,
+                                                              math_op=MathOperator(0), first_operand='track_name',
+                                                              is_field_first=True,
+                                                              second_operand='energy', is_field_second=True,
                                                               belong_op_out=Belong(0),
                                                               field_in='loudness', field_out='loudness')
         print_and_log("Test Case 39 Passed: Expected ValueError, got ValueError")
@@ -8805,9 +8805,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         with self.assertRaises(expected_exception):
             result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                               data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(0), firstOperand='energy',
-                                                              isFieldFirst=True,
-                                                              secondOperand='track_name', isFieldSecond=True,
+                                                              math_op=MathOperator(0), first_operand='energy',
+                                                              is_field_first=True,
+                                                              second_operand='track_name', is_field_second=True,
                                                               belong_op_out=Belong(0),
                                                               field_in='loudness', field_out='loudness')
         print_and_log("Test Case 40 Passed: Expected ValueError, got ValueError")
@@ -8820,9 +8820,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         with self.assertRaises(expected_exception):
             result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                               data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(0), firstOperand='Hola',
-                                                              isFieldFirst=False,
-                                                              secondOperand='danceability', isFieldSecond=True,
+                                                              math_op=MathOperator(0), first_operand='Hola',
+                                                              is_field_first=False,
+                                                              second_operand='danceability', is_field_second=True,
                                                               belong_op_out=Belong(0),
                                                               field_in='loudness', field_out='loudness')
         print_and_log("Test Case 41 Passed: Expected ValueError, got ValueError")
@@ -8835,9 +8835,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         with self.assertRaises(expected_exception):
             result = self.invariants.check_inv_math_operation(data_dictionary_in=self.rest_of_dataset.copy(),
                                                               data_dictionary_out=expected_df,
-                                                              math_op=MathOperator(0), firstOperand='energy',
-                                                              isFieldFirst=True,
-                                                              secondOperand='Carlos', isFieldSecond=False,
+                                                              math_op=MathOperator(0), first_operand='energy',
+                                                              is_field_first=True,
+                                                              second_operand='Carlos', is_field_second=False,
                                                               belong_op_out=Belong(0),
                                                               field_in='loudness', field_out='loudness')
         print_and_log("Test Case 42 Passed: Expected ValueError, got ValueError")
@@ -8849,8 +8849,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.rest_of_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.MULTIPLY,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.BELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -8866,8 +8866,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.rest_of_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.MULTIPLY,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.BELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -8882,8 +8882,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.rest_of_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.MULTIPLY,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand=constant, isFieldSecond=False,
+            first_operand='danceability', is_field_first=True,
+            second_operand=constant, is_field_second=False,
             belong_op_out=Belong.BELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -8898,8 +8898,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.rest_of_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.MULTIPLY,
-            firstOperand=constant, isFieldFirst=False,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand=constant, is_field_first=False,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.BELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -8913,8 +8913,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.rest_of_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.MULTIPLY,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.NOTBELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -8928,8 +8928,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
                 data_dictionary_in=self.rest_of_dataset.copy(),
                 data_dictionary_out=expected_df.copy(),
                 math_op=MathOperator.MULTIPLY,
-                firstOperand='danceability', isFieldFirst=True,
-                secondOperand='energy', isFieldSecond=True,
+                first_operand='danceability', is_field_first=True,
+                second_operand='energy', is_field_second=True,
                 belong_op_out=Belong.BELONG,
                 field_in=None, field_out='loudness'
             )
@@ -8943,8 +8943,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
                 data_dictionary_in=self.rest_of_dataset.copy(),
                 data_dictionary_out=expected_df.copy(),
                 math_op=MathOperator.MULTIPLY,
-                firstOperand='danceability', isFieldFirst=True,
-                secondOperand='energy', isFieldSecond=True,
+                first_operand='danceability', is_field_first=True,
+                second_operand='energy', is_field_second=True,
                 belong_op_out=Belong.BELONG,
                 field_in='loudness', field_out=None
             )
@@ -8959,8 +8959,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.rest_of_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.BELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -8976,8 +8976,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.rest_of_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.BELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -8992,8 +8992,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.rest_of_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand=constant, isFieldSecond=False,
+            first_operand='danceability', is_field_first=True,
+            second_operand=constant, is_field_second=False,
             belong_op_out=Belong.BELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -9008,8 +9008,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.rest_of_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand=constant, isFieldFirst=False,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand=constant, is_field_first=False,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.BELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -9023,8 +9023,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.rest_of_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.NOTBELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -9037,8 +9037,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
                 data_dictionary_in=self.rest_of_dataset.copy(),
                 data_dictionary_out=expected_df.copy(),
                 math_op=MathOperator.DIVIDE,
-                firstOperand='danceability', isFieldFirst=True,
-                secondOperand='energy', isFieldSecond=True,
+                first_operand='danceability', is_field_first=True,
+                second_operand='energy', is_field_second=True,
                 belong_op_out=Belong.BELONG,
                 field_in=None, field_out='loudness'
             )
@@ -9052,8 +9052,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
                 data_dictionary_in=self.rest_of_dataset.copy(),
                 data_dictionary_out=expected_df.copy(),
                 math_op=MathOperator.DIVIDE,
-                firstOperand='danceability', isFieldFirst=True,
-                secondOperand='energy', isFieldSecond=True,
+                first_operand='danceability', is_field_first=True,
+                second_operand='energy', is_field_second=True,
                 belong_op_out=Belong.BELONG,
                 field_in='loudness', field_out=None
             )
@@ -9068,8 +9068,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.rest_of_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.NOTBELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -9086,8 +9086,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.rest_of_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.NOTBELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -9103,8 +9103,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.rest_of_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand=constant, isFieldSecond=False,
+            first_operand='danceability', is_field_first=True,
+            second_operand=constant, is_field_second=False,
             belong_op_out=Belong.NOTBELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -9120,8 +9120,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.rest_of_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand=constant, isFieldFirst=False,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand=constant, is_field_first=False,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.NOTBELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -9140,8 +9140,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             data_dictionary_in=self.rest_of_dataset.copy(),
             data_dictionary_out=expected_df.copy(),
             math_op=MathOperator.DIVIDE,
-            firstOperand='danceability', isFieldFirst=True,
-            secondOperand='energy', isFieldSecond=True,
+            first_operand='danceability', is_field_first=True,
+            second_operand='energy', is_field_second=True,
             belong_op_out=Belong.NOTBELONG,
             field_in='loudness', field_out='loudness'
         )
@@ -9155,8 +9155,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
                 data_dictionary_in=self.rest_of_dataset.copy(),
                 data_dictionary_out=expected_df.copy(),
                 math_op=MathOperator.DIVIDE,
-                firstOperand='danceability', isFieldFirst=True,
-                secondOperand='energy', isFieldSecond=True,
+                first_operand='danceability', is_field_first=True,
+                second_operand='energy', is_field_second=True,
                 belong_op_out=Belong.NOTBELONG,
                 field_in=None, field_out='loudness'
             )
@@ -9170,8 +9170,8 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
                 data_dictionary_in=self.rest_of_dataset.copy(),
                 data_dictionary_out=expected_df.copy(),
                 math_op=MathOperator.DIVIDE,
-                firstOperand='danceability', isFieldFirst=True,
-                secondOperand='energy', isFieldSecond=True,
+                first_operand='danceability', is_field_first=True,
+                second_operand='energy', is_field_second=True,
                 belong_op_out=Belong.NOTBELONG,
                 field_in='loudness', field_out=None
             )
