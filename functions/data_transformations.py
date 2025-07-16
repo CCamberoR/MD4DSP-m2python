@@ -70,7 +70,7 @@ def transform_fix_value_fix_value(data_dictionary: pd.DataFrame, input_values_li
                             return int(new_str)
                         elif original_type is float:
                             return float(new_str)
-                    except Exception:
+                    except (ValueError, TypeError):
                         return new_str
                     return new_str
 
@@ -100,7 +100,7 @@ def transform_fix_value_derived_value(data_dictionary: pd.DataFrame, fix_value_i
     # Check if it should only be done for rows and columns or also for the entire dataframe.
     """
     Execute the data transformation of the FixValue - DerivedValue relation
-    Sustituye el valor proporcionado por el usuario por el valor derivado en el eje que se especifique por parámetros
+    Replace the values of fix_value_input with the value derived from the operation derived_type_output
     params:
         data_dictionary: dataframe with the data
         data_type_input: data type of the input value
@@ -124,16 +124,16 @@ def transform_fix_value_derived_value(data_dictionary: pd.DataFrame, fix_value_i
                     lambda value: data_dictionary_copy.loc[
                         fila.name].value_counts().idxmax() if value == fix_value_input else value), axis=axis_param)
             elif axis_param == 0:  # Applies the lambda function at the column level
-                data_dictionary_copy = data_dictionary_copy.apply(lambda columna: columna.apply(
+                data_dictionary_copy = data_dictionary_copy.apply(lambda column: column.apply(
                     lambda value: data_dictionary_copy[
-                        columna.name].value_counts().idxmax() if value == fix_value_input else value),
+                        column.name].value_counts().idxmax() if value == fix_value_input else value),
                                                                   axis=axis_param)
             else:  # Applies the lambda function at the dataframe level
                 # In case of a tie of the value with the most appearances in the dataset, the first value is taken
-                valor_mas_frecuente = data_dictionary_copy.stack().value_counts().idxmax()
+                more_frequent_value = data_dictionary_copy.stack().value_counts().idxmax()
                 # Replace the values within the interval with the most frequent value in the entire DataFrame using lambda
                 data_dictionary_copy = data_dictionary_copy.apply(
-                    lambda col: col.replace(fix_value_input, valor_mas_frecuente))
+                    lambda col: col.replace(fix_value_input, more_frequent_value))
         # If it is the first value, it is replaced by the previous value in the same column
         elif derived_type_output == DerivedType.PREVIOUS:
             # Applies the lambda function at the column level or at the row level
@@ -254,8 +254,9 @@ def transform_fix_value_num_op(data_dictionary: pd.DataFrame, fix_value_input, n
                 data_dictionary_copy = data_dictionary_copy.replace(fix_value_input, mean_value)
             elif axis_param == 0:
                 means = data_dictionary_copy.apply(
-                    lambda col: col[col.apply(lambda x: np.issubdtype(type(x), np.number))].mean() if np.issubdtype(
-                        col.dtype, np.number) else None)
+                    lambda column: column[
+                        column.apply(lambda x: np.issubdtype(type(x), np.number))].mean() if np.issubdtype(
+                        column.dtype, np.number) else None)
 
                 for col in data_dictionary_copy.columns:
                     if np.issubdtype(data_dictionary_copy[col].dtype, np.number):
@@ -265,8 +266,9 @@ def transform_fix_value_num_op(data_dictionary: pd.DataFrame, fix_value_input, n
                 data_dictionary_copy = data_dictionary_copy.T
 
                 means = data_dictionary_copy.apply(
-                    lambda row: row[row.apply(lambda x: np.issubdtype(type(x), np.number))].mean() if np.issubdtype(
-                        row.dtype, np.number) else None)
+                    lambda row_instance: row_instance[
+                        row_instance.apply(lambda x: np.issubdtype(type(x), np.number))].mean() if np.issubdtype(
+                        row_instance.dtype, np.number) else None)
 
                 for row in data_dictionary_copy.columns:
                     if np.issubdtype(data_dictionary_copy[row].dtype, np.number):
@@ -413,7 +415,7 @@ def transform_interval_fix_value(data_dictionary: pd.DataFrame, left_margin: flo
             raise ValueError("The DataField does not exist in the dataframe")
 
         elif field_in in data_dictionary.columns:
-            # Reemplaza np.issubdtype(...) por pd.api.types.is_numeric_dtype(...)
+            # Replace np.issubdtype(...) with pd.api.types.is_numeric_dtype(...)
             if pd.api.types.is_numeric_dtype(data_dictionary[field_in]):
                 if closure_type == Closure.openOpen:
                     for i in data_dictionary_copy.index:
@@ -426,7 +428,8 @@ def transform_interval_fix_value(data_dictionary: pd.DataFrame, left_margin: flo
                 elif closure_type == Closure.openClosed:
                     for i in data_dictionary_copy.index:
                         # Verify if the index exists in the mask and if the value is an outlier
-                        if i in data_dictionary_copy.index and (left_margin < data_dictionary_copy.loc[i, field_in]) and (
+                        if i in data_dictionary_copy.index and (
+                                left_margin < data_dictionary_copy.loc[i, field_in]) and (
                                 data_dictionary_copy.loc[i, field_in] <= right_margin):
                             data_dictionary_copy.loc[i, field_out] = fix_value_output
                         else:
@@ -491,10 +494,10 @@ def transform_interval_derived_value(data_dictionary: pd.DataFrame, left_margin:
                                                                             closure_type) else x)
             else:  # Applies the lambda function at the dataframe level
                 # In case of a tie of the value with the most appearances in the dataset, the first value is taken
-                valor_mas_frecuente = data_dictionary_copy.stack().value_counts().idxmax()
+                most_frequent_value = data_dictionary_copy.stack().value_counts().idxmax()
                 # Replace the values within the interval with the most frequent value in the entire DataFrame using lambda
-                data_dictionary_copy = data_dictionary_copy.apply(lambda columna: columna.apply(
-                    lambda value: valor_mas_frecuente if check_interval_condition(value, left_margin, right_margin,
+                data_dictionary_copy = data_dictionary_copy.apply(lambda column: column.apply(
+                    lambda value: most_frequent_value if check_interval_condition(value, left_margin, right_margin,
                                                                                   closure_type) else value))
         # Doesn't assign anything to np.nan
         elif derived_type_output == DerivedType.PREVIOUS:
@@ -542,14 +545,14 @@ def transform_interval_derived_value(data_dictionary: pd.DataFrame, left_margin:
                                                                                        closure_type) else value)
         elif derived_type_output == DerivedType.PREVIOUS:
             data_dictionary_copy[field_out] = pd.Series(
-                [np.nan if pd.isnull(value) else data_dictionary_copy[field_in].iloc[i - 1]
-                if check_interval_condition(value, left_margin, right_margin, closure_type) and i > 0 else value for
+                [np.nan if pd.isnull(value) else data_dictionary_copy[field_in].iloc[i - 1] if
+                check_interval_condition(value, left_margin, right_margin, closure_type) and i > 0 else value for
                  i, value in enumerate(data_dictionary_copy[field_in])],
                 index=data_dictionary_copy[field_in].index)
         elif derived_type_output == DerivedType.NEXT:
             data_dictionary_copy[field_out] = pd.Series(
-                [np.nan if pd.isnull(value) else data_dictionary_copy[field_in].iloc[i + 1]
-                if check_interval_condition(value, left_margin, right_margin, closure_type) and i < len(
+                [np.nan if pd.isnull(value) else data_dictionary_copy[field_in].iloc[i + 1] if
+                check_interval_condition(value, left_margin, right_margin, closure_type) and i < len(
                     data_dictionary_copy[field_in]) - 1 else value for i, value in
                  enumerate(data_dictionary_copy[field_in])], index=data_dictionary_copy[field_in].index)
 
@@ -626,26 +629,28 @@ def transform_interval_num_op(data_dictionary: pd.DataFrame, left_margin: float,
                 mean_value = only_numbers_df.mean().mean()
                 # Replace the values within the interval with the mean of the entire DataFrame using lambda
                 data_dictionary_copy = data_dictionary_copy.apply(
-                    lambda col: col.apply(
+                    lambda column: column.apply(
                         lambda x: mean_value if (
                                 np.issubdtype(type(x), np.number) and check_interval_condition(x, left_margin,
                                                                                                right_margin,
                                                                                                closure_type)) else x))
             elif axis_param == 0:
-                means = data_dictionary_copy.apply(lambda col: col[col.apply(lambda x:
-                                                                             np.issubdtype(type(x),
-                                                                                           np.number))].mean() if np.issubdtype(
-                    col.dtype, np.number) else None)
+                means = data_dictionary_copy.apply(lambda column:
+                                                   column[column.apply(lambda x:
+                                                                       np.issubdtype(type(x),
+                                                                                     np.number))].mean()
+                                                   if np.issubdtype(column.dtype, np.number) else None)
                 for col in data_dictionary_copy.columns:
                     if np.issubdtype(data_dictionary_copy[col].dtype, np.number):
                         data_dictionary_copy[col] = data_dictionary_copy[col].apply(lambda x: means[col] if
                         check_interval_condition(x, left_margin, right_margin, closure_type) else x)
             elif axis_param == 1:
                 data_dictionary_copy = data_dictionary_copy.T
-                means = data_dictionary_copy.apply(lambda row: row[row.apply(lambda x:
-                                                                             np.issubdtype(type(x),
-                                                                                           np.number))].mean() if np.issubdtype(
-                    row.dtype, np.number) else None)
+                means = data_dictionary_copy.apply(lambda row_instance: row_instance[row_instance.apply(lambda x:
+                                                                                                        np.issubdtype(
+                                                                                                            type(x),
+                                                                                                            np.number))].mean() if np.issubdtype(
+                    row_instance.dtype, np.number) else None)
                 for row in data_dictionary_copy.columns:
                     if np.issubdtype(data_dictionary_copy[row].dtype, np.number):
                         data_dictionary_copy[row] = data_dictionary_copy[row].apply(lambda x: means[row] if
@@ -661,7 +666,7 @@ def transform_interval_num_op(data_dictionary: pd.DataFrame, left_margin: float,
                 median_value = only_numbers_df.median().median()
                 # Replace the values within the interval with the median of the entire DataFrame using lambda
                 data_dictionary_copy = data_dictionary_copy.apply(
-                    lambda col: col.apply(
+                    lambda column: column.apply(
                         lambda x: median_value if (
                                 np.issubdtype(type(x), np.number) and check_interval_condition(x, left_margin,
                                                                                                right_margin,
@@ -703,10 +708,9 @@ def transform_interval_num_op(data_dictionary: pd.DataFrame, left_margin: float,
                 # Check if the closest values have been replaced in the data_dictionary_out
                 for idx, row in data_dictionary_copy.iterrows():
                     for col_name in data_dictionary_copy.columns:
-                        if (np.isreal(row[col_name]) and check_interval_condition(row[col_name], left_margin,
-                                                                                  right_margin,
-                                                                                  closure_type) and not pd.isnull(
-                            row[col_name])):
+                        if (np.isreal(row[col_name]) and
+                                check_interval_condition(row[col_name], left_margin, right_margin, closure_type) and
+                                not pd.isnull(row[col_name])):
                             data_dictionary_copy.at[idx, col_name] = closest_values[row[col_name]]
             elif axis_param == 0:
                 for col_name in data_dictionary_copy.select_dtypes(include=[np.number]).columns:
@@ -718,8 +722,7 @@ def transform_interval_num_op(data_dictionary: pd.DataFrame, left_margin: float,
                     for value in flattened_values:
                         # Check if the value is within the interval
                         if check_interval_condition(value, left_margin, right_margin,
-                                                    closure_type) and not pd.isnull(
-                            value):
+                                                    closure_type) and not pd.isnull(value):
                             # Check if the value is already in the dictionary
                             if value not in closest_values:
                                 # Find the closest value to the current value in the interval
@@ -740,10 +743,9 @@ def transform_interval_num_op(data_dictionary: pd.DataFrame, left_margin: float,
                     # Iterate over the values in the interval
                     for value in flattened_values:
                         # Check if the value is within the interval
-                        if np.issubdtype(value, np.number) and check_interval_condition(value, left_margin,
-                                                                                        right_margin,
-                                                                                        closure_type) and not pd.isnull(
-                            value):
+                        if (np.issubdtype(value, np.number)
+                                and check_interval_condition(value, left_margin, right_margin, closure_type) and not
+                                pd.isnull(value)):
                             # Check if the value is already in the dictionary
                             if value not in closest_values:
                                 # Find the closest value to the current value in the interval
@@ -818,7 +820,7 @@ def transform_special_value_fix_value(data_dictionary: pd.DataFrame, special_typ
     :param special_type_input: special type of the input value
     :param data_type_output: data type of the output value
     :param fix_value_output: output value to check
-    :param missing_values: list of missing values
+    :param missing_values: a list of missing values
     :param axis_param: axis to execute the data transformation
     :param field_in: field to execute the data transformation
     :param field_out: field to store the data transformation
@@ -834,9 +836,9 @@ def transform_special_value_fix_value(data_dictionary: pd.DataFrame, special_typ
             data_dictionary_copy = data_dictionary_copy.replace(np.nan, fix_value_output)
             if missing_values is not None:
                 data_dictionary_copy = data_dictionary_copy.apply(
-                    lambda col: col.apply(lambda x: fix_value_output if x in missing_values else x))
+                    lambda column: column.apply(lambda x: fix_value_output if x in missing_values else x))
 
-        elif special_type_input == SpecialType.INVALID:  # Just include the values in the list missing_values
+        elif special_type_input == SpecialType.INVALID:  # Include the values in the list missing_values
             if missing_values is not None:
                 data_dictionary_copy = data_dictionary_copy.apply(
                     lambda col: col.apply(lambda x: fix_value_output if x in missing_values else x))
@@ -989,6 +991,7 @@ def transform_special_value_num_op(data_dictionary: pd.DataFrame, special_type_i
     :param data_dictionary: dataframe with the data
     :param special_type_input: special type of the input value
     :param num_op_output: operation to execute the data transformation
+    :param missing_values: list of missing values
     :param axis_param: axis to execute the data transformation
     :param field_in: field to execute the data transformation
     :param field_out: field to store the output value
@@ -1066,7 +1069,7 @@ def transform_derived_field(data_dictionary: pd.DataFrame, field_in: str, field_
             data_dictionary_copy[field_out] = data_dictionary_copy[field_out].fillna(0).astype(float)
 
     data_dictionary_copy[field_out] = data_dictionary_copy[field_in]
-    if data_type_output is not None:  # If the type is not None, the new field is initialize to None and then casted
+    if data_type_output is not None:  # If the type is not None, the new field is initialized to None and then cast
         cast_type_column()
 
     return data_dictionary_copy
@@ -1167,7 +1170,7 @@ def transform_filter_rows_primitive(data_dictionary: pd.DataFrame, columns: list
 
 
 def transform_filter_rows_special_values(data_dictionary: pd.DataFrame, cols_special_type_values: dict,
-                                        filter_type: FilterType) -> pd.DataFrame:
+                                         filter_type: FilterType) -> pd.DataFrame:
     """
     Execute the data transformation of the FilterRows - SpecialValues relation
 
@@ -1222,7 +1225,7 @@ def transform_filter_rows_special_values(data_dictionary: pd.DataFrame, cols_spe
                         # Include the rows with the value 1 in the mask dataframe with outliers
                         data_dictionary_copy = data_dictionary_copy[data_dictionary_copy_mask[column_name].isin([1])]
                     elif filter_type == FilterType.EXCLUDE:
-                        # Remove the rows with the value 1 in the mask dataframe with outliers
+                        # Remove the rows with value 1 in the mask dataframe with outliers
                         data_dictionary_copy = data_dictionary_copy[~data_dictionary_copy_mask[column_name].isin([1])]
 
     return data_dictionary_copy
@@ -1274,17 +1277,18 @@ def transform_filter_rows_range(data_dictionary: pd.DataFrame, columns: list[str
 
 
 def transform_math_operation(data_dictionary: pd.DataFrame, math_op: MathOperator,
-                             field_out: str, firstOperand, isFieldFirst: bool, secondOperand, isFieldSecond: bool) -> pd.DataFrame:
+                             field_out: str, first_operand, is_field_first: bool, second_operand,
+                             is_field_second: bool) -> pd.DataFrame:
     """
     Execute the data transformation of the MathOperation relation
     Args:
         data_dictionary: dataframe with the data
         math_op: math operation to execute
         field_out: field to store the output value
-        firstOperand: first operand of the operation, it can be a value or a field
-        isFieldFirst: boolean to check if the first operand is a field
-        secondOperand: second operand of the operation, it can be a value or a field
-        isFieldSecond: boolean to check if the second operand is a field
+        first_operand: first operand of the operation, it can be a value or a field
+        is_field_first: boolean to check if the first operand is a field
+        second_operand: second operand of the operation, it can be a value or a field
+        is_field_second: boolean to check if the second operand is a field
 
     Returns:
         pd.DataFrame: data_dictionary with the result of the math operation
@@ -1294,66 +1298,68 @@ def transform_math_operation(data_dictionary: pd.DataFrame, math_op: MathOperato
 
     if field_out is None:
         raise ValueError("The output DataField cannot be None")
-    if ((isFieldFirst is True and (not np.issubdtype(data_dictionary_copy[firstOperand].dtype, np.number))) or
-            (isFieldSecond is True and (not np.issubdtype(data_dictionary_copy[secondOperand].dtype, np.number)))):
+    if ((is_field_first is True and (not np.issubdtype(data_dictionary_copy[first_operand].dtype, np.number))) or
+            (is_field_second is True and (not np.issubdtype(data_dictionary_copy[second_operand].dtype, np.number)))):
         raise ValueError("The DataField to operate is not numeric")
-    if ((isFieldFirst is False and (not np.issubdtype(type(firstOperand), np.number))) or
-            (isFieldSecond is False and (not np.issubdtype(type(secondOperand), np.number)))):
+    if ((is_field_first is False and (not np.issubdtype(type(first_operand), np.number))) or
+            (is_field_second is False and (not np.issubdtype(type(second_operand), np.number)))):
         raise ValueError("The value to operate is not numeric")
 
     if math_op == MathOperator.SUM:
-        if isFieldFirst and isFieldSecond:
-            data_dictionary_copy[field_out] = data_dictionary_copy[firstOperand] + data_dictionary_copy[secondOperand]
-        elif isFieldFirst and not isFieldSecond:
-            data_dictionary_copy[field_out] = data_dictionary_copy[firstOperand] + secondOperand
-        elif not isFieldFirst and isFieldSecond:
-            data_dictionary_copy[field_out] = firstOperand + data_dictionary_copy[secondOperand]
-        elif not isFieldFirst and not isFieldSecond:
-            data_dictionary_copy[field_out] = firstOperand + secondOperand
+        if is_field_first and is_field_second:
+            data_dictionary_copy[field_out] = data_dictionary_copy[first_operand] + data_dictionary_copy[second_operand]
+        elif is_field_first and not is_field_second:
+            data_dictionary_copy[field_out] = data_dictionary_copy[first_operand] + second_operand
+        elif not is_field_first and is_field_second:
+            data_dictionary_copy[field_out] = first_operand + data_dictionary_copy[second_operand]
+        elif not is_field_first and not is_field_second:
+            data_dictionary_copy[field_out] = first_operand + second_operand
 
     elif math_op == MathOperator.SUBSTRACT:
-        if isFieldFirst and isFieldSecond:
-            data_dictionary_copy[field_out] = data_dictionary_copy[firstOperand] - data_dictionary_copy[secondOperand]
-        elif isFieldFirst and not isFieldSecond:
-            data_dictionary_copy[field_out] = data_dictionary_copy[firstOperand] - secondOperand
-        elif not isFieldFirst and isFieldSecond:
-            data_dictionary_copy[field_out] = firstOperand - data_dictionary_copy[secondOperand]
-        elif not isFieldFirst and not isFieldSecond:
-            data_dictionary_copy[field_out] = firstOperand - secondOperand
+        if is_field_first and is_field_second:
+            data_dictionary_copy[field_out] = data_dictionary_copy[first_operand] - data_dictionary_copy[second_operand]
+        elif is_field_first and not is_field_second:
+            data_dictionary_copy[field_out] = data_dictionary_copy[first_operand] - second_operand
+        elif not is_field_first and is_field_second:
+            data_dictionary_copy[field_out] = first_operand - data_dictionary_copy[second_operand]
+        elif not is_field_first and not is_field_second:
+            data_dictionary_copy[field_out] = first_operand - second_operand
 
     elif math_op == MathOperator.MULTIPLY:
-        if isFieldFirst and isFieldSecond:
-            data_dictionary_copy[field_out] = data_dictionary_copy[firstOperand] * data_dictionary_copy[secondOperand]
-        elif isFieldFirst and not isFieldSecond:
-            data_dictionary_copy[field_out] = data_dictionary_copy[firstOperand] * secondOperand
-        elif not isFieldFirst and isFieldSecond:
-            data_dictionary_copy[field_out] = firstOperand * data_dictionary_copy[secondOperand]
-        elif not isFieldFirst and not isFieldSecond:
-            data_dictionary_copy[field_out] = firstOperand * secondOperand
+        if is_field_first and is_field_second:
+            data_dictionary_copy[field_out] = data_dictionary_copy[first_operand] * data_dictionary_copy[second_operand]
+        elif is_field_first and not is_field_second:
+            data_dictionary_copy[field_out] = data_dictionary_copy[first_operand] * second_operand
+        elif not is_field_first and is_field_second:
+            data_dictionary_copy[field_out] = first_operand * data_dictionary_copy[second_operand]
+        elif not is_field_first and not is_field_second:
+            data_dictionary_copy[field_out] = first_operand * second_operand
 
     elif math_op == MathOperator.DIVIDE:
-        if isFieldFirst and isFieldSecond:
-            if (data_dictionary_copy[secondOperand] == 0).any():
-                warnings.warn(f"Division by zero encountered in DataField '{secondOperand}'. Result will be NaN where divisor is 0.")
-            data_dictionary_copy[field_out] = data_dictionary_copy[firstOperand] / data_dictionary_copy[secondOperand]
+        if is_field_first and is_field_second:
+            if (data_dictionary_copy[second_operand] == 0).any():
+                warnings.warn(
+                    f"Division by zero encountered in DataField '{second_operand}'. Result will be NaN where divisor is 0.")
+            data_dictionary_copy[field_out] = data_dictionary_copy[first_operand] / data_dictionary_copy[second_operand]
             data_dictionary_copy[field_out] = data_dictionary_copy[field_out].replace([np.inf, -np.inf], np.nan)
-        elif isFieldFirst and not isFieldSecond:
-            if secondOperand == 0:
+        elif is_field_first and not is_field_second:
+            if second_operand == 0:
                 warnings.warn("Division by zero encountered with constant denominator. Result will be NaN.")
                 data_dictionary_copy[field_out] = np.nan
             else:
-                data_dictionary_copy[field_out] = data_dictionary_copy[firstOperand] / secondOperand
-        elif not isFieldFirst and isFieldSecond:
-            if (data_dictionary_copy[secondOperand] == 0).any():
-                warnings.warn(f"Division by zero encountered in DataField '{secondOperand}'. Result will be NaN where divisor is 0.")
-            data_dictionary_copy[field_out] = firstOperand / data_dictionary_copy[secondOperand]
+                data_dictionary_copy[field_out] = data_dictionary_copy[first_operand] / second_operand
+        elif not is_field_first and is_field_second:
+            if (data_dictionary_copy[second_operand] == 0).any():
+                warnings.warn(
+                    f"Division by zero encountered in DataField '{second_operand}'. Result will be NaN where divisor is 0.")
+            data_dictionary_copy[field_out] = first_operand / data_dictionary_copy[second_operand]
             data_dictionary_copy[field_out] = data_dictionary_copy[field_out].replace([np.inf, -np.inf], np.nan)
-        elif not isFieldFirst and not isFieldSecond:
-            if secondOperand == 0:
+        elif not is_field_first and not is_field_second:
+            if second_operand == 0:
                 warnings.warn("Division by zero encountered with constant denominator. Result will be NaN.")
                 data_dictionary_copy[field_out] = np.nan
             else:
-                data_dictionary_copy[field_out] = firstOperand / secondOperand
+                data_dictionary_copy[field_out] = first_operand / second_operand
 
     return data_dictionary_copy
 
@@ -1363,7 +1369,7 @@ def transform_join(data_dictionary: pd.DataFrame, dictionary: dict, field_out: s
     Execute the data transformation of the Join relation
     :param data_dictionary: dataframe with the data
     :param dictionary: dictionary with the columns or string to join.
-                            If the value is True, it mans the key is a column.
+                            If the value is True, it means the key is a column.
                             If the value is False, it means the key is a string.
     :param field_out: field to store the output value
     :return: pd.DataFrame: data_dictionary with the result of the join operation
@@ -1381,7 +1387,8 @@ def transform_join(data_dictionary: pd.DataFrame, dictionary: dict, field_out: s
         if value:  # It is a column
             if key not in data_dictionary_copy.columns:
                 raise ValueError(f"DataField {key} doesn't exist in DataFrame")
-            data_dictionary_copy[field_out] = data_dictionary_copy[field_out].fillna('') + data_dictionary[key].fillna('').astype(str)
+            data_dictionary_copy[field_out] = data_dictionary_copy[field_out].fillna('') + data_dictionary[key].fillna(
+                '').astype(str)
         elif not value:  # It is fix value
             data_dictionary_copy[field_out] = data_dictionary_copy[field_out].fillna('') + str(key)
 

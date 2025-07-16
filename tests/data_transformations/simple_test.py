@@ -3390,8 +3390,8 @@ class DataTransformationsSimpleTest(unittest.TestCase):
 
         result_df = self.data_transformations.transform_math_operation(data_dictionary=datadic.copy(),
                                                                        math_op=MathOperator(0), field_out='C',
-                                                                       firstOperand='A', isFieldFirst=True,
-                                                                       secondOperand='B', isFieldSecond=True)
+                                                                       first_operand='A', is_field_first=True,
+                                                                       second_operand='B', is_field_second=True)
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 1 Passed: got the dataframe expected")
 
@@ -3403,8 +3403,8 @@ class DataTransformationsSimpleTest(unittest.TestCase):
 
         result_df = self.data_transformations.transform_math_operation(data_dictionary=datadic.copy(),
                                                                        math_op=MathOperator(1), field_out='C',
-                                                                       firstOperand='A', isFieldFirst=True,
-                                                                       secondOperand='B', isFieldSecond=True)
+                                                                       first_operand='A', is_field_first=True,
+                                                                       second_operand='B', is_field_second=True)
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 2 Passed: got the dataframe expected")
 
@@ -3416,8 +3416,8 @@ class DataTransformationsSimpleTest(unittest.TestCase):
 
         result_df = self.data_transformations.transform_math_operation(data_dictionary=datadic.copy(),
                                                                        math_op=MathOperator(0), field_out='C',
-                                                                       firstOperand='A', isFieldFirst=True,
-                                                                       secondOperand=14, isFieldSecond=False)
+                                                                       first_operand='A', is_field_first=True,
+                                                                       second_operand=14, is_field_second=False)
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 3 Passed: got the dataframe expected")
 
@@ -3429,8 +3429,8 @@ class DataTransformationsSimpleTest(unittest.TestCase):
 
         result_df = self.data_transformations.transform_math_operation(data_dictionary=datadic.copy(),
                                                                        math_op=MathOperator(1), field_out='C',
-                                                                       firstOperand='A', isFieldFirst=True,
-                                                                       secondOperand=7, isFieldSecond=False)
+                                                                       first_operand='A', is_field_first=True,
+                                                                       second_operand=7, is_field_second=False)
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 4 Passed: got the dataframe expected")
 
@@ -3442,8 +3442,8 @@ class DataTransformationsSimpleTest(unittest.TestCase):
 
         result_df = self.data_transformations.transform_math_operation(data_dictionary=datadic.copy(),
                                                                        math_op=MathOperator(0), field_out='C',
-                                                                       firstOperand=8, isFieldFirst=False,
-                                                                       secondOperand='B', isFieldSecond=True)
+                                                                       first_operand=8, is_field_first=False,
+                                                                       second_operand='B', is_field_second=True)
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 5 Passed: got the dataframe expected")
 
@@ -3455,8 +3455,8 @@ class DataTransformationsSimpleTest(unittest.TestCase):
 
         result_df = self.data_transformations.transform_math_operation(data_dictionary=datadic.copy(),
                                                                        math_op=MathOperator(1), field_out='C',
-                                                                       firstOperand=2, isFieldFirst=False,
-                                                                       secondOperand='A', isFieldSecond=True)
+                                                                       first_operand=2, is_field_first=False,
+                                                                       second_operand='A', is_field_second=True)
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 6 Passed: got the dataframe expected")
 
@@ -3468,8 +3468,8 @@ class DataTransformationsSimpleTest(unittest.TestCase):
 
         result_df = self.data_transformations.transform_math_operation(data_dictionary=datadic.copy(),
                                                                        math_op=MathOperator(0), field_out='C',
-                                                                       firstOperand=8, isFieldFirst=False,
-                                                                       secondOperand=5, isFieldSecond=False)
+                                                                       first_operand=8, is_field_first=False,
+                                                                       second_operand=5, is_field_second=False)
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 7 Passed: got the dataframe expected")
 
@@ -3481,8 +3481,8 @@ class DataTransformationsSimpleTest(unittest.TestCase):
 
         result_df = self.data_transformations.transform_math_operation(data_dictionary=datadic.copy(),
                                                                        math_op=MathOperator(1), field_out='C',
-                                                                       firstOperand=2, isFieldFirst=False,
-                                                                       secondOperand=9, isFieldSecond=False)
+                                                                       first_operand=2, is_field_first=False,
+                                                                       second_operand=9, is_field_second=False)
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 8 Passed: got the dataframe expected")
 
@@ -3493,9 +3493,9 @@ class DataTransformationsSimpleTest(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception):
             self.data_transformations.transform_math_operation(data_dictionary=datadic.copy(),
-                                                                           math_op=MathOperator(1), field_out=None,
-                                                                           firstOperand=2, isFieldFirst=False,
-                                                                           secondOperand=9, isFieldSecond=False)
+                                                               math_op=MathOperator(1), field_out=None,
+                                                               first_operand=2, is_field_first=False,
+                                                               second_operand=9, is_field_second=False)
         print_and_log("Test Case 9 Passed: got the expected error")
 
         # Caso 10 - Columna no numerica
@@ -3505,9 +3505,9 @@ class DataTransformationsSimpleTest(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception):
             self.data_transformations.transform_math_operation(data_dictionary=datadic.copy(),
-                                                                           math_op=MathOperator(0), field_out='C',
-                                                                           firstOperand='A', isFieldFirst=True,
-                                                                           secondOperand=9, isFieldSecond=False)
+                                                               math_op=MathOperator(0), field_out='C',
+                                                               first_operand='A', is_field_first=True,
+                                                               second_operand=9, is_field_second=False)
         print_and_log("Test Case 10 Passed: got the expected error")
 
         # Caso 11 - Valor no numerico
@@ -3517,9 +3517,9 @@ class DataTransformationsSimpleTest(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception):
             self.data_transformations.transform_math_operation(data_dictionary=datadic.copy(),
-                                                                           math_op=MathOperator(0), field_out='C',
-                                                                           firstOperand='A', isFieldFirst=True,
-                                                                           secondOperand='Antonio', isFieldSecond=False)
+                                                               math_op=MathOperator(0), field_out='C',
+                                                               first_operand='A', is_field_first=True,
+                                                               second_operand='Antonio', is_field_second=False)
         print_and_log("Test Case 11 Passed: got the expected error")
 
         # Caso 12 - Multiplicacion de dos columnas
@@ -3533,10 +3533,10 @@ class DataTransformationsSimpleTest(unittest.TestCase):
             data_dictionary=datadic.copy(),
             math_op=MathOperator.MULTIPLY,
             field_out="C",
-            firstOperand="A",
-            secondOperand="B",
-            isFieldFirst=True,
-            isFieldSecond=True
+            first_operand="A",
+            second_operand="B",
+            is_field_first=True,
+            is_field_second=True
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 12 Passed: got the dataframe expected")
@@ -3552,10 +3552,10 @@ class DataTransformationsSimpleTest(unittest.TestCase):
             data_dictionary=datadic.copy(),
             math_op=MathOperator.DIVIDE,
             field_out="C",
-            firstOperand="A",
-            secondOperand="B",
-            isFieldFirst=True,
-            isFieldSecond=True
+            first_operand="A",
+            second_operand="B",
+            is_field_first=True,
+            is_field_second=True
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 13 Passed: got the dataframe expected")
@@ -3570,10 +3570,10 @@ class DataTransformationsSimpleTest(unittest.TestCase):
             data_dictionary=datadic.copy(),
             math_op=MathOperator.MULTIPLY,
             field_out="B",
-            firstOperand="A",
-            secondOperand=3,
-            isFieldFirst=True,
-            isFieldSecond=False
+            first_operand="A",
+            second_operand=3,
+            is_field_first=True,
+            is_field_second=False
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 14 Passed: got the dataframe expected")
@@ -3588,10 +3588,10 @@ class DataTransformationsSimpleTest(unittest.TestCase):
             data_dictionary=datadic.copy(),
             math_op=MathOperator.DIVIDE,
             field_out="B",
-            firstOperand="A",
-            secondOperand=2,
-            isFieldFirst=True,
-            isFieldSecond=False
+            first_operand="A",
+            second_operand=2,
+            is_field_first=True,
+            is_field_second=False
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 15 Passed: got the dataframe expected")
@@ -3606,10 +3606,10 @@ class DataTransformationsSimpleTest(unittest.TestCase):
             data_dictionary=datadic.copy(),
             math_op=MathOperator.MULTIPLY,
             field_out="B",
-            firstOperand=3,
-            secondOperand="A",
-            isFieldFirst=False,
-            isFieldSecond=True
+            first_operand=3,
+            second_operand="A",
+            is_field_first=False,
+            is_field_second=True
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 16 Passed: got the dataframe expected")
@@ -3624,10 +3624,10 @@ class DataTransformationsSimpleTest(unittest.TestCase):
             data_dictionary=datadic.copy(),
             math_op=MathOperator.DIVIDE,
             field_out="B",
-            firstOperand=100,
-            secondOperand="A",
-            isFieldFirst=False,
-            isFieldSecond=True
+            first_operand=100,
+            second_operand="A",
+            is_field_first=False,
+            is_field_second=True
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 17 Passed: got the dataframe expected")
@@ -3641,10 +3641,10 @@ class DataTransformationsSimpleTest(unittest.TestCase):
             data_dictionary=datadic.copy(),
             math_op=MathOperator.MULTIPLY,
             field_out="C",
-            firstOperand=2,
-            secondOperand=3,
-            isFieldFirst=False,
-            isFieldSecond=False
+            first_operand=2,
+            second_operand=3,
+            is_field_first=False,
+            is_field_second=False
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 18 Passed: got the dataframe expected")
@@ -3657,10 +3657,10 @@ class DataTransformationsSimpleTest(unittest.TestCase):
             data_dictionary=datadic.copy(),
             math_op=MathOperator.DIVIDE,
             field_out="C",
-            firstOperand=20,
-            secondOperand=4,
-            isFieldFirst=False,
-            isFieldSecond=False
+            first_operand=20,
+            second_operand=4,
+            is_field_first=False,
+            is_field_second=False
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 19 Passed: got the dataframe expected")
@@ -3676,10 +3676,10 @@ class DataTransformationsSimpleTest(unittest.TestCase):
             data_dictionary=datadic.copy(),
             math_op=MathOperator.DIVIDE,
             field_out="B",
-            firstOperand=100,
-            secondOperand="A",
-            isFieldFirst=False,
-            isFieldSecond=True
+            first_operand=100,
+            second_operand="A",
+            is_field_first=False,
+            is_field_second=True
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 20 Passed: got the dataframe expected")
@@ -3695,10 +3695,10 @@ class DataTransformationsSimpleTest(unittest.TestCase):
             data_dictionary=datadic.copy(),
             math_op=MathOperator.DIVIDE,
             field_out="B",
-            firstOperand="A",
-            secondOperand=0,
-            isFieldFirst=True,
-            isFieldSecond=False
+            first_operand="A",
+            second_operand=0,
+            is_field_first=True,
+            is_field_second=False
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 21 Passed: got the dataframe expected")

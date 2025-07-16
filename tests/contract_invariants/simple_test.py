@@ -4701,8 +4701,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [2, 5, 7, 8, 6]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='A', isFieldFirst=True,
-                                                          secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(0), first_operand='A', is_field_first=True,
+                                                          second_operand='B', is_field_second=True, belong_op_out=Belong(0),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4716,8 +4716,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [2, 1, 7, 8, 6]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='A', isFieldFirst=True,
-                                                          secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(0), first_operand='A', is_field_first=True,
+                                                          second_operand='B', is_field_second=True, belong_op_out=Belong(0),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4731,8 +4731,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [-2, -1, -1, -4, -4]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='A', isFieldFirst=True,
-                                                          secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(1), first_operand='A', is_field_first=True,
+                                                          second_operand='B', is_field_second=True, belong_op_out=Belong(0),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4746,8 +4746,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [2, 1, 7, 8, 6]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='A', isFieldFirst=True,
-                                                          secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(1), first_operand='A', is_field_first=True,
+                                                          second_operand='B', is_field_second=True, belong_op_out=Belong(0),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4761,8 +4761,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [3, 5, 6, 5, 4]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='A', isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(0), first_operand='A', is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4776,8 +4776,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [3, 5, 14, 5, 4]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='A', isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(0), first_operand='A', is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4791,8 +4791,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [-3, -1, 0, -1, -2]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='A', isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(1), first_operand='A', is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4806,8 +4806,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [-3, 2, 0, -1, -2]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='A', isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(1), first_operand='A', is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4821,8 +4821,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [7, 8, 9, 11, 10]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand='B', is_field_second=True, belong_op_out=Belong(0),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4836,8 +4836,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [7, 8, 9, 10, 11]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand='B', is_field_second=True, belong_op_out=Belong(0),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4851,8 +4851,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [3, 2, 1, -1, 0]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand='B', is_field_second=True, belong_op_out=Belong(0),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4866,8 +4866,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [3, 2, 1, 0, -1]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand='B', is_field_second=True, belong_op_out=Belong(0),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4881,8 +4881,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [7, 7, 7, 7, 7]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4896,8 +4896,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [7, 5, 7, 7, 7]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4911,8 +4911,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [3, 3, 3, 3, 3]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4926,8 +4926,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [3, 3, 3, 3, 1]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(0),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4942,8 +4942,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [2, 5, 7, 8, 6]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='A', isFieldFirst=True,
-                                                          secondOperand='B', isFieldSecond=True, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(0), first_operand='A', is_field_first=True,
+                                                          second_operand='B', is_field_second=True, belong_op_out=Belong(1),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4957,8 +4957,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [2, 1, 7, 8, 6]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='A', isFieldFirst=True,
-                                                          secondOperand='B', isFieldSecond=True, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(0), first_operand='A', is_field_first=True,
+                                                          second_operand='B', is_field_second=True, belong_op_out=Belong(1),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4972,8 +4972,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [-2, -1, -1, -4, -4]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='A', isFieldFirst=True,
-                                                          secondOperand='B', isFieldSecond=True, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(1), first_operand='A', is_field_first=True,
+                                                          second_operand='B', is_field_second=True, belong_op_out=Belong(1),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -4987,8 +4987,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [2, 1, 7, 8, 6]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='A', isFieldFirst=True,
-                                                          secondOperand='B', isFieldSecond=True, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(1), first_operand='A', is_field_first=True,
+                                                          second_operand='B', is_field_second=True, belong_op_out=Belong(1),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -5002,8 +5002,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [3, 5, 6, 5, 4]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='A', isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(0), first_operand='A', is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -5017,8 +5017,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [3, 5, 14, 5, 4]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand='A', isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(0), first_operand='A', is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -5032,8 +5032,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [-3, -1, 0, -1, -2]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='A', isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(1), first_operand='A', is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -5047,8 +5047,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [-3, 2, 0, -1, -2]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand='A', isFieldFirst=True,
-                                                          secondOperand=3, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(1), first_operand='A', is_field_first=True,
+                                                          second_operand=3, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -5062,8 +5062,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [7, 8, 9, 11, 10]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='B', isFieldSecond=True, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand='B', is_field_second=True, belong_op_out=Belong(1),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -5077,8 +5077,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [7, 8, 9, 10, 11]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='B', isFieldSecond=True, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand='B', is_field_second=True, belong_op_out=Belong(1),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -5092,8 +5092,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [3, 2, 1, -1, 0]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='B', isFieldSecond=True, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand='B', is_field_second=True, belong_op_out=Belong(1),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -5107,8 +5107,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [3, 2, 1, 0, -1]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand='B', isFieldSecond=True, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand='B', is_field_second=True, belong_op_out=Belong(1),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -5122,8 +5122,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [7, 7, 7, 7, 7]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -5137,8 +5137,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [7, 5, 7, 7, 7]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(0), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(0), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -5152,8 +5152,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [3, 3, 3, 3, 3]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -5167,8 +5167,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             {'A': [0, 2, 3, 2, 1], 'B': [2, 3, 4, 6, 5], 'C': [3, 3, 3, 3, 1]})
 
         result = self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(1),
+                                                          math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                          second_operand=2, is_field_second=False, belong_op_out=Belong(1),
                                                           field_in='C', field_out='C')
 
         # Verificar si el resultado obtenido coincide con el esperado
@@ -5186,8 +5186,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception) as context:
             self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                     math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                     secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
+                                                     math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                     second_operand=2, is_field_second=False, belong_op_out=Belong(0),
                                                      field_in=None, field_out='C')
         print_and_log("Test Case 33 Passed: Expected ValueError, got ValueError")
 
@@ -5200,9 +5200,9 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception) as context:
             self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                          math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                          secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
-                                                          field_in='C', field_out=None)
+                                                     math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                     second_operand=2, is_field_second=False, belong_op_out=Belong(0),
+                                                     field_in='C', field_out=None)
         print_and_log("Test Case 34 Passed: Expected ValueError, got ValueError")
 
         # Caso 35
@@ -5214,8 +5214,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception) as context:
             self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                     math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                     secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
+                                                     math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                     second_operand=2, is_field_second=False, belong_op_out=Belong(0),
                                                      field_in='J', field_out='C')
         print_and_log("Test Case 35 Passed: Expected ValueError, got ValueError")
 
@@ -5228,8 +5228,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception) as context:
             self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                     math_op=MathOperator(1), firstOperand=5, isFieldFirst=False,
-                                                     secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
+                                                     math_op=MathOperator(1), first_operand=5, is_field_first=False,
+                                                     second_operand=2, is_field_second=False, belong_op_out=Belong(0),
                                                      field_in='C', field_out='J')
         print_and_log("Test Case 36 Passed: Expected ValueError, got ValueError")
 
@@ -5242,8 +5242,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception) as context:
             self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                     math_op=MathOperator(0), firstOperand='P', isFieldFirst=True,
-                                                     secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+                                                     math_op=MathOperator(0), first_operand='P', is_field_first=True,
+                                                     second_operand='B', is_field_second=True, belong_op_out=Belong(0),
                                                      field_in='C', field_out='C')
         print_and_log("Test Case 37 Passed: Expected ValueError, got ValueError")
 
@@ -5256,8 +5256,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception) as context:
             self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                     math_op=MathOperator(0), firstOperand='A', isFieldFirst=True,
-                                                     secondOperand='Y', isFieldSecond=True, belong_op_out=Belong(0),
+                                                     math_op=MathOperator(0), first_operand='A', is_field_first=True,
+                                                     second_operand='Y', is_field_second=True, belong_op_out=Belong(0),
                                                      field_in='C', field_out='C')
         print_and_log("Test Case 38 Passed: Expected ValueError, got ValueError")
 
@@ -5270,8 +5270,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception) as context:
             self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                     math_op=MathOperator(0), firstOperand='A', isFieldFirst=True,
-                                                     secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+                                                     math_op=MathOperator(0), first_operand='A', is_field_first=True,
+                                                     second_operand='B', is_field_second=True, belong_op_out=Belong(0),
                                                      field_in='C', field_out='C')
         print_and_log("Test Case 39 Passed: Expected ValueError, got ValueError")
 
@@ -5284,8 +5284,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception) as context:
             self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                     math_op=MathOperator(0), firstOperand='B', isFieldFirst=True,
-                                                     secondOperand='A', isFieldSecond=True, belong_op_out=Belong(0),
+                                                     math_op=MathOperator(0), first_operand='B', is_field_first=True,
+                                                     second_operand='A', is_field_second=True, belong_op_out=Belong(0),
                                                      field_in='C', field_out='C')
         print_and_log("Test Case 40 Passed: Expected ValueError, got ValueError")
 
@@ -5298,8 +5298,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception) as context:
             self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                     math_op=MathOperator(0), firstOperand='B', isFieldFirst=False,
-                                                     secondOperand='A', isFieldSecond=True, belong_op_out=Belong(0),
+                                                     math_op=MathOperator(0), first_operand='B', is_field_first=False,
+                                                     second_operand='A', is_field_second=True, belong_op_out=Belong(0),
                                                      field_in='C', field_out='C')
         print_and_log("Test Case 41 Passed: Expected ValueError, got ValueError")
 
@@ -5312,8 +5312,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_exception = ValueError
         with self.assertRaises(expected_exception) as context:
             self.invariants.check_inv_math_operation(data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                                                     math_op=MathOperator(0), firstOperand='B', isFieldFirst=True,
-                                                     secondOperand='A', isFieldSecond=False, belong_op_out=Belong(0),
+                                                     math_op=MathOperator(0), first_operand='B', is_field_first=True,
+                                                     second_operand='A', is_field_second=False, belong_op_out=Belong(0),
                                                      field_in='C', field_out='C')
         print_and_log("Test Case 42 Passed: Expected ValueError, got ValueError")
 
@@ -5326,8 +5326,8 @@ class InvariantsSimpleTest(unittest.TestCase):
                                     'C': [5, 8, 9, 8, 5]})
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-            math_op=MathOperator(2), firstOperand='A', isFieldFirst=True,
-            secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+            math_op=MathOperator(2), first_operand='A', is_field_first=True,
+            second_operand='B', is_field_second=True, belong_op_out=Belong(0),
             field_in='C', field_out='C')
         assert result is True, "Test Case 43 Failed: Expected True, but got False"
         print_and_log("Test Case 43 Passed: Expected True, got True")
@@ -5336,8 +5336,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df.loc[2, 'C'] = 0
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-            math_op=MathOperator(2), firstOperand='A', isFieldFirst=True,
-            secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+            math_op=MathOperator(2), first_operand='A', is_field_first=True,
+            second_operand='B', is_field_second=True, belong_op_out=Belong(0),
             field_in='C', field_out='C')
         assert result is False, "Test Case 44 Failed: Expected False, but got True"
         print_and_log("Test Case 44 Passed: Expected False, got False")
@@ -5349,8 +5349,8 @@ class InvariantsSimpleTest(unittest.TestCase):
                                     'C': [2, 4, 6, 8, 10]})
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-            math_op=MathOperator(2), firstOperand='A', isFieldFirst=True,
-            secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
+            math_op=MathOperator(2), first_operand='A', is_field_first=True,
+            second_operand=2, is_field_second=False, belong_op_out=Belong(0),
             field_in='C', field_out='C')
         assert result is True, "Test Case 45 Failed: Expected True, but got False"
         print_and_log("Test Case 45 Passed: Expected True, got True")
@@ -5359,8 +5359,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df.loc[3, 'C'] = 999
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-            math_op=MathOperator(2), firstOperand='A', isFieldFirst=True,
-            secondOperand=2, isFieldSecond=False, belong_op_out=Belong(0),
+            math_op=MathOperator(2), first_operand='A', is_field_first=True,
+            second_operand=2, is_field_second=False, belong_op_out=Belong(0),
             field_in='C', field_out='C')
         assert result is False, "Test Case 46 Failed: Expected False, but got True"
         print_and_log("Test Case 46 Passed: Expected False, got False")
@@ -5372,8 +5372,8 @@ class InvariantsSimpleTest(unittest.TestCase):
                                     'C': [12, 12, 12, 12, 12]})
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-            math_op=MathOperator(2), firstOperand=3, isFieldFirst=False,
-            secondOperand=4, isFieldSecond=False, belong_op_out=Belong(0),
+            math_op=MathOperator(2), first_operand=3, is_field_first=False,
+            second_operand=4, is_field_second=False, belong_op_out=Belong(0),
             field_in='C', field_out='C')
         assert result is True, "Test Case 47 Failed: Expected True, but got False"
         print_and_log("Test Case 47 Passed: Expected True, got True")
@@ -5382,8 +5382,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df.loc[1, 'C'] = 999
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-            math_op=MathOperator(2), firstOperand=3, isFieldFirst=False,
-            secondOperand=4, isFieldSecond=False, belong_op_out=Belong(0),
+            math_op=MathOperator(2), first_operand=3, is_field_first=False,
+            second_operand=4, is_field_second=False, belong_op_out=Belong(0),
             field_in='C', field_out='C')
         assert result is False, "Test Case 48 Failed: Expected False, but got True"
         print_and_log("Test Case 48 Passed: Expected False, got False")
@@ -5395,8 +5395,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-            math_op=MathOperator(2), firstOperand='A', isFieldFirst=True,
-            secondOperand='B', isFieldSecond=True, belong_op_out=Belong(1),
+            math_op=MathOperator(2), first_operand='A', is_field_first=True,
+            second_operand='B', is_field_second=True, belong_op_out=Belong(1),
             field_in='C', field_out='C')
         assert result is False, "Test Case 49 Failed: Expected False, but got True"
         print_and_log("Test Case 49 Passed: Expected False, got False")
@@ -5405,8 +5405,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df.loc[0, 'C'] = 0
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-            math_op=MathOperator(2), firstOperand='A', isFieldFirst=True,
-            secondOperand='B', isFieldSecond=True, belong_op_out=Belong(1),
+            math_op=MathOperator(2), first_operand='A', is_field_first=True,
+            second_operand='B', is_field_second=True, belong_op_out=Belong(1),
             field_in='C', field_out='C')
         assert result is True, "Test Case 50 Failed: Expected True, but got False"
         print_and_log("Test Case 50 Passed: Expected True, got True")
@@ -5417,8 +5417,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-            math_op=MathOperator(2), firstOperand='A', isFieldFirst=True,
-            secondOperand=2, isFieldSecond=False, belong_op_out=Belong(1),
+            math_op=MathOperator(2), first_operand='A', is_field_first=True,
+            second_operand=2, is_field_second=False, belong_op_out=Belong(1),
             field_in='C', field_out='C')
         assert result is False, "Test Case 51 Failed: Expected False, but got True"
         print_and_log("Test Case 51 Passed: Expected False, got False")
@@ -5427,8 +5427,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df.loc[4, 'C'] = 999
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-            math_op=MathOperator(2), firstOperand='A', isFieldFirst=True,
-            secondOperand=2, isFieldSecond=False, belong_op_out=Belong(1),
+            math_op=MathOperator(2), first_operand='A', is_field_first=True,
+            second_operand=2, is_field_second=False, belong_op_out=Belong(1),
             field_in='C', field_out='C')
         assert result is True, "Test Case 52 Failed: Expected True, but got False"
         print_and_log("Test Case 52 Passed: Expected True, got True")
@@ -5439,8 +5439,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-            math_op=MathOperator(2), firstOperand=3, isFieldFirst=False,
-            secondOperand=4, isFieldSecond=False, belong_op_out=Belong(1),
+            math_op=MathOperator(2), first_operand=3, is_field_first=False,
+            second_operand=4, is_field_second=False, belong_op_out=Belong(1),
             field_in='C', field_out='C')
         assert result is False, "Test Case 53 Failed: Expected False, but got True"
         print_and_log("Test Case 53 Passed: Expected False, got False")
@@ -5449,8 +5449,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df.loc[2, 'C'] = 0
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-            math_op=MathOperator(2), firstOperand=3, isFieldFirst=False,
-            secondOperand=4, isFieldSecond=False, belong_op_out=Belong(1),
+            math_op=MathOperator(2), first_operand=3, is_field_first=False,
+            second_operand=4, is_field_second=False, belong_op_out=Belong(1),
             field_in='C', field_out='C')
         assert result is True, "Test Case 54 Failed: Expected True, but got False"
         print_and_log("Test Case 54 Passed: Expected True, got True")
@@ -5462,8 +5462,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-            math_op=MathOperator(2), firstOperand=2, isFieldFirst=False,
-            secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+            math_op=MathOperator(2), first_operand=2, is_field_first=False,
+            second_operand='B', is_field_second=True, belong_op_out=Belong(0),
             field_in='C', field_out='C')
         assert result is True, "Test Case 55 Failed: Expected True, but got False"
         print_and_log("Test Case 55 Passed: Expected True, got True")
@@ -5472,8 +5472,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df.loc[1, 'C'] = 999
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-            math_op=MathOperator(2), firstOperand=2, isFieldFirst=False,
-            secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+            math_op=MathOperator(2), first_operand=2, is_field_first=False,
+            second_operand='B', is_field_second=True, belong_op_out=Belong(0),
             field_in='C', field_out='C')
         assert result is False, "Test Case 56 Failed: Expected False, but got True"
         print_and_log("Test Case 56 Passed: Expected False, got False")
@@ -5482,8 +5482,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-            math_op=MathOperator(2), firstOperand=2, isFieldFirst=False,
-            secondOperand='B', isFieldSecond=True, belong_op_out=Belong(1),
+            math_op=MathOperator(2), first_operand=2, is_field_first=False,
+            second_operand='B', is_field_second=True, belong_op_out=Belong(1),
             field_in='C', field_out='C')
         assert result is False, "Test Case 57 Failed: Expected False, but got True"
         print_and_log("Test Case 57 Passed: Expected False, got False")
@@ -5492,8 +5492,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df.loc[0, 'C'] = 999
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-            math_op=MathOperator(2), firstOperand=2, isFieldFirst=False,
-            secondOperand='B', isFieldSecond=True, belong_op_out=Belong(1),
+            math_op=MathOperator(2), first_operand=2, is_field_first=False,
+            second_operand='B', is_field_second=True, belong_op_out=Belong(1),
             field_in='C', field_out='C')
         assert result is True, "Test Case 58 Failed: Expected True, but got False"
         print_and_log("Test Case 58 Passed: Expected True, got True")
@@ -5505,8 +5505,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.invariants.check_inv_math_operation(
                 data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                math_op=MathOperator(2), firstOperand=3, isFieldFirst=False,
-                secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+                math_op=MathOperator(2), first_operand=3, is_field_first=False,
+                second_operand='B', is_field_second=True, belong_op_out=Belong(0),
                 field_in=None, field_out='C')
         print_and_log("Test Case 59 Passed: Expected ValueError, got ValueError")
 
@@ -5514,8 +5514,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.invariants.check_inv_math_operation(
                 data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                math_op=MathOperator(2), firstOperand=3, isFieldFirst=False,
-                secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+                math_op=MathOperator(2), first_operand=3, is_field_first=False,
+                second_operand='B', is_field_second=True, belong_op_out=Belong(0),
                 field_in='C', field_out=None)
         print_and_log("Test Case 60 Passed: Expected ValueError, got ValueError")
 
@@ -5523,8 +5523,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.invariants.check_inv_math_operation(
                 data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                math_op=MathOperator(2), firstOperand='X', isFieldFirst=True,
-                secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+                math_op=MathOperator(2), first_operand='X', is_field_first=True,
+                second_operand='B', is_field_second=True, belong_op_out=Belong(0),
                 field_in='C', field_out='C')
         print_and_log("Test Case 61 Passed: Expected ValueError, got ValueError")
 
@@ -5532,8 +5532,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.invariants.check_inv_math_operation(
                 data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                math_op=MathOperator(2), firstOperand='A', isFieldFirst=True,
-                secondOperand='Y', isFieldSecond=True, belong_op_out=Belong(0),
+                math_op=MathOperator(2), first_operand='A', is_field_first=True,
+                second_operand='Y', is_field_second=True, belong_op_out=Belong(0),
                 field_in='C', field_out='C')
         print_and_log("Test Case 62 Passed: Expected ValueError, got ValueError")
 
@@ -5543,8 +5543,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.invariants.check_inv_math_operation(
                 data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df,
-                math_op=MathOperator(2), firstOperand='A', isFieldFirst=True,
-                secondOperand='B', isFieldSecond=True, belong_op_out=Belong(0),
+                math_op=MathOperator(2), first_operand='A', is_field_first=True,
+                second_operand='B', is_field_second=True, belong_op_out=Belong(0),
                 field_in='C', field_out='C')
         print_and_log("Test Case 63 Passed: Expected ValueError, got ValueError")
 
@@ -5558,8 +5558,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-            math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-            secondOperand='B', isFieldSecond=True,
+            math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+            second_operand='B', is_field_second=True,
             belong_op_out=Belong.BELONG, field_in='C', field_out='C'
         )
         assert result is True, "Division Test 64 Failed: Expected True, but got False"
@@ -5578,8 +5578,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         })
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-            math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-            secondOperand='B', isFieldSecond=True,
+            math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+            second_operand='B', is_field_second=True,
             belong_op_out=Belong.BELONG, field_in='C', field_out='C'
         )
         assert result is False, "Division Test 65 Failed: Expected False, but got True"
@@ -5593,8 +5593,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-            math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-            secondOperand=2, isFieldSecond=False,
+            math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+            second_operand=2, is_field_second=False,
             belong_op_out=Belong.BELONG, field_in='C', field_out='C'
         )
         assert result is True, "Division Test 66 Failed: Expected True, but got False"
@@ -5608,8 +5608,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-            math_op=MathOperator.DIVIDE, firstOperand=10, isFieldFirst=False,
-            secondOperand='B', isFieldSecond=True,
+            math_op=MathOperator.DIVIDE, first_operand=10, is_field_first=False,
+            second_operand='B', is_field_second=True,
             belong_op_out=Belong.BELONG, field_in='C', field_out='C'
         )
         assert result is True, "Division Test 67 Failed: Expected True, but got False"
@@ -5624,8 +5624,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-            math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-            secondOperand='B', isFieldSecond=True,
+            math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+            second_operand='B', is_field_second=True,
             belong_op_out=Belong.NOTBELONG, field_in='C', field_out='C'
         )
         # Inversion: correct division makes result False
@@ -5636,8 +5636,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df.loc[1, 'C'] = 999.0  # Alter one value
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-            math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-            secondOperand='B', isFieldSecond=True,
+            math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+            second_operand='B', is_field_second=True,
             belong_op_out=Belong.NOTBELONG, field_in='C', field_out='C'
         )
         assert result is True, "Division Test 69 Failed: Expected True, but got False"
@@ -5649,8 +5649,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.invariants.check_inv_math_operation(
                 data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-                math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-                secondOperand='B', isFieldSecond=True,
+                math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+                second_operand='B', is_field_second=True,
                 belong_op_out=Belong.BELONG, field_in=None, field_out='C'
             )
         print_and_log("Division Test 70 Passed: Expected ValueError, got ValueError")
@@ -5659,8 +5659,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.invariants.check_inv_math_operation(
                 data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-                math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-                secondOperand='B', isFieldSecond=True,
+                math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+                second_operand='B', is_field_second=True,
                 belong_op_out=Belong.BELONG, field_in='C', field_out=None
             )
         print_and_log("Division Test 71 Passed: Expected ValueError, got ValueError")
@@ -5669,8 +5669,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.invariants.check_inv_math_operation(
                 data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-                math_op=MathOperator.DIVIDE, firstOperand='NON_EXISTENT', isFieldFirst=True,
-                secondOperand='B', isFieldSecond=True,
+                math_op=MathOperator.DIVIDE, first_operand='NON_EXISTENT', is_field_first=True,
+                second_operand='B', is_field_second=True,
                 belong_op_out=Belong.BELONG, field_in='C', field_out='C'
             )
         print_and_log("Division Test 72 Passed: Expected ValueError, got ValueError")
@@ -5679,8 +5679,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.invariants.check_inv_math_operation(
                 data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-                math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-                secondOperand='NON_EXISTENT', isFieldSecond=True,
+                math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+                second_operand='NON_EXISTENT', is_field_second=True,
                 belong_op_out=Belong.BELONG, field_in='C', field_out='C'
             )
         print_and_log("Division Test 73 Passed: Expected ValueError, got ValueError")
@@ -5695,8 +5695,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.invariants.check_inv_math_operation(
                 data_dictionary_in=datadic_bad.copy(), data_dictionary_out=expected_bad.copy(),
-                math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-                secondOperand='B', isFieldSecond=True,
+                math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+                second_operand='B', is_field_second=True,
                 belong_op_out=Belong.BELONG, field_in='C', field_out='C'
             )
         print_and_log("Division Test 74 Passed: Expected ValueError, got ValueError")
@@ -5710,8 +5710,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-            math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-            secondOperand='B', isFieldSecond=True,
+            math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+            second_operand='B', is_field_second=True,
             belong_op_out=Belong.BELONG, field_in='C', field_out='C'
         )
         assert result is True, "Division Test 75 Failed: Expected True, but got False"
@@ -5726,8 +5726,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-            math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-            secondOperand='B', isFieldSecond=True,
+            math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+            second_operand='B', is_field_second=True,
             belong_op_out=Belong.BELONG, field_in='C', field_out='C'
         )
         assert result is True, "Division Test 76 Failed: Expected True, but got False"
@@ -5742,8 +5742,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-            math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-            secondOperand='B', isFieldSecond=True,
+            math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+            second_operand='B', is_field_second=True,
             belong_op_out=Belong.BELONG, field_in='C', field_out='C'
         )
         assert result is True, "Division Test 77 Failed: Expected True, but got False"
@@ -5758,8 +5758,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         })
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-            math_op=MathOperator.DIVIDE, firstOperand=10, isFieldFirst=False,
-            secondOperand=5, isFieldSecond=False,
+            math_op=MathOperator.DIVIDE, first_operand=10, is_field_first=False,
+            second_operand=5, is_field_second=False,
             belong_op_out=Belong.BELONG, field_in='dummy', field_out='dummy'
         )
         assert result is True, "Division Test 78 Failed: Expected True, but got False"
@@ -5773,8 +5773,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-            math_op=MathOperator.DIVIDE, firstOperand=10, isFieldFirst=False,
-            secondOperand='B', isFieldSecond=True,
+            math_op=MathOperator.DIVIDE, first_operand=10, is_field_first=False,
+            second_operand='B', is_field_second=True,
             belong_op_out=Belong.BELONG, field_in='C', field_out='C'
         )
         assert result is True, "Division Test 79 Failed: Expected True, but got False"
@@ -5789,8 +5789,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-            math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-            secondOperand='B', isFieldSecond=True,
+            math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+            second_operand='B', is_field_second=True,
             belong_op_out=Belong.BELONG, field_in='C', field_out='C'
         )
         assert result is True, "Division Test 80 Failed: Expected True, but got False"
@@ -5804,8 +5804,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-            math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-            secondOperand=1, isFieldSecond=False,
+            math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+            second_operand=1, is_field_second=False,
             belong_op_out=Belong.BELONG, field_in='C', field_out='C'
         )
         assert result is True, "Division Test 81 Failed: Expected True, but got False"
@@ -5819,8 +5819,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-            math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-            secondOperand=1, isFieldSecond=False,
+            math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+            second_operand=1, is_field_second=False,
             belong_op_out=Belong.BELONG, field_in='C', field_out='C'
         )
         assert result is False, "Division Test 82 Failed: Expected False, but got True"
@@ -5835,8 +5835,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-            math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-            secondOperand='B', isFieldSecond=True,
+            math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+            second_operand='B', is_field_second=True,
             belong_op_out=Belong.BELONG, field_in='C', field_out='C'
         )
         assert result is True, "Division Test 83 Failed: Expected True, but got False"
@@ -5847,8 +5847,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df.loc[2, 'C'] = 999.0  # alter expected value on one row
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-            math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-            secondOperand='B', isFieldSecond=True,
+            math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+            second_operand='B', is_field_second=True,
             belong_op_out=Belong.NOTBELONG, field_in='C', field_out='C'
         )
         assert result is True, "Division Test 84 Failed: Expected True, but got False"
@@ -5858,8 +5858,8 @@ class InvariantsSimpleTest(unittest.TestCase):
         expected_df = datadic.copy()
         result = self.invariants.check_inv_math_operation(
             data_dictionary_in=datadic.copy(), data_dictionary_out=expected_df.copy(),
-            math_op=MathOperator.DIVIDE, firstOperand='A', isFieldFirst=True,
-            secondOperand='B', isFieldSecond=True,
+            math_op=MathOperator.DIVIDE, first_operand='A', is_field_first=True,
+            second_operand='B', is_field_second=True,
             belong_op_out=Belong.NOTBELONG, field_in='C', field_out='C'
         )
         assert result is False, "Division Test 85 Failed: Expected False, but got True"
@@ -6537,13 +6537,13 @@ class InvariantsSimpleTest(unittest.TestCase):
         """
         Execute simple tests for the check_inv_filter_columns function
         """
-        
+
         # Caso 1: BELONG operation - Remove specified columns (basic case)
         print_and_log("Test Case 1: BELONG operation - Remove columns 'B' and 'C'")
         datadic_in = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6], 'C': [7, 8, 9], 'D': [10, 11, 12]})
         expected_df = pd.DataFrame({'A': [1, 2, 3], 'D': [10, 11, 12]})
         columns_to_remove = ['B', 'C']
-        
+
         result = self.invariants.check_inv_filter_columns(
             data_dictionary_in=datadic_in.copy(),
             data_dictionary_out=expected_df.copy(),
@@ -6559,7 +6559,7 @@ class InvariantsSimpleTest(unittest.TestCase):
         datadic_in_2 = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6], 'C': [7, 8, 9], 'D': [10, 11, 12]})
         expected_df_2 = pd.DataFrame({'A': [1, 2, 3], 'C': [7, 8, 9]})
         columns_to_keep = ['A', 'C']
-        
+
         result = self.invariants.check_inv_filter_columns(
             data_dictionary_in=datadic_in_2.copy(),
             data_dictionary_out=expected_df_2.copy(),
@@ -6575,7 +6575,7 @@ class InvariantsSimpleTest(unittest.TestCase):
         datadic_in_3 = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6], 'C': [7, 8, 9]})
         expected_df_3 = pd.DataFrame({'A': [1, 2, 3], 'C': [7, 8, 9]})
         columns_to_remove_3 = ['B']
-        
+
         result = self.invariants.check_inv_filter_columns(
             data_dictionary_in=datadic_in_3.copy(),
             data_dictionary_out=expected_df_3.copy(),
@@ -6591,7 +6591,7 @@ class InvariantsSimpleTest(unittest.TestCase):
         datadic_in_4 = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6], 'C': [7, 8, 9]})
         expected_df_4 = pd.DataFrame({'A': [1, 2, 3]})
         columns_to_keep_4 = ['A']
-        
+
         result = self.invariants.check_inv_filter_columns(
             data_dictionary_in=datadic_in_4.copy(),
             data_dictionary_out=expected_df_4.copy(),
@@ -6606,7 +6606,7 @@ class InvariantsSimpleTest(unittest.TestCase):
         print_and_log("Test Case 5: Error - columns parameter is None")
         datadic_in_5 = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})
         expected_df_5 = datadic_in_5.copy()
-        
+
         with self.assertRaises(ValueError):
             self.invariants.check_inv_filter_columns(
                 data_dictionary_in=datadic_in_5.copy(),
@@ -6621,7 +6621,7 @@ class InvariantsSimpleTest(unittest.TestCase):
         print_and_log("Test Case 6: Error - Non-existent column in list")
         datadic_in_6 = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})
         expected_df_6 = datadic_in_6.copy()
-        
+
         with self.assertRaises(ValueError):
             self.invariants.check_inv_filter_columns(
                 data_dictionary_in=datadic_in_6.copy(),
@@ -6638,7 +6638,7 @@ class InvariantsSimpleTest(unittest.TestCase):
         # Incorrect: don't actually remove the column B
         incorrect_df_7 = datadic_in_7.copy()  # Keep all columns
         columns_to_remove_7 = ['B']
-        
+
         result = self.invariants.check_inv_filter_columns(
             data_dictionary_in=datadic_in_7.copy(),
             data_dictionary_out=incorrect_df_7.copy(),
@@ -6655,7 +6655,7 @@ class InvariantsSimpleTest(unittest.TestCase):
         columns_to_keep_8 = ['A']
         # Incorrect: keep extra columns
         incorrect_df_8 = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})  # Extra column B
-        
+
         result = self.invariants.check_inv_filter_columns(
             data_dictionary_in=datadic_in_8.copy(),
             data_dictionary_out=incorrect_df_8.copy(),
@@ -6671,7 +6671,7 @@ class InvariantsSimpleTest(unittest.TestCase):
         datadic_in_9 = pd.DataFrame({'A': [1, 2], 'B': [3, 4], 'C': [5, 6], 'D': [7, 8]})
         expected_df_9 = pd.DataFrame({'D': [7, 8]})
         columns_to_remove_9 = ['A', 'B', 'C']
-        
+
         result = self.invariants.check_inv_filter_columns(
             data_dictionary_in=datadic_in_9.copy(),
             data_dictionary_out=expected_df_9.copy(),
@@ -6687,7 +6687,7 @@ class InvariantsSimpleTest(unittest.TestCase):
         datadic_in_10 = pd.DataFrame({'A': [1, 2], 'B': [3, 4], 'C': [5, 6], 'D': [7, 8], 'E': [9, 10]})
         expected_df_10 = pd.DataFrame({'B': [3, 4], 'D': [7, 8], 'E': [9, 10]})
         columns_to_keep_10 = ['B', 'D', 'E']
-        
+
         result = self.invariants.check_inv_filter_columns(
             data_dictionary_in=datadic_in_10.copy(),
             data_dictionary_out=expected_df_10.copy(),
@@ -6704,7 +6704,7 @@ class InvariantsSimpleTest(unittest.TestCase):
         columns_to_keep_11 = ['A', 'B']
         # Incorrect: missing column A that should be kept
         incorrect_df_11 = pd.DataFrame({'B': [3, 4]})  # Missing column A
-        
+
         result = self.invariants.check_inv_filter_columns(
             data_dictionary_in=datadic_in_11.copy(),
             data_dictionary_out=incorrect_df_11.copy(),
@@ -6721,7 +6721,7 @@ class InvariantsSimpleTest(unittest.TestCase):
         columns_to_remove_12 = ['A', 'C']
         # Incorrect: column A is still present
         incorrect_df_12 = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})  # Column A should be removed
-        
+
         result = self.invariants.check_inv_filter_columns(
             data_dictionary_in=datadic_in_12.copy(),
             data_dictionary_out=incorrect_df_12.copy(),
