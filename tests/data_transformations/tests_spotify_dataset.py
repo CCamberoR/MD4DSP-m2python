@@ -5672,8 +5672,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
         result_df = self.data_transformations.transform_math_operation(data_dictionary=self.small_batch_dataset.copy(),
                                                                        math_op=MathOperator(0),
                                                                        field_out='track_popularity',
-                                                                       firstOperand='danceability', isFieldFirst=True,
-                                                                       secondOperand='energy', isFieldSecond=True)
+                                                                       first_operand='danceability', is_field_first=True,
+                                                                       second_operand='energy', is_field_second=True)
 
         expected_df = self.small_batch_dataset.copy()
         expected_df['track_popularity'] = expected_df['danceability'] + expected_df['energy']
@@ -5685,8 +5685,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
         result_df = self.data_transformations.transform_math_operation(data_dictionary=self.small_batch_dataset.copy(),
                                                                        math_op=MathOperator(1),
                                                                        field_out='track_popularity',
-                                                                       firstOperand='danceability', isFieldFirst=True,
-                                                                       secondOperand='energy', isFieldSecond=True)
+                                                                       first_operand='danceability', is_field_first=True,
+                                                                       second_operand='energy', is_field_second=True)
 
         expected_df = self.small_batch_dataset.copy()
         expected_df['track_popularity'] = expected_df['danceability'] - expected_df['energy']
@@ -5698,8 +5698,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
         result_df = self.data_transformations.transform_math_operation(data_dictionary=self.small_batch_dataset.copy(),
                                                                        math_op=MathOperator(0),
                                                                        field_out='track_popularity',
-                                                                       firstOperand='danceability', isFieldFirst=True,
-                                                                       secondOperand=3, isFieldSecond=False)
+                                                                       first_operand='danceability', is_field_first=True,
+                                                                       second_operand=3, is_field_second=False)
 
         expected_df = self.small_batch_dataset.copy()
         expected_df['track_popularity'] = expected_df['danceability'] + 3
@@ -5711,8 +5711,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
         result_df = self.data_transformations.transform_math_operation(data_dictionary=self.small_batch_dataset.copy(),
                                                                        math_op=MathOperator(1),
                                                                        field_out='track_popularity',
-                                                                       firstOperand='danceability', isFieldFirst=True,
-                                                                       secondOperand=1, isFieldSecond=False)
+                                                                       first_operand='danceability', is_field_first=True,
+                                                                       second_operand=1, is_field_second=False)
 
         expected_df = self.small_batch_dataset.copy()
         expected_df['track_popularity'] = expected_df['danceability'] - 1
@@ -5724,8 +5724,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
         result_df = self.data_transformations.transform_math_operation(data_dictionary=self.small_batch_dataset.copy(),
                                                                        math_op=MathOperator(0),
                                                                        field_out='track_popularity',
-                                                                       firstOperand=8, isFieldFirst=False,
-                                                                       secondOperand='danceability', isFieldSecond=True)
+                                                                       first_operand=8, is_field_first=False,
+                                                                       second_operand='danceability', is_field_second=True)
 
         expected_df = self.small_batch_dataset.copy()
         expected_df['track_popularity'] = 8 + expected_df['danceability']
@@ -5737,8 +5737,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
         result_df = self.data_transformations.transform_math_operation(data_dictionary=self.small_batch_dataset.copy(),
                                                                        math_op=MathOperator(1),
                                                                        field_out='track_popularity',
-                                                                       firstOperand=2, isFieldFirst=False,
-                                                                       secondOperand='danceability', isFieldSecond=True)
+                                                                       first_operand=2, is_field_first=False,
+                                                                       second_operand='danceability', is_field_second=True)
 
         expected_df = self.small_batch_dataset.copy()
         expected_df['track_popularity'] = 2 - expected_df['danceability']
@@ -5750,8 +5750,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
         result_df = self.data_transformations.transform_math_operation(data_dictionary=self.small_batch_dataset.copy(),
                                                                        math_op=MathOperator(0),
                                                                        field_out='track_popularity',
-                                                                       firstOperand=2, isFieldFirst=False,
-                                                                       secondOperand=15, isFieldSecond=False)
+                                                                       first_operand=2, is_field_first=False,
+                                                                       second_operand=15, is_field_second=False)
 
         expected_df = self.small_batch_dataset.copy()
         expected_df['track_popularity'] = 2 + 15
@@ -5763,8 +5763,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
         result_df = self.data_transformations.transform_math_operation(data_dictionary=self.small_batch_dataset.copy(),
                                                                        math_op=MathOperator(1),
                                                                        field_out='track_popularity',
-                                                                       firstOperand=8, isFieldFirst=False,
-                                                                       secondOperand=13, isFieldSecond=False)
+                                                                       first_operand=8, is_field_first=False,
+                                                                       second_operand=13, is_field_second=False)
 
         expected_df = self.small_batch_dataset.copy()
         expected_df['track_popularity'] = 8 - 13
@@ -5779,8 +5779,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             self.data_transformations.transform_math_operation(
                 data_dictionary=self.small_batch_dataset.copy(),
                 math_op=MathOperator(1), field_out=None,
-                firstOperand=2, isFieldFirst=False,
-                secondOperand=9, isFieldSecond=False)
+                first_operand=2, is_field_first=False,
+                second_operand=9, is_field_second=False)
         print_and_log("Test Case 9 Passed: got the expected error")
 
         # Caso 10 - Columna no numerica
@@ -5789,8 +5789,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             self.data_transformations.transform_math_operation(
                 data_dictionary=self.small_batch_dataset.copy(),
                 math_op=MathOperator(0), field_out='track_popularity',
-                firstOperand='track_artist', isFieldFirst=True,
-                secondOperand=9, isFieldSecond=False)
+                first_operand='track_artist', is_field_first=True,
+                second_operand=9, is_field_second=False)
         print_and_log("Test Case 10 Passed: got the expected error")
 
         # Caso 11 - Valor no numerico
@@ -5799,8 +5799,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             self.data_transformations.transform_math_operation(
                 data_dictionary=self.small_batch_dataset.copy(),
                 math_op=MathOperator(0), field_out='track_popularity',
-                firstOperand='danceability', isFieldFirst=True,
-                secondOperand='Antonio', isFieldSecond=False)
+                first_operand='danceability', is_field_first=True,
+                second_operand='Antonio', is_field_second=False)
         print_and_log("Test Case 11 Passed: got the expected error")
 
         # Caso 12 - Multiplicación de dos columnas
@@ -5810,10 +5810,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=self.small_batch_dataset.copy(),
             math_op=MathOperator.MULTIPLY,
             field_out='result',
-            firstOperand='danceability',
-            isFieldFirst=True,
-            secondOperand='track_popularity',
-            isFieldSecond=True
+            first_operand='danceability',
+            is_field_first=True,
+            second_operand='track_popularity',
+            is_field_second=True
         )
         pd.testing.assert_frame_equal(result_df, expected_df)
         print_and_log("Test Case 12 Passed: Multiplication of two columns")
@@ -5826,10 +5826,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=self.small_batch_dataset.copy(),
             math_op=MathOperator.DIVIDE,
             field_out='result',
-            firstOperand='danceability',
-            isFieldFirst=True,
-            secondOperand='loudness',
-            isFieldSecond=True
+            first_operand='danceability',
+            is_field_first=True,
+            second_operand='loudness',
+            is_field_second=True
         )
         pd.testing.assert_frame_equal(result_df, expected_df)
         print_and_log("Test Case 13 Passed: Division of two columns")
@@ -5842,10 +5842,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=self.small_batch_dataset.copy(),
             math_op=MathOperator.MULTIPLY,
             field_out='result',
-            firstOperand='danceability',
-            isFieldFirst=True,
-            secondOperand=constant,
-            isFieldSecond=False
+            first_operand='danceability',
+            is_field_first=True,
+            second_operand=constant,
+            is_field_second=False
         )
         pd.testing.assert_frame_equal(result_df, expected_df)
         print_and_log("Test Case 14 Passed: Multiplication of column and number")
@@ -5858,10 +5858,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=self.small_batch_dataset.copy(),
             math_op=MathOperator.DIVIDE,
             field_out='result',
-            firstOperand='danceability',
-            isFieldFirst=True,
-            secondOperand=constant,
-            isFieldSecond=False
+            first_operand='danceability',
+            is_field_first=True,
+            second_operand=constant,
+            is_field_second=False
         )
         pd.testing.assert_frame_equal(result_df, expected_df)
         print_and_log("Test Case 15 Passed: Division of column and number")
@@ -5874,10 +5874,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=self.small_batch_dataset.copy(),
             math_op=MathOperator.MULTIPLY,
             field_out='result',
-            firstOperand=constant,
-            isFieldFirst=False,
-            secondOperand='track_popularity',
-            isFieldSecond=True
+            first_operand=constant,
+            is_field_first=False,
+            second_operand='track_popularity',
+            is_field_second=True
         )
         pd.testing.assert_frame_equal(result_df, expected_df)
         print_and_log("Test Case 16 Passed: Multiplication of number and column")
@@ -5890,10 +5890,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=self.small_batch_dataset.copy(),
             math_op=MathOperator.DIVIDE,
             field_out='result',
-            firstOperand=constant,
-            isFieldFirst=False,
-            secondOperand='loudness',
-            isFieldSecond=True
+            first_operand=constant,
+            is_field_first=False,
+            second_operand='loudness',
+            is_field_second=True
         )
         pd.testing.assert_frame_equal(result_df, expected_df)
         print_and_log("Test Case 17 Passed: Division of number and column")
@@ -5906,10 +5906,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=self.small_batch_dataset.copy(),
             math_op=MathOperator.MULTIPLY,
             field_out='result',
-            firstOperand=5.5,
-            isFieldFirst=False,
-            secondOperand=2.0,
-            isFieldSecond=False
+            first_operand=5.5,
+            is_field_first=False,
+            second_operand=2.0,
+            is_field_second=False
         )
         pd.testing.assert_frame_equal(result_df, expected_df)
         print_and_log("Test Case 18 Passed: Multiplication of numbers")
@@ -5922,10 +5922,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=self.small_batch_dataset.copy(),
             math_op=MathOperator.DIVIDE,
             field_out='result',
-            firstOperand=10.0,
-            isFieldFirst=False,
-            secondOperand=2.0,
-            isFieldSecond=False
+            first_operand=10.0,
+            is_field_first=False,
+            second_operand=2.0,
+            is_field_second=False
         )
         pd.testing.assert_frame_equal(result_df, expected_df)
         print_and_log("Test Case 19 Passed: Division of numbers")
@@ -5939,10 +5939,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=datadic,
             math_op=MathOperator.DIVIDE,
             field_out='result',
-            firstOperand=10.0,
-            isFieldFirst=False,
-            secondOperand="mode",
-            isFieldSecond=True
+            first_operand=10.0,
+            is_field_first=False,
+            second_operand="mode",
+            is_field_second=True
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 20 Passed: division by column with zeros returns NaN for zero divisors")
@@ -5956,10 +5956,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=datadic,
             math_op=MathOperator.DIVIDE,
             field_out='result',
-            firstOperand="mode",
-            isFieldFirst=True,
-            secondOperand=0,
-            isFieldSecond=False
+            first_operand="mode",
+            is_field_first=True,
+            second_operand=0,
+            is_field_second=False
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 21 Passed: division by zero integer returns NaN")
@@ -5977,8 +5977,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
         result_df = self.data_transformations.transform_math_operation(data_dictionary=self.rest_of_dataset.copy(),
                                                                        math_op=MathOperator(0),
                                                                        field_out='track_popularity',
-                                                                       firstOperand='danceability', isFieldFirst=True,
-                                                                       secondOperand='energy', isFieldSecond=True)
+                                                                       first_operand='danceability', is_field_first=True,
+                                                                       second_operand='energy', is_field_second=True)
 
         expected_df = self.rest_of_dataset.copy()
         expected_df['track_popularity'] = expected_df['danceability'] + expected_df['energy']
@@ -5990,8 +5990,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
         result_df = self.data_transformations.transform_math_operation(data_dictionary=self.rest_of_dataset.copy(),
                                                                        math_op=MathOperator(1),
                                                                        field_out='track_popularity',
-                                                                       firstOperand='danceability', isFieldFirst=True,
-                                                                       secondOperand='energy', isFieldSecond=True)
+                                                                       first_operand='danceability', is_field_first=True,
+                                                                       second_operand='energy', is_field_second=True)
 
         expected_df = self.rest_of_dataset.copy()
         expected_df['track_popularity'] = expected_df['danceability'] - expected_df['energy']
@@ -6003,8 +6003,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
         result_df = self.data_transformations.transform_math_operation(data_dictionary=self.rest_of_dataset.copy(),
                                                                        math_op=MathOperator(0),
                                                                        field_out='track_popularity',
-                                                                       firstOperand='danceability', isFieldFirst=True,
-                                                                       secondOperand=3, isFieldSecond=False)
+                                                                       first_operand='danceability', is_field_first=True,
+                                                                       second_operand=3, is_field_second=False)
 
         expected_df = self.rest_of_dataset.copy()
         expected_df['track_popularity'] = expected_df['danceability'] + 3
@@ -6016,8 +6016,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
         result_df = self.data_transformations.transform_math_operation(data_dictionary=self.rest_of_dataset.copy(),
                                                                        math_op=MathOperator(1),
                                                                        field_out='track_popularity',
-                                                                       firstOperand='danceability', isFieldFirst=True,
-                                                                       secondOperand=1, isFieldSecond=False)
+                                                                       first_operand='danceability', is_field_first=True,
+                                                                       second_operand=1, is_field_second=False)
 
         expected_df = self.rest_of_dataset.copy()
         expected_df['track_popularity'] = expected_df['danceability'] - 1
@@ -6029,8 +6029,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
         result_df = self.data_transformations.transform_math_operation(data_dictionary=self.rest_of_dataset.copy(),
                                                                        math_op=MathOperator(0),
                                                                        field_out='track_popularity',
-                                                                       firstOperand=8, isFieldFirst=False,
-                                                                       secondOperand='danceability', isFieldSecond=True)
+                                                                       first_operand=8, is_field_first=False,
+                                                                       second_operand='danceability', is_field_second=True)
 
         expected_df = self.rest_of_dataset.copy()
         expected_df['track_popularity'] = 8 + expected_df['danceability']
@@ -6042,8 +6042,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
         result_df = self.data_transformations.transform_math_operation(data_dictionary=self.rest_of_dataset.copy(),
                                                                        math_op=MathOperator(1),
                                                                        field_out='track_popularity',
-                                                                       firstOperand=2, isFieldFirst=False,
-                                                                       secondOperand='danceability', isFieldSecond=True)
+                                                                       first_operand=2, is_field_first=False,
+                                                                       second_operand='danceability', is_field_second=True)
 
         expected_df = self.rest_of_dataset.copy()
         expected_df['track_popularity'] = 2 - expected_df['danceability']
@@ -6055,8 +6055,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
         result_df = self.data_transformations.transform_math_operation(data_dictionary=self.rest_of_dataset.copy(),
                                                                        math_op=MathOperator(0),
                                                                        field_out='track_popularity',
-                                                                       firstOperand=2, isFieldFirst=False,
-                                                                       secondOperand=15, isFieldSecond=False)
+                                                                       first_operand=2, is_field_first=False,
+                                                                       second_operand=15, is_field_second=False)
 
         expected_df = self.rest_of_dataset.copy()
         expected_df['track_popularity'] = 2 + 15
@@ -6068,8 +6068,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
         result_df = self.data_transformations.transform_math_operation(data_dictionary=self.rest_of_dataset.copy(),
                                                                        math_op=MathOperator(1),
                                                                        field_out='track_popularity',
-                                                                       firstOperand=8, isFieldFirst=False,
-                                                                       secondOperand=13, isFieldSecond=False)
+                                                                       first_operand=8, is_field_first=False,
+                                                                       second_operand=13, is_field_second=False)
 
         expected_df = self.rest_of_dataset.copy()
         expected_df['track_popularity'] = 8 - 13
@@ -6084,8 +6084,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             self.data_transformations.transform_math_operation(
                 data_dictionary=self.rest_of_dataset.copy(),
                 math_op=MathOperator(1), field_out=None,
-                firstOperand=2, isFieldFirst=False,
-                secondOperand=9, isFieldSecond=False)
+                first_operand=2, is_field_first=False,
+                second_operand=9, is_field_second=False)
         print_and_log("Test Case 9 Passed: got the expected error")
 
         # Caso 10 - Columna no numerica
@@ -6094,8 +6094,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             self.data_transformations.transform_math_operation(
                 data_dictionary=self.rest_of_dataset.copy(),
                 math_op=MathOperator(0), field_out='track_popularity',
-                firstOperand='track_artist', isFieldFirst=True,
-                secondOperand=9, isFieldSecond=False)
+                first_operand='track_artist', is_field_first=True,
+                second_operand=9, is_field_second=False)
         print_and_log("Test Case 10 Passed: got the expected error")
 
         # Caso 11 - Valor no numerico
@@ -6104,8 +6104,8 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             self.data_transformations.transform_math_operation(
                 data_dictionary=self.rest_of_dataset.copy(),
                 math_op=MathOperator(0), field_out='track_popularity',
-                firstOperand='danceability', isFieldFirst=True,
-                secondOperand='Antonio', isFieldSecond=False)
+                first_operand='danceability', is_field_first=True,
+                second_operand='Antonio', is_field_second=False)
         print_and_log("Test Case 11 Passed: got the expected error")
 
         # Caso 12 - Multiplicación de dos columnas
@@ -6115,10 +6115,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=self.rest_of_dataset.copy(),
             math_op=MathOperator.MULTIPLY,
             field_out='result',
-            firstOperand='danceability',
-            isFieldFirst=True,
-            secondOperand='track_popularity',
-            isFieldSecond=True
+            first_operand='danceability',
+            is_field_first=True,
+            second_operand='track_popularity',
+            is_field_second=True
         )
         pd.testing.assert_frame_equal(result_df, expected_df)
         print_and_log("Test Case 12 Passed: Multiplication of two columns")
@@ -6131,10 +6131,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=self.rest_of_dataset.copy(),
             math_op=MathOperator.DIVIDE,
             field_out='result',
-            firstOperand='danceability',
-            isFieldFirst=True,
-            secondOperand='loudness',
-            isFieldSecond=True
+            first_operand='danceability',
+            is_field_first=True,
+            second_operand='loudness',
+            is_field_second=True
         )
         pd.testing.assert_frame_equal(result_df, expected_df)
         print_and_log("Test Case 13 Passed: Division of two columns")
@@ -6147,10 +6147,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=self.rest_of_dataset.copy(),
             math_op=MathOperator.MULTIPLY,
             field_out='result',
-            firstOperand='danceability',
-            isFieldFirst=True,
-            secondOperand=constant,
-            isFieldSecond=False
+            first_operand='danceability',
+            is_field_first=True,
+            second_operand=constant,
+            is_field_second=False
         )
         pd.testing.assert_frame_equal(result_df, expected_df)
         print_and_log("Test Case 14 Passed: Multiplication of column and number")
@@ -6163,10 +6163,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=self.rest_of_dataset.copy(),
             math_op=MathOperator.DIVIDE,
             field_out='result',
-            firstOperand='danceability',
-            isFieldFirst=True,
-            secondOperand=constant,
-            isFieldSecond=False
+            first_operand='danceability',
+            is_field_first=True,
+            second_operand=constant,
+            is_field_second=False
         )
         pd.testing.assert_frame_equal(result_df, expected_df)
         print_and_log("Test Case 15 Passed: Division of column and number")
@@ -6179,10 +6179,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=self.rest_of_dataset.copy(),
             math_op=MathOperator.MULTIPLY,
             field_out='result',
-            firstOperand=constant,
-            isFieldFirst=False,
-            secondOperand='track_popularity',
-            isFieldSecond=True
+            first_operand=constant,
+            is_field_first=False,
+            second_operand='track_popularity',
+            is_field_second=True
         )
         pd.testing.assert_frame_equal(result_df, expected_df)
         print_and_log("Test Case 16 Passed: Multiplication of number and column")
@@ -6195,10 +6195,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=self.rest_of_dataset.copy(),
             math_op=MathOperator.DIVIDE,
             field_out='result',
-            firstOperand=constant,
-            isFieldFirst=False,
-            secondOperand='loudness',
-            isFieldSecond=True
+            first_operand=constant,
+            is_field_first=False,
+            second_operand='loudness',
+            is_field_second=True
         )
         pd.testing.assert_frame_equal(result_df, expected_df)
         print_and_log("Test Case 17 Passed: Division of number and column")
@@ -6211,10 +6211,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=self.rest_of_dataset.copy(),
             math_op=MathOperator.MULTIPLY,
             field_out='result',
-            firstOperand=5.5,
-            isFieldFirst=False,
-            secondOperand=2.0,
-            isFieldSecond=False
+            first_operand=5.5,
+            is_field_first=False,
+            second_operand=2.0,
+            is_field_second=False
         )
         pd.testing.assert_frame_equal(result_df, expected_df)
         print_and_log("Test Case 18 Passed: Multiplication of numbers")
@@ -6227,10 +6227,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=self.rest_of_dataset.copy(),
             math_op=MathOperator.DIVIDE,
             field_out='result',
-            firstOperand=10.0,
-            isFieldFirst=False,
-            secondOperand=2.0,
-            isFieldSecond=False
+            first_operand=10.0,
+            is_field_first=False,
+            second_operand=2.0,
+            is_field_second=False
         )
         pd.testing.assert_frame_equal(result_df, expected_df)
         print_and_log("Test Case 19 Passed: Division of numbers")
@@ -6244,10 +6244,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=datadic,
             math_op=MathOperator.DIVIDE,
             field_out='result',
-            firstOperand=10.0,
-            isFieldFirst=False,
-            secondOperand="mode",
-            isFieldSecond=True
+            first_operand=10.0,
+            is_field_first=False,
+            second_operand="mode",
+            is_field_second=True
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 20 Passed: division by column with zeros returns NaN for zero divisors")
@@ -6261,10 +6261,10 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             data_dictionary=datadic,
             math_op=MathOperator.DIVIDE,
             field_out='result',
-            firstOperand="mode",
-            isFieldFirst=True,
-            secondOperand=0,
-            isFieldSecond=False
+            first_operand="mode",
+            is_field_first=True,
+            second_operand=0,
+            is_field_second=False
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 21 Passed: division by zero integer returns NaN")
