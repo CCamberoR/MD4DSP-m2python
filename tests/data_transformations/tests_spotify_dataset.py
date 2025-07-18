@@ -145,12 +145,13 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
             self.execute_transform_SpecialValue_NumOp,
             self.execute_transform_derived_field,
             self.execute_transform_filter_columns,
+            self.execute_transform_cast_type,
             self.execute_transform_filter_rows_primitive,
             self.execute_transform_filter_rows_special_values,
             self.execute_transform_filter_rows_range,
             self.execute_execute_transform_math_operation,
             self.execute_transform_join,
-            self.execute_transform_cast_type
+
         ]
 
         print_and_log("")

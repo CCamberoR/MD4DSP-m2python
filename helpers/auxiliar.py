@@ -64,16 +64,30 @@ def check_interval_condition(x: Union[int, float], left_margin: float,
     Returns:
         :return: True if the value x meets the condition of the interval
     """
-    if closure_type == Closure.openOpen:
-        return True if np.issubdtype(type(x), np.number) and ((x > left_margin) & (x < right_margin)) else False
-    elif closure_type == Closure.openClosed:
-        return True if np.issubdtype(type(x), np.number) and ((x > left_margin) & (x <= right_margin)) else False
-    elif closure_type == Closure.closedOpen:
-        return True if np.issubdtype(type(x), np.number) and ((x >= left_margin) & (x < right_margin)) else False
-    elif closure_type == Closure.closedClosed:
-        return True if np.issubdtype(type(x), np.number) and ((x >= left_margin) & (x <= right_margin)) else False
-    else:
-        raise ValueError("No valid closure type")
+    # Check if the value is numeric or datetime
+    is_valid_type = (np.issubdtype(type(x), np.number) or
+                     pd.api.types.is_datetime64_any_dtype(type(x)) or
+                     isinstance(x, pd.Timestamp))
+
+    if not is_valid_type:
+        return False
+
+    try:
+        if closure_type == Closure.openOpen:
+            result = (x > left_margin) and (x < right_margin)
+        elif closure_type == Closure.openClosed:
+            result = (x > left_margin) and (x <= right_margin)
+        elif closure_type == Closure.closedOpen:
+            result = (x >= left_margin) and (x < right_margin)
+        elif closure_type == Closure.closedClosed:
+            result = (x >= left_margin) and (x <= right_margin)
+        else:
+            raise ValueError("No valid closure type")
+
+        # Ensure we return a Python boolean, not a numpy boolean
+        return bool(result)
+    except Exception:
+        return False
 
 
 def count_abs_frequency(value, data_dictionary: pd.DataFrame, field: str = None) -> int:

@@ -1396,3 +1396,52 @@ def transform_join(data_dictionary: pd.DataFrame, dictionary: dict, field_out: s
     data_dictionary_copy[field_out] = data_dictionary_copy[field_out].replace('', np.nan)
 
     return data_dictionary_copy
+
+
+def transform_filter_rows_date_range(data_dictionary: pd.DataFrame, columns: list[str],
+                                     left_margin_list: list[pd.Timestamp] = None,
+                                     right_margin_list: list[pd.Timestamp] = None,
+                                     filter_type: FilterType = None,
+                                     closure_type_list: list[Closure] = None) -> pd.DataFrame:
+    """
+    Execute the data transformation of the FilterRows - DateRange relation
+
+    Args:
+        data_dictionary: dataframe with the data
+        columns: list of columns to filter
+        left_margin_list: left margin list of the interval to filter (closure type is closed)
+        right_margin_list: right margin list of the interval to filter (closure type is closed)
+        filter_type: filter type value to execute/include the values in the columns
+        closure_type_list: closure type list of the interval to filter
+
+    Returns:
+        pd.DataFrame: data_dictionary including/excluding the rows with date values within the interval
+        [left_margin, right_margin] in the columns of the list columns removed
+    """
+    data_dictionary_copy = data_dictionary.copy()
+
+    for index in range(len(left_margin_list)):  # Iterate over the list of ranges
+
+        for current_column in columns:
+
+            # If column doesn't exist in the dataframe, raise an error
+            if current_column not in data_dictionary_copy.columns:
+                raise ValueError(f"The DataField {current_column} does not exist in the dataframe")
+
+            # Verify the column contains datetime values
+            if not pd.api.types.is_datetime64_any_dtype(data_dictionary_copy[current_column]):
+                raise ValueError(f"The DataField {current_column} is not a datetime column")
+
+            # Exclude or include the values within the interval [left_margin, right_margin] in the column
+            if filter_type == FilterType.INCLUDE:
+                data_dictionary_copy = data_dictionary_copy[data_dictionary_copy[current_column].apply(
+                    lambda x: check_interval_condition(x, left_margin_list[index], right_margin_list[index],
+                                                       closure_type_list[index]))]
+            elif filter_type == FilterType.EXCLUDE:
+                data_dictionary_copy = data_dictionary_copy[~data_dictionary_copy[current_column].apply(
+                    lambda x: check_interval_condition(x, left_margin_list[index], right_margin_list[index],
+                                                       closure_type_list[index]))]
+            else:
+                raise ValueError("The filter type is not valid")
+
+    return data_dictionary_copy

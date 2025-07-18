@@ -65,7 +65,8 @@ class DataTransformationsSimpleTest(unittest.TestCase):
             self.execute_transform_filter_rows_special_values,
             self.execute_transform_filter_rows_range,
             self.execute_transform_math_operation,
-            self.execute_transform_join
+            self.execute_transform_join,
+            self.execute_transform_filter_rows_date_range
         ]
 
         print_and_log("")
@@ -3856,7 +3857,7 @@ class DataTransformationsSimpleTest(unittest.TestCase):
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 8 Passed: got the dataframe expected")
 
-        # Caso 8 - Una columna con nulos
+        # Caso 9 - Una columna con nulos
         datadic = pd.DataFrame(
             {'A': [np.nan, 'np.nan', None, np.nan, np.nan],
              'B': [np.nan, 'np.nan', None, np.nan, np.nan],
@@ -3873,3 +3874,317 @@ class DataTransformationsSimpleTest(unittest.TestCase):
                                                                  field_out='C', dictionary=dictionary)
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 9 Passed: got the dataframe expected")
+
+        print_and_log("")
+        print_and_log("-----------------------------------------------------------")
+        print_and_log("")
+
+    def execute_transform_filter_rows_date_range(self):
+        """
+        Execute the simple tests of the function transform_filter_rows_date_range
+        """
+        print_and_log("Testing transform_filter_rows_date_range Function")
+        print_and_log("")
+        print_and_log("Casos Básicos añadidos:")
+        print_and_log("")
+        print_and_log("-----------------------------------------------------------")
+        print_and_log("")
+
+        # Caso 1 - Filtrar fechas con un solo rango y una column (INCLUDE)
+        datadic = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01-01', '2023-02-15', '2023-06-30', '2023-12-31']),
+            'B': [1, 2, 3, 4]
+        })
+        expected_df = pd.DataFrame({
+            'A': pd.to_datetime(['2023-02-15', '2023-06-30']),
+            'B': [2, 3]
+        })
+        expected_df.index = [1, 2]
+
+        result_df = self.data_transformations.transform_filter_rows_date_range(
+            data_dictionary=datadic.copy(),
+            columns=['A'],
+            left_margin_list=[pd.Timestamp('2023-02-01')],
+            right_margin_list=[pd.Timestamp('2023-07-01')],
+            filter_type=FilterType.INCLUDE,
+            closure_type_list=[Closure.closedClosed]
+        )
+        pd.testing.assert_frame_equal(expected_df, result_df)
+        print_and_log("Test Case 1 Passed: got the expected dataframe")
+
+        # Caso 2 - Filtrar fechas con un solo rango y una columna (EXCLUDE)
+        datadic = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01-01', '2023-02-15', '2023-06-30', '2023-12-31']),
+            'B': [1, 2, 3, 4]
+        })
+        expected_df = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01-01', '2023-12-31']),
+            'B': [1, 4]
+        })
+        expected_df.index = [0, 3]
+
+        result_df = self.data_transformations.transform_filter_rows_date_range(
+            data_dictionary=datadic.copy(),
+            columns=['A'],
+            left_margin_list=[pd.Timestamp('2023-02-01')],
+            right_margin_list=[pd.Timestamp('2023-07-01')],
+            filter_type=FilterType.EXCLUDE,
+            closure_type_list=[Closure.closedClosed]
+        )
+        pd.testing.assert_frame_equal(expected_df, result_df)
+        print_and_log("Test Case 2 Passed: got the expected dataframe")
+
+        # Caso 3 - Prueba con múltiples columnas de fecha (INCLUDE)
+        datadic = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01-15', '2023-03-20', '2023-07-10', '2023-11-05']),
+            'B': pd.to_datetime(['2023-02-01', '2023-04-15', '2023-08-20', '2023-12-25']),
+            'C': [1, 2, 3, 4]
+        })
+        expected_df = pd.DataFrame({
+            'A': pd.to_datetime(['2023-03-20']),
+            'B': pd.to_datetime(['2023-04-15']),
+            'C': [2]
+        })
+        expected_df.index = [1]
+
+        result_df = self.data_transformations.transform_filter_rows_date_range(
+            data_dictionary=datadic.copy(),
+            columns=['A', 'B'],
+            left_margin_list=[pd.Timestamp('2023-03-01')],
+            right_margin_list=[pd.Timestamp('2023-05-01')],
+            filter_type=FilterType.INCLUDE,
+            closure_type_list=[Closure.closedClosed]
+        )
+        pd.testing.assert_frame_equal(expected_df, result_df)
+        print_and_log("Test Case 3 Passed: got the expected dataframe")
+
+        # Caso 4 - Prueba con rango abierto-abierto (INCLUDE)
+        datadic = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01-01', '2023-02-01', '2023-03-01', '2023-04-01']),
+            'B': [1, 2, 3, 4]
+        })
+        expected_df = pd.DataFrame({
+            'A': pd.to_datetime(['2023-02-01', '2023-03-01']),
+            'B': [2, 3]
+        })
+        expected_df.index = [1, 2]
+
+        result_df = self.data_transformations.transform_filter_rows_date_range(
+            data_dictionary=datadic.copy(),
+            columns=['A'],
+            left_margin_list=[pd.Timestamp('2023-01-01')],
+            right_margin_list=[pd.Timestamp('2023-04-01')],
+            filter_type=FilterType.INCLUDE,
+            closure_type_list=[Closure.openOpen]
+        )
+        pd.testing.assert_frame_equal(expected_df, result_df)
+        print_and_log("Test Case 4 Passed: got the expected dataframe")
+
+        # Caso 5 - Prueba con rango cerrado-abierto (INCLUDE)
+        datadic = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01-01', '2023-02-01', '2023-03-01', '2023-04-01']),
+            'B': [1, 2, 3, 4]
+        })
+        expected_df = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01-01', '2023-02-01', '2023-03-01']),
+            'B': [1, 2, 3]
+        })
+        expected_df.index = [0, 1, 2]
+
+        result_df = self.data_transformations.transform_filter_rows_date_range(
+            data_dictionary=datadic.copy(),
+            columns=['A'],
+            left_margin_list=[pd.Timestamp('2023-01-01')],
+            right_margin_list=[pd.Timestamp('2023-04-01')],
+            filter_type=FilterType.INCLUDE,
+            closure_type_list=[Closure.closedOpen]
+        )
+        pd.testing.assert_frame_equal(expected_df, result_df)
+        print_and_log("Test Case 5 Passed: got the expected dataframe")
+
+        # Caso 6 - Prueba con rango abierto-cerrado (INCLUDE)
+        datadic = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01-01', '2023-02-01', '2023-03-01', '2023-04-01']),
+            'B': [1, 2, 3, 4]
+        })
+        expected_df = pd.DataFrame({
+            'A': pd.to_datetime(['2023-02-01', '2023-03-01', '2023-04-01']),
+            'B': [2, 3, 4]
+        })
+        expected_df.index = [1, 2, 3]
+
+        result_df = self.data_transformations.transform_filter_rows_date_range(
+            data_dictionary=datadic.copy(),
+            columns=['A'],
+            left_margin_list=[pd.Timestamp('2023-01-01')],
+            right_margin_list=[pd.Timestamp('2023-04-01')],
+            filter_type=FilterType.INCLUDE,
+            closure_type_list=[Closure.openClosed]
+        )
+        pd.testing.assert_frame_equal(expected_df, result_df)
+        print_and_log("Test Case 6 Passed: got the expected dataframe")
+
+        # Caso 7 - Prueba con columna de fecha incorrecta
+        datadic = pd.DataFrame({
+            'A': ['2023-01-01', '2023-02-01', '2023-03-01'],
+            'B': [1, 2, 3]
+        })
+
+        with self.assertRaises(ValueError):
+            self.data_transformations.transform_filter_rows_date_range(
+                data_dictionary=datadic.copy(),
+                columns=['A'],
+                left_margin_list=[pd.Timestamp('2023-01-01')],
+                right_margin_list=[pd.Timestamp('2023-03-01')],
+                filter_type=FilterType.INCLUDE,
+                closure_type_list=[Closure.closedClosed]
+            )
+        print_and_log("Test Case 7 Passed: expected ValueError, got ValueError")
+
+        # Caso 8 - Prueba con columna inexistente
+        datadic = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01-01', '2023-02-01', '2023-03-01']),
+            'B': [1, 2, 3]
+        })
+
+        with self.assertRaises(ValueError):
+            self.data_transformations.transform_filter_rows_date_range(
+                data_dictionary=datadic.copy(),
+                columns=['C'],
+                left_margin_list=[pd.Timestamp('2023-01-01')],
+                right_margin_list=[pd.Timestamp('2023-03-01')],
+                filter_type=FilterType.INCLUDE,
+                closure_type_list=[Closure.closedClosed]
+            )
+        print_and_log("Test Case 8 Passed: expected ValueError, got ValueError")
+
+        # Caso 9 - Prueba con tipo de filtro inválido
+        datadic = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01-01', '2023-02-01', '2023-03-01']),
+            'B': [1, 2, 3]
+        })
+
+        with self.assertRaises(ValueError):
+            self.data_transformations.transform_filter_rows_date_range(
+                data_dictionary=datadic.copy(),
+                columns=['A'],
+                left_margin_list=[pd.Timestamp('2023-01-01')],
+                right_margin_list=[pd.Timestamp('2023-03-01')],
+                filter_type=None,
+                closure_type_list=[Closure.closedClosed]
+            )
+        print_and_log("Test Case 9 Passed: expected ValueError, got ValueError")
+
+        # Caso 10 - Prueba con múltiples rangos y exclusión
+        datadic = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01-15', '2023-03-20', '2023-07-10', '2023-11-05']),
+            'B': [1, 2, 3, 4]
+        })
+        expected_df = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01-15', '2023-07-10']),
+            'B': [1, 3]
+        })
+        expected_df.index = [0, 2]
+
+        result_df = self.data_transformations.transform_filter_rows_date_range(
+            data_dictionary=datadic.copy(),
+            columns=['A'],
+            left_margin_list=[pd.Timestamp('2023-03-01'), pd.Timestamp('2023-11-01')],
+            right_margin_list=[pd.Timestamp('2023-04-01'), pd.Timestamp('2023-12-01')],
+            filter_type=FilterType.EXCLUDE,
+            closure_type_list=[Closure.closedClosed, Closure.closedClosed]
+        )
+        pd.testing.assert_frame_equal(expected_df, result_df)
+        print_and_log("Test Case 10 Passed: got the expected dataframe")
+
+        # Caso 11 - Prueba con rango vacío
+        datadic = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01-01', '2023-02-01', '2023-03-01']),
+            'B': [1, 2, 3]
+        })
+        expected_df = pd.DataFrame({
+            'A': pd.to_datetime([]),
+            'B': []
+        }, dtype='int64')
+        expected_df['A'] = expected_df['A'].astype('datetime64[ns]')
+
+        result_df = self.data_transformations.transform_filter_rows_date_range(
+            data_dictionary=datadic.copy(),
+            columns=['A'],
+            left_margin_list=[pd.Timestamp('2024-01-01')],
+            right_margin_list=[pd.Timestamp('2024-12-31')],
+            filter_type=FilterType.INCLUDE,
+            closure_type_list=[Closure.closedClosed]
+        )
+        pd.testing.assert_frame_equal(expected_df, result_df)
+        print_and_log("Test Case 11 Passed: got the expected dataframe")
+
+        # Caso 12 - Prueba con fechas incluyendo zona horaria (convertidas a naive)
+        datadic = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01-01 12:00:00+00:00', '2023-01-01 14:00:00+00:00',
+                                '2023-01-01 16:00:00+00:00']).tz_localize(None),
+            'B': [1, 2, 3]
+        })
+        expected_df = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01-01 14:00:00']),
+            'B': [2]
+        })
+        expected_df.index = [1]
+
+        result_df = self.data_transformations.transform_filter_rows_date_range(
+            data_dictionary=datadic.copy(),
+            columns=['A'],
+            left_margin_list=[pd.Timestamp('2023-01-01 13:00:00')],
+            right_margin_list=[pd.Timestamp('2023-01-01 15:00:00')],
+            filter_type=FilterType.INCLUDE,
+            closure_type_list=[Closure.closedClosed]
+        )
+        pd.testing.assert_frame_equal(expected_df, result_df)
+        print_and_log("Test Case 12 Passed: got the expected dataframe")
+
+        # Caso 13 - Prueba con todas las fechas fuera del rango (EXCLUDE)
+        datadic = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01-01', '2023-02-01', '2023-03-01']),
+            'B': [1, 2, 3]
+        })
+        expected_df = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01-01', '2023-02-01', '2023-03-01']),
+            'B': [1, 2, 3]
+        })
+
+        result_df = self.data_transformations.transform_filter_rows_date_range(
+            data_dictionary=datadic.copy(),
+            columns=['A'],
+            left_margin_list=[pd.Timestamp('2024-01-01')],
+            right_margin_list=[pd.Timestamp('2024-12-31')],
+            filter_type=FilterType.EXCLUDE,
+            closure_type_list=[Closure.closedClosed]
+        )
+        pd.testing.assert_frame_equal(expected_df, result_df)
+        print_and_log("Test Case 13 Passed: got the expected dataframe")
+
+        # Caso 14 - Prueba con fechas en formato año-mes (sin día)
+        datadic = pd.DataFrame({
+            'A': pd.to_datetime(['2023-01', '2023-06', '2023-12']),
+            'B': [1, 2, 3]
+        })
+        expected_df = pd.DataFrame({
+            'A': pd.to_datetime(['2023-06']),
+            'B': [2]
+        })
+        expected_df.index = [1]
+
+        result_df = self.data_transformations.transform_filter_rows_date_range(
+            data_dictionary=datadic.copy(),
+            columns=['A'],
+            left_margin_list=[pd.Timestamp('2023-04')],
+            right_margin_list=[pd.Timestamp('2023-08')],
+            filter_type=FilterType.INCLUDE,
+            closure_type_list=[Closure.closedClosed]
+        )
+        pd.testing.assert_frame_equal(expected_df, result_df)
+        print_and_log("Test Case 14 Passed: got the expected dataframe")
+
+        print_and_log("")
+        print_and_log("-----------------------------------------------------------")
+        print_and_log("")
