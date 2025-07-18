@@ -832,7 +832,7 @@ def check_suspect_far_date_value(data_dictionary: pd.DataFrame, field: str = Non
     """
     Checks if date/datetime fields have values that are suspiciously far from the current date.
     A date is considered "far" if it is more than 50 years away from the current date.
-    If so, logs a warning indicating a possible data smell.
+    If so, log a warning indicating a possible data smell.
 
     :param data_dictionary: (pd.DataFrame) DataFrame containing the data
     :param field: (str) Optional field to check; if None, checks all datetime fields
