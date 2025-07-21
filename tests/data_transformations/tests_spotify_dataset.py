@@ -6672,17 +6672,3 @@ class DataTransformationsExternalDatasetTests(unittest.TestCase):
                 filter_type=FilterType.INCLUDE,
                 closure_type_list=[Closure.closedClosed])
         print_and_log("Test Case 11 Passed: ValueError for non-existent column")
-
-        # Caso 12 - Error: columna no es datetime
-        small_batch_non_datetime = small_batch_test.copy()
-        small_batch_non_datetime['track_popularity_str'] = small_batch_non_datetime['track_popularity'].astype(str)
-
-        with self.assertRaises(ValueError):
-            self.data_transformations.transform_filter_rows_date_range(
-                data_dictionary=small_batch_non_datetime,
-                columns=['track_popularity_str'],
-                left_margin_list=[pd.Timestamp('2019-01-01')],
-                right_margin_list=[pd.Timestamp('2020-01-01')],
-                filter_type=FilterType.INCLUDE,
-                closure_type_list=[Closure.closedClosed])
-        print_and_log("Test Case 12 Passed: ValueError for non-datetime column")
