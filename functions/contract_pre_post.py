@@ -203,17 +203,19 @@ def check_fix_value_range(value: Union[str, float, datetime, int], data_dictiona
                 raise ValueError("quant_rel and quant_abs should be None when belong_op is NOTBELONG")
 
 
-def check_interval_range_float(left_margin: float, right_margin: float, data_dictionary: pd.DataFrame,
-                               closure_type: Closure, belong_op: Belong, field: str = None,
-                               origin_function: str = None) -> bool:
+def check_interval_range(left_margin: Union[float, str],
+                         right_margin: Union[float, str],
+                         data_dictionary: pd.DataFrame,
+                         closure_type: Closure, belong_op: Belong, field: str = None,
+                         origin_function: str = None) -> bool:
     """
         Check if the data_dictionary meets the condition of belong_op in the interval
         defined by leftMargin and rightMargin with the closure_type.
         If the field is None, it does the check in the whole data_dictionary.
         If not, it does the check in the column specified by the field.
 
-        :param left_margin: Float value which represents the left margin of the interval
-        :param right_margin: float value which represents the right margin of the interval
+        :param left_margin: Float or str value which represents the left margin of the interval
+        :param right_margin: Float or str value which represents the right margin of the interval
         :param data_dictionary: data dictionary
         :param closure_type: enum operator which can be Closure.openOpen=0, Closure.openClosed=1,
                             Closure.closedOpen=2, Closure.closedClosed=3
@@ -223,29 +225,56 @@ def check_interval_range_float(left_margin: float, right_margin: float, data_dic
 
         :return: If data_dictionary meets the condition of belong_op in the interval defined by leftMargin and rightMargin with the closure_type
     """
+    # Convert datetime to pd.Timestamp for consistency
+    if isinstance(left_margin, str):
+        left_margin = pd.to_datetime(left_margin)
+    if isinstance(right_margin, str):
+        right_margin = pd.to_datetime(right_margin)
+
     if left_margin > right_margin:
         raise ValueError("leftMargin should be less than or equal to rightMargin")  # Case 0
 
-    def in_interval(value, left_margin_def: float, right_margin_def: float, closure_type_def: Closure) -> bool:
-        if closure_type_def == Closure.openOpen:
-            return left_margin_def < value < right_margin_def
-        elif closure_type_def == Closure.openClosed:
-            return left_margin_def < value <= right_margin_def
-        elif closure_type_def == Closure.closedOpen:
-            return left_margin_def <= value < right_margin_def
-        elif closure_type_def == Closure.closedClosed:
-            return left_margin_def <= value <= right_margin_def
+    def in_interval(value, left_margin_def: Union[float, pd.Timestamp],
+                   right_margin_def: Union[float, pd.Timestamp], closure_type_def: Closure) -> bool:
+        try:
+            if closure_type_def == Closure.openOpen:
+                return left_margin_def < value < right_margin_def
+            elif closure_type_def == Closure.openClosed:
+                return left_margin_def < value <= right_margin_def
+            elif closure_type_def == Closure.closedOpen:
+                return left_margin_def <= value < right_margin_def
+            elif closure_type_def == Closure.closedClosed:
+                return left_margin_def <= value <= right_margin_def
+        except TypeError:
+            # Handle comparison between incompatible types (e.g., float and datetime)
+            return False
         print_and_log(
             f"Error - Origin function: {origin_function} - value {value} is not in the interval [{left_margin_def}, {right_margin_def}] with closure type {closure_type_def}")
         return False
 
-    # Column selection based on a field
+    # Column selection based on a field and data type
     if field is None:
-        columns = data_dictionary.select_dtypes(include=[np.number, 'Int64']).columns
+        # Include both numeric and datetime columns
+        if isinstance(left_margin, pd.Timestamp):
+            columns = data_dictionary.select_dtypes(include=['datetime64', 'datetimetz']).columns
+        else:
+            columns = data_dictionary.select_dtypes(include=[np.number, 'Int64']).columns
     else:
         if field not in data_dictionary.columns:
             raise ValueError(f"DataField '{field}' not found in data_dictionary.")
-        if not pd.api.types.is_numeric_dtype(data_dictionary[field]):
+
+        # Check if field type is compatible with margin types
+        is_datetime_field = pd.api.types.is_datetime64_any_dtype(data_dictionary[field])
+        is_numeric_field = pd.api.types.is_numeric_dtype(data_dictionary[field])
+        is_datetime_margin = isinstance(left_margin, pd.Timestamp)
+
+        if is_datetime_margin and not is_datetime_field:
+            if belong_op == Belong.BELONG:
+                print_and_log(f"Error - Origin function: {origin_function} - DataField {field} is not datetime type for datetime interval.")
+                return False
+            elif belong_op == Belong.NOTBELONG:
+                return True
+        elif not is_datetime_margin and not is_numeric_field:
             if belong_op == Belong.BELONG:
                 print_and_log(f"Error - Origin function: {origin_function} - DataField {field} is not numeric.")
                 return False

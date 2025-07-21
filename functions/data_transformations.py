@@ -1429,7 +1429,7 @@ def transform_filter_rows_date_range(data_dictionary: pd.DataFrame, columns: lis
                 raise ValueError(f"The DataField {current_column} does not exist in the dataframe")
 
             # Verify the column contains datetime values
-            if not pd.api.types.is_datetime64_any_dtype(data_dictionary_copy[current_column]):
+            if not pd.api.types.is_datetime64_any_dtype(data_dictionary_copy[current_column]) and data_dictionary_copy[current_column].dtype != 'object':
                 raise ValueError(f"The DataField {current_column} is not a datetime column")
 
             # Exclude or include the values within the interval [left_margin, right_margin] in the column
@@ -1438,6 +1438,7 @@ def transform_filter_rows_date_range(data_dictionary: pd.DataFrame, columns: lis
                     lambda x: check_interval_condition(x, left_margin_list[index], right_margin_list[index],
                                                        closure_type_list[index]))]
             elif filter_type == FilterType.EXCLUDE:
+                # Filter out the rows that do not satisfy the interval condition
                 data_dictionary_copy = data_dictionary_copy[~data_dictionary_copy[current_column].apply(
                     lambda x: check_interval_condition(x, left_margin_list[index], right_margin_list[index],
                                                        closure_type_list[index]))]

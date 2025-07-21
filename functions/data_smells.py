@@ -667,7 +667,7 @@ def check_date_time_consistency(data_dictionary: pd.DataFrame, expected_type: Da
     :param field: (str) Optional field to check; if None, checks all datetime fields
     :param origin_function: (str) Optional name of the function that called this function, for logging purposes
 
-    :return: (bool) True if a format is consistent, False otherwise
+    :return: (bool) True if the format is consistent, False otherwise
     """
     if expected_type not in [DataType.DATE, DataType.DATETIME]:
         raise ValueError("expected_type must be either DataType.DATE or DataType.DATETIME")
@@ -781,10 +781,18 @@ def check_suspect_date_value(data_dictionary: pd.DataFrame, min_date: str, max_d
     :return: (bool) False if a smell is detected, True otherwise.
     """
     try:
+        # Parse dates without timezone handling first, then convert to naive
         min_date_dt = pd.to_datetime(min_date)
         max_date_dt = pd.to_datetime(max_date)
-    except ValueError:
-        raise ValueError("Invalid min_date or max_date format. Please use a format recognizable by pandas.to_datetime.")
+
+        # Convert timezone-aware datetime to naive if needed
+        if hasattr(min_date_dt, 'tz') and min_date_dt.tz is not None:
+            min_date_dt = min_date_dt.tz_localize(None)
+        if hasattr(max_date_dt, 'tz') and max_date_dt.tz is not None:
+            max_date_dt = max_date_dt.tz_localize(None)
+
+    except (ValueError, TypeError) as e:
+        raise ValueError(f"Invalid min_date or max_date format. Please use a format recognizable by pandas.to_datetime. Error: {str(e)}")
 
     if min_date_dt > max_date_dt:
         raise ValueError("min_date cannot be greater than max_date")
@@ -921,7 +929,7 @@ def check_number_string_size(data_dictionary: pd.DataFrame, field: str = None, o
             column = data_dictionary[col_name].dropna()
             if not column.empty:
                 # Check for values between -1 and 1 (excluding -1 and 1)
-                small_numbers = (column > -1) & (column < 1) & (column != 0)  # exclude zero as it's a common valid value
+                small_numbers = (column > -1) & (column < 1) & (column != 0) # exclude zero as it's a common valid value
                 if small_numbers.any():
                     small_numbers_count = small_numbers.sum()
                     small_numbers_list = column[small_numbers].tolist()

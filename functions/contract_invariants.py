@@ -2051,3 +2051,130 @@ def check_inv_filter_columns(data_dictionary_in: pd.DataFrame, data_dictionary_o
             result = False
 
     return result
+
+
+def check_inv_filter_rows_date_range(data_dictionary_in: pd.DataFrame,
+                                     data_dictionary_out: pd.DataFrame,
+                                     columns: list[str],
+                                     left_margin_list: list[pd.Timestamp] = None,
+                                     right_margin_list: list[pd.Timestamp] = None,
+                                     filter_type: FilterType = None,
+                                     closure_type_list: list[Closure] = None,
+                                     origin_function: str = None) -> bool:
+    """
+    Validates the invariant for the FilterRows - DateRange relation by verifying that after
+    applying the filtering condition on the input data, the frequency count (value_counts)
+    of each possible value in every specified column matches the corresponding count in the output data.
+
+    Parameters:
+      data_dictionary_in (pd.DataFrame): Input dataframe.
+      data_dictionary_out (pd.DataFrame): Output dataframe.
+      columns (list[str]): List of column names to apply the filter.
+      left_margin_list (list[pd.Timestamp]): List of left margin timestamp values for each column.
+      right_margin_list (list[pd.Timestamp]): List of right margin timestamp values for each column.
+      filter_type (FilterType): The type of filter to apply (INCLUDE or EXCLUDE).
+      closure_type_list (list[Closure]): List of closure types for the filtering intervals.
+      origin_function (str): Name of the function that calls this function (for logging).
+
+    Returns:
+      bool: True if the frequency counts match for all specified columns, False otherwise.
+    """
+    # Validate that all parameters are provided
+    if (columns is None or left_margin_list is None or
+            right_margin_list is None or closure_type_list is None or
+            filter_type is None):
+        raise ValueError(
+            "All parameters (DataFields, left_margin_list, right_margin_list, closure_type_list, filter_type) are required.")
+
+    # Validate that all list parameters have the same length
+    if not (len(columns) == len(left_margin_list) == len(right_margin_list) == len(closure_type_list)):
+        raise ValueError(
+            "The lists DataFields, left_margin_list, right_margin_list, and closure_type_list must have the same length.")
+
+    # Validate that the specified columns exist in both dataframes
+    for col in columns:
+        if col not in data_dictionary_in.columns:
+            raise ValueError(f"DataField {col} does not exist in the input dataframe.")
+        if col not in data_dictionary_out.columns:
+            raise ValueError(f"DataField {col} does not exist in the output dataframe.")
+
+    # Validate that the specified columns contain datetime values
+    for col in columns:
+        if (not pd.api.types.is_datetime64_any_dtype(data_dictionary_in[col])
+                and data_dictionary_out[col].dtype != 'object'):
+            raise ValueError(f"The DataField {col} is not a datetime column in the input dataframe.")
+        if (not pd.api.types.is_datetime64_any_dtype(data_dictionary_out[col])
+                and data_dictionary_out[col].dtype != 'object'):
+            raise ValueError(f"The DataField {col} is not a datetime column in the output dataframe.")
+
+    kept_row_indices = []
+
+    # Iterate row by row using the DataFrame's index
+    for row_actual_index in data_dictionary_in.index:
+        current_row_should_be_kept = True  # Assume the row will be kept, unless a condition fails
+
+        # For the current row, check conditions for all specified columns
+        for col_list_idx, col_name in enumerate(columns):
+            left_margin = left_margin_list[col_list_idx]
+            right_margin = right_margin_list[col_list_idx]
+            closure = closure_type_list[col_list_idx]
+
+            # Access the cell value using the current row's actual index and the column name
+            value_in_cell = data_dictionary_in.loc[row_actual_index, col_name]
+
+            condition_met_for_cell = check_interval_condition(value_in_cell, left_margin, right_margin, closure)
+
+            if filter_type == FilterType.INCLUDE:
+                if not condition_met_for_cell:
+                    current_row_should_be_kept = False
+                    break  # Stop checking other columns for this row; it won't be included
+            elif filter_type == FilterType.EXCLUDE:
+                if condition_met_for_cell:  # If the condition is met, the value is IN the interval to be excluded
+                    current_row_should_be_kept = False
+                    break  # Stop checking other columns for this row; it will be excluded
+            else:
+                raise ValueError(f"Unknown filter type: {filter_type}")
+
+        if current_row_should_be_kept:
+            kept_row_indices.append(row_actual_index)
+
+    # Create the DataFrame that is expected after filtering data_dictionary_in
+    expected_filtered_df = data_dictionary_in.loc[kept_row_indices]
+
+    for idx, col in enumerate(columns):
+        # Get the frequency counts for each value in both the filtered input and output columns
+        counts_in = expected_filtered_df[col].value_counts(dropna=False).to_dict()
+        counts_out = data_dictionary_out[col].value_counts(dropna=False).to_dict()
+
+        for key in list(counts_in.keys()):  # iterate over a copy of keys
+            if pd.isna(key):
+                counts_in['NaN'] = counts_in.pop(key)
+
+        for key in list(counts_out.keys()):  # iterate over a copy of keys
+            if pd.isna(key):
+                counts_out['NaN'] = counts_out.pop(key)
+
+        # Compare the frequency counts and identify differences
+        if counts_in != counts_out:
+            # Find values that were incorrectly filtered based on the date range conditions
+            incorrectly_filtered = []
+            all_values = set(counts_in.keys()) | set(counts_out.keys())
+
+            for value in all_values:
+                count_in = counts_in.get(value, 0)
+                count_out = counts_out.get(value, 0)
+                if count_in != count_out:
+                    if filter_type == FilterType.INCLUDE:
+                        if count_in > count_out:  # Should have been included but was filtered out
+                            incorrectly_filtered.append(f"{value}({count_in - count_out} times)")
+                    else:  # EXCLUDE
+                        if count_out > count_in:  # Should have been filtered but wasn't
+                            incorrectly_filtered.append(f"{value}({count_out - count_in} times)")
+
+            date_range_info = f"[{left_margin_list[idx]}, {right_margin_list[idx]}] with {closure_type_list[idx]}"
+            print_and_log(f"Error in function: {origin_function} and in DataField: {col}")
+            print_and_log(
+                f"For date range {date_range_info}, values incorrectly filtered: {', '.join(str(x) for x in incorrectly_filtered)}")
+            return False
+
+    return True
