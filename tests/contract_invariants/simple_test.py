@@ -64,7 +64,8 @@ class InvariantsSimpleTest(unittest.TestCase):
             self.execute_checkInv_filter_rows_primitive,
             self.execute_checkInv_filter_rows_range,
             self.execute_checkInv_filter_rows_special_values,
-            self.execute_checkInv_filter_columns
+            self.execute_checkInv_filter_columns,
+            self.execute_checkInv_filter_rows_date_range
         ]
 
         print_and_log("")
@@ -6733,3 +6734,381 @@ class InvariantsSimpleTest(unittest.TestCase):
         print_and_log("Test Case 12 Passed: Expected False, got False")
 
         print_and_log("All filter_columns tests completed successfully!")
+
+
+    def execute_checkInv_filter_rows_date_range(self):
+        """
+        Execute the simple tests of the function checkInv_filter_rows_date_range
+        """
+        print_and_log("Testing checkInv_filter_rows_date_range Function")
+        print_and_log("")
+        print_and_log("Casos Básicos añadidos:")
+
+        # Caso 1: Filtro INCLUDE con intervalo cerrado [2020-01-01, 2020-12-31]
+        datadic = pd.DataFrame({
+            'fecha': pd.to_datetime(['2019-12-31', '2020-06-15', '2020-12-31', '2021-01-01', '2020-03-20']),
+            'valor': [10, 20, 30, 40, 50]
+        })
+        expected_df = pd.DataFrame({
+            'fecha': pd.to_datetime(['2020-06-15', '2020-12-31', '2020-03-20']),
+            'valor': [20, 30, 50]
+        }).reset_index(drop=True)
+
+        result = self.invariants.check_inv_filter_rows_date_range(
+            data_dictionary_in=datadic.copy(),
+            data_dictionary_out=expected_df.copy(),
+            columns=['fecha'],
+            left_margin_list=[pd.Timestamp('2020-01-01')],
+            right_margin_list=[pd.Timestamp('2020-12-31')],
+            closure_type_list=[Closure.closedClosed],
+            filter_type=FilterType.INCLUDE,
+            origin_function='test_date_range_include_closed'
+        )
+        assert result is True, "Test Case 1 Failed: Expected True, but got False"
+        print_and_log("Test Case 1 Passed: Expected True, got True")
+
+        # Caso 2: Filtro EXCLUDE con intervalo cerrado [2020-01-01, 2020-12-31]
+        expected_df_2 = pd.DataFrame({
+            'fecha': pd.to_datetime(['2019-12-31', '2021-01-01']),
+            'valor': [10, 40]
+        }).reset_index(drop=True)
+
+        result = self.invariants.check_inv_filter_rows_date_range(
+            data_dictionary_in=datadic.copy(),
+            data_dictionary_out=expected_df_2.copy(),
+            columns=['fecha'],
+            left_margin_list=[pd.Timestamp('2020-01-01')],
+            right_margin_list=[pd.Timestamp('2020-12-31')],
+            closure_type_list=[Closure.closedClosed],
+            filter_type=FilterType.EXCLUDE,
+            origin_function='test_date_range_exclude_closed'
+        )
+        assert result is True, "Test Case 2 Failed: Expected True, but got False"
+        print_and_log("Test Case 2 Passed: Expected True, got True")
+
+        # Caso 3: Filtro INCLUDE con intervalo abierto (2020-01-01, 2020-12-31)
+        expected_df_3 = pd.DataFrame({
+            'fecha': pd.to_datetime(['2020-06-15', '2020-03-20']),
+            'valor': [20, 50]
+        }).reset_index(drop=True)
+
+        result = self.invariants.check_inv_filter_rows_date_range(
+            data_dictionary_in=datadic.copy(),
+            data_dictionary_out=expected_df_3.copy(),
+            columns=['fecha'],
+            left_margin_list=[pd.Timestamp('2020-01-01')],
+            right_margin_list=[pd.Timestamp('2020-12-31')],
+            closure_type_list=[Closure.openOpen],
+            filter_type=FilterType.INCLUDE,
+            origin_function='test_date_range_include_open'
+        )
+        assert result is True, "Test Case 3 Failed: Expected True, but got False"
+        print_and_log("Test Case 3 Passed: Expected True, got True")
+
+        # Caso 4: Filtro INCLUDE con intervalo semi-abierto [2020-01-01, 2020-12-31)
+        expected_df_4 = pd.DataFrame({
+            'fecha': pd.to_datetime(['2020-06-15', '2020-03-20']),
+            'valor': [20, 50]
+        }).reset_index(drop=True)
+
+        result = self.invariants.check_inv_filter_rows_date_range(
+            data_dictionary_in=datadic.copy(),
+            data_dictionary_out=expected_df_4.copy(),
+            columns=['fecha'],
+            left_margin_list=[pd.Timestamp('2020-01-01')],
+            right_margin_list=[pd.Timestamp('2020-12-31')],
+            closure_type_list=[Closure.closedOpen],
+            filter_type=FilterType.INCLUDE,
+            origin_function='test_date_range_include_closed_open'
+        )
+        assert result is True, "Test Case 4 Failed: Expected True, but got False"
+        print_and_log("Test Case 4 Passed: Expected True, got True")
+
+        # Caso 5: Filtro INCLUDE con intervalo semi-abierto (2020-01-01, 2020-12-31]
+        expected_df_5 = pd.DataFrame({
+            'fecha': pd.to_datetime(['2020-06-15', '2020-12-31', '2020-03-20']),
+            'valor': [20, 30, 50]
+        }).reset_index(drop=True)
+
+        result = self.invariants.check_inv_filter_rows_date_range(
+            data_dictionary_in=datadic.copy(),
+            data_dictionary_out=expected_df_5.copy(),
+            columns=['fecha'],
+            left_margin_list=[pd.Timestamp('2020-01-01')],
+            right_margin_list=[pd.Timestamp('2020-12-31')],
+            closure_type_list=[Closure.openClosed],
+            filter_type=FilterType.INCLUDE,
+            origin_function='test_date_range_include_open_closed'
+        )
+        assert result is True, "Test Case 5 Failed: Expected True, but got False"
+        print_and_log("Test Case 5 Passed: Expected True, got True")
+
+        # Caso 6: Múltiples columnas de fechas con filtro INCLUDE
+        datadic_multi = pd.DataFrame({
+            'fecha1': pd.to_datetime(['2020-01-15', '2020-06-15', '2019-12-31', '2021-01-01']),
+            'fecha2': pd.to_datetime(['2020-02-10', '2020-07-20', '2019-11-30', '2021-02-01']),
+            'valor': [10, 20, 30, 40]
+        })
+        expected_df_6 = pd.DataFrame({
+            'fecha1': pd.to_datetime(['2020-01-15', '2020-06-15']),
+            'fecha2': pd.to_datetime(['2020-02-10', '2020-07-20']),
+            'valor': [10, 20]
+        }).reset_index(drop=True)
+
+        result = self.invariants.check_inv_filter_rows_date_range(
+            data_dictionary_in=datadic_multi.copy(),
+            data_dictionary_out=expected_df_6.copy(),
+            columns=['fecha1', 'fecha2'],
+            left_margin_list=[pd.Timestamp('2020-01-01'), pd.Timestamp('2020-01-01')],
+            right_margin_list=[pd.Timestamp('2020-12-31'), pd.Timestamp('2020-12-31')],
+            closure_type_list=[Closure.closedClosed, Closure.closedClosed],
+            filter_type=FilterType.INCLUDE,
+            origin_function='test_date_range_multiple_columns'
+        )
+        assert result is True, "Test Case 6 Failed: Expected True, but got False"
+        print_and_log("Test Case 6 Passed: Expected True, got True")
+
+        # Caso 7: DataFrame con valores NaN en fechas
+        datadic_nan = pd.DataFrame({
+            'fecha': pd.to_datetime(['2020-01-15', None, '2020-06-15', '2019-12-31']),
+            'valor': [10, 20, 30, 40]
+        })
+        expected_df_7 = pd.DataFrame({
+            'fecha': pd.to_datetime(['2020-01-15', '2020-06-15']),
+            'valor': [10, 30]
+        }).reset_index(drop=True)
+
+        result = self.invariants.check_inv_filter_rows_date_range(
+            data_dictionary_in=datadic_nan.copy(),
+            data_dictionary_out=expected_df_7.copy(),
+            columns=['fecha'],
+            left_margin_list=[pd.Timestamp('2020-01-01')],
+            right_margin_list=[pd.Timestamp('2020-12-31')],
+            closure_type_list=[Closure.closedClosed],
+            filter_type=FilterType.INCLUDE,
+            origin_function='test_date_range_with_nan'
+        )
+        assert result is True, "Test Case 7 Failed: Expected True, but got False"
+        print_and_log("Test Case 7 Passed: Expected True, got True")
+
+        # Caso 8: Fecha con hora específica
+        datadic_time = pd.DataFrame({
+            'fecha': pd.to_datetime(['2020-06-15 10:30:00', '2020-06-15 14:20:00', '2020-06-16 09:15:00']),
+            'valor': [100, 200, 300]
+        })
+        expected_df_10 = pd.DataFrame({
+            'fecha': pd.to_datetime(['2020-06-15 10:30:00', '2020-06-15 14:20:00']),
+            'valor': [100, 200]
+        }).reset_index(drop=True)
+
+        result = self.invariants.check_inv_filter_rows_date_range(
+            data_dictionary_in=datadic_time.copy(),
+            data_dictionary_out=expected_df_10.copy(),
+            columns=['fecha'],
+            left_margin_list=[pd.Timestamp('2020-06-15 00:00:00')],
+            right_margin_list=[pd.Timestamp('2020-06-15 23:59:59')],
+            closure_type_list=[Closure.closedClosed],
+            filter_type=FilterType.INCLUDE,
+            origin_function='test_date_range_with_time'
+        )
+        assert result is True, "Test Case 8 Failed: Expected True, but got False"
+        print_and_log("Test Case 8 Passed: Expected True, got True")
+
+        # Caso 9: Resultado incorrecto (debería fallar)
+        wrong_df = pd.DataFrame({
+            'fecha': pd.to_datetime(['2019-12-31', '2020-06-15']),  # Incluye fecha fuera del rango
+            'valor': [10, 20]
+        }).reset_index(drop=True)
+
+        result = self.invariants.check_inv_filter_rows_date_range(
+            data_dictionary_in=datadic.copy(),
+            data_dictionary_out=wrong_df.copy(),
+            columns=['fecha'],
+            left_margin_list=[pd.Timestamp('2020-01-01')],
+            right_margin_list=[pd.Timestamp('2020-12-31')],
+            closure_type_list=[Closure.closedClosed],
+            filter_type=FilterType.INCLUDE,
+            origin_function='test_date_range_wrong_result'
+        )
+        assert result is False, "Test Case 9 Failed: Expected False, but got True"
+        print_and_log("Test Case 9 Passed: Expected False, got False")
+
+        # Caso 10: Error - columna no existe en DataFrame de entrada
+        expected_exception = ValueError
+        with self.assertRaises(expected_exception):
+            self.invariants.check_inv_filter_rows_date_range(
+                data_dictionary_in=datadic.copy(),
+                data_dictionary_out=expected_df.copy(),
+                columns=['fecha_inexistente'],
+                left_margin_list=[pd.Timestamp('2020-01-01')],
+                right_margin_list=[pd.Timestamp('2020-12-31')],
+                closure_type_list=[Closure.closedClosed],
+                filter_type=FilterType.INCLUDE,
+                origin_function='test_nonexistent_column'
+            )
+        print_and_log("Test Case 10 Passed: Expected ValueError, got ValueError")
+
+        # Caso 11: Error - parámetros None
+        with self.assertRaises(expected_exception):
+            self.invariants.check_inv_filter_rows_date_range(
+                data_dictionary_in=datadic.copy(),
+                data_dictionary_out=expected_df.copy(),
+                columns=None,
+                left_margin_list=[pd.Timestamp('2020-01-01')],
+                right_margin_list=[pd.Timestamp('2020-12-31')],
+                closure_type_list=[Closure.closedClosed],
+                filter_type=FilterType.INCLUDE,
+                origin_function='test_none_columns'
+            )
+        print_and_log("Test Case 11 Passed: Expected ValueError, got ValueError")
+
+        # Caso 12: Error - listas de diferentes longitudes
+        with self.assertRaises(expected_exception):
+            self.invariants.check_inv_filter_rows_date_range(
+                data_dictionary_in=datadic.copy(),
+                data_dictionary_out=expected_df.copy(),
+                columns=['fecha'],
+                left_margin_list=[pd.Timestamp('2020-01-01'), pd.Timestamp('2020-06-01')],  # Lista más larga
+                right_margin_list=[pd.Timestamp('2020-12-31')],
+                closure_type_list=[Closure.closedClosed],
+                filter_type=FilterType.INCLUDE,
+                origin_function='test_mismatched_lists'
+            )
+        print_and_log("Test Case 12 Passed: Expected ValueError, got ValueError")
+
+        # Caso 13: Filtro con fechas muy específicas (microsegundos)
+        datadic_micro = pd.DataFrame({
+            'fecha': pd.to_datetime(['2020-06-15 12:30:45.123456', '2020-06-15 12:30:45.123457',
+                                   '2020-06-15 12:30:45.123455']),
+            'valor': [1, 2, 3]
+        })
+        expected_df_15 = pd.DataFrame({
+            'fecha': pd.to_datetime(['2020-06-15 12:30:45.123456']),
+            'valor': [1]
+        }).reset_index(drop=True)
+
+        result = self.invariants.check_inv_filter_rows_date_range(
+            data_dictionary_in=datadic_micro.copy(),
+            data_dictionary_out=expected_df_15.copy(),
+            columns=['fecha'],
+            left_margin_list=[pd.Timestamp('2020-06-15 12:30:45.123456')],
+            right_margin_list=[pd.Timestamp('2020-06-15 12:30:45.123456')],
+            closure_type_list=[Closure.closedClosed],
+            filter_type=FilterType.INCLUDE,
+            origin_function='test_date_range_microseconds'
+        )
+        assert result is True, "Test Case 13 Failed: Expected True, but got False"
+        print_and_log("Test Case 13 Passed: Expected True, got True")
+
+        # Caso 14: Filtro EXCLUDE con múltiples intervalos en diferentes columnas
+        expected_df_16 = pd.DataFrame({
+            'fecha1': pd.to_datetime(['2019-12-31', '2021-01-01']),
+            'fecha2': pd.to_datetime(['2019-11-30', '2021-02-01']),
+            'valor': [30, 40]
+        }).reset_index(drop=True)
+
+        result = self.invariants.check_inv_filter_rows_date_range(
+            data_dictionary_in=datadic_multi.copy(),
+            data_dictionary_out=expected_df_16.copy(),
+            columns=['fecha1', 'fecha2'],
+            left_margin_list=[pd.Timestamp('2020-01-01'), pd.Timestamp('2020-01-01')],
+            right_margin_list=[pd.Timestamp('2020-12-31'), pd.Timestamp('2020-12-31')],
+            closure_type_list=[Closure.openOpen, Closure.openOpen],
+            filter_type=FilterType.EXCLUDE,
+            origin_function='test_date_range_exclude_multiple'
+        )
+        assert result is True, "Test Case 14 Failed: Expected True, but got False"
+        print_and_log("Test Case 14 Passed: Expected True, got True")
+
+        # Caso 15: DataFrame con una sola fila que cumple la condición
+        datadic_single = pd.DataFrame({
+            'fecha': pd.to_datetime(['2020-06-15']),
+            'valor': [100]
+        })
+        expected_df_17 = datadic_single.copy()
+
+        result = self.invariants.check_inv_filter_rows_date_range(
+            data_dictionary_in=datadic_single.copy(),
+            data_dictionary_out=expected_df_17.copy(),
+            columns=['fecha'],
+            left_margin_list=[pd.Timestamp('2020-01-01')],
+            right_margin_list=[pd.Timestamp('2020-12-31')],
+            closure_type_list=[Closure.closedClosed],
+            filter_type=FilterType.INCLUDE,
+            origin_function='test_date_range_single_row'
+        )
+        assert result is True, "Test Case 15 Failed: Expected True, but got False"
+        print_and_log("Test Case 15 Passed: Expected True, got True")
+
+        # Caso 16: Fechas en el límite exacto del intervalo
+        datadic_boundary = pd.DataFrame({
+            'fecha': pd.to_datetime(['2020-01-01', '2020-12-31', '2019-12-31', '2021-01-01']),
+            'valor': [1, 2, 3, 4]
+        })
+        expected_df_18 = pd.DataFrame({
+            'fecha': pd.to_datetime(['2020-01-01', '2020-12-31']),
+            'valor': [1, 2]
+        }).reset_index(drop=True)
+
+        result = self.invariants.check_inv_filter_rows_date_range(
+            data_dictionary_in=datadic_boundary.copy(),
+            data_dictionary_out=expected_df_18.copy(),
+            columns=['fecha'],
+            left_margin_list=[pd.Timestamp('2020-01-01')],
+            right_margin_list=[pd.Timestamp('2020-12-31')],
+            closure_type_list=[Closure.closedClosed],
+            filter_type=FilterType.INCLUDE,
+            origin_function='test_date_range_boundaries'
+        )
+        assert result is True, "Test Case 16 Failed: Expected True, but got False"
+        print_and_log("Test Case 16 Passed: Expected True, got True")
+
+        # Caso 17: Intervalo invertido (margen izquierdo mayor que derecho)
+        datadic_inverted = pd.DataFrame({
+            'fecha': pd.to_datetime(['2020-06-15', '2020-03-15', '2020-09-15']),
+            'valor': [1, 2, 3]
+        })
+        expected_df_19 = pd.DataFrame({
+            'fecha': pd.Series([], dtype='datetime64[ns]'),
+            'valor': pd.Series([], dtype='int64')
+        })
+
+        result = self.invariants.check_inv_filter_rows_date_range(
+            data_dictionary_in=datadic_inverted.copy(),
+            data_dictionary_out=expected_df_19.copy(),
+            columns=['fecha'],
+            left_margin_list=[pd.Timestamp('2020-12-31')],  # Mayor que right_margin
+            right_margin_list=[pd.Timestamp('2020-01-01')],
+            closure_type_list=[Closure.closedClosed],
+            filter_type=FilterType.INCLUDE,
+            origin_function='test_date_range_inverted'
+        )
+        assert result is True, "Test Case 17 Failed: Expected True, but got False"
+        print_and_log("Test Case 17 Passed: Expected True, got True")
+
+        # Caso 18: DataFrame con fechas duplicadas
+        datadic_duplicates = pd.DataFrame({
+            'fecha': pd.to_datetime(['2020-06-15', '2020-06-15', '2020-03-15', '2020-06-15']),
+            'valor': [10, 20, 30, 40]
+        })
+        expected_df_20 = pd.DataFrame({
+            'fecha': pd.to_datetime(['2020-06-15', '2020-06-15', '2020-06-15']),
+            'valor': [10, 30, 40]
+        }).reset_index(drop=True)
+
+        result = self.invariants.check_inv_filter_rows_date_range(
+            data_dictionary_in=datadic_duplicates.copy(),
+            data_dictionary_out=expected_df_20.copy(),
+            columns=['fecha'],
+            left_margin_list=[pd.Timestamp('2020-04-01')],
+            right_margin_list=[pd.Timestamp('2020-08-31')],
+            closure_type_list=[Closure.closedClosed],
+            filter_type=FilterType.INCLUDE,
+            origin_function='test_date_range_duplicates'
+        )
+        assert result is True, "Test Case 18 Failed: Expected True, but got False"
+        print_and_log("Test Case 18 Passed: Expected True, got True")
+
+        print_and_log("")
+        print_and_log("-----------------------------------------------------------")
+        print_and_log("")
