@@ -941,10 +941,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = 0
         right = 1
         closure = 0  # OpenOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is True, "Test Case 1 Failed: Expected True, but got False"
         print_and_log("Test Case 1 Passed: Expected True, got True")
 
@@ -953,10 +953,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -47.30
         right = 518000
         closure = 0  # OpenOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is True, "Test Case 2 Failed: Expected True, but got False"
         print_and_log("Test Case 2 Passed: Expected True, got True")
 
@@ -965,10 +965,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -47.30
         right = 517810
         closure = 1  # OpenClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is True, "Test Case 3 Failed: Expected True, but got False"
         print_and_log("Test Case 3 Passed: Expected True, got True")
 
@@ -976,10 +976,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -4700000.30
         right = -517809.99
         closure = 1  # OpenClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is False, "Test Case 4 Failed: Expected False, but got True"
         print_and_log("Test Case 4 Passed: Expected False, got False")
 
@@ -988,10 +988,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.448
         right = 517811
         closure = 2  # ClosedOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is True, "Test Case 5 Failed: Expected True, but got False"
         print_and_log("Test Case 5 Passed: Expected True, got True")
 
@@ -1000,10 +1000,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         right = 5178100.0
         belong_op = 0
         closure = 2  # ClosedOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is False, "Test Case 6 Failed: Expected False, but got True"
         print_and_log("Test Case 6 Passed: Expected False, got False")
 
@@ -1012,10 +1012,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.448
         right = 517810
         closure = 3  # ClosedClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is True, "Test Case 7 Failed: Expected True, but got False"
         print_and_log("Test Case 7 Passed: Expected True, got True")
 
@@ -1024,10 +1024,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.447
         right = 517810.0
         closure = 3  # ClosedClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is True, "Test Case 8 Failed: Expected True, but got False"
         print_and_log("Test Case 8 Passed: Expected True, got True")
 
@@ -1039,10 +1039,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.448
         right = 517811
         closure = 0  # OpenOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is False, "Test Case 9 Failed: Expected False, but got True"
         print_and_log("Test Case 9 Passed: Expected False, got False")
 
@@ -1051,10 +1051,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.449
         right = 517810.1
         closure = 0  # OpenOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is False, "Test Case 10 Failed: Expected False, but got True"
         print_and_log("Test Case 10 Passed: Expected False, got False")
 
@@ -1063,10 +1063,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.449
         right = 517810
         closure = 1  # OpenClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is False, "Test Case 11 Failed: Expected False, but got True"
         print_and_log("Test Case 11 Passed: Expected False, got False")
 
@@ -1075,10 +1075,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = 4600000.448
         right = 5178100
         closure = 1  # OpenClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is True, "Test Case 12 Failed: Expected True, but got False"
         print_and_log("Test Case 12 Passed: Expected True, got True")
 
@@ -1087,10 +1087,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.448
         right = 517810.01
         closure = 2  # ClosedOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is False, "Test Case 13 Failed: Expected False, but got True"
         print_and_log("Test Case 13 Passed: Expected False, got False")
 
@@ -1099,10 +1099,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.448
         right = 517810
         closure = 2  # ClosedOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is False, "Test Case 14 Failed: Expected False, but got True"
         print_and_log("Test Case 14 Passed: Expected False, got False")
 
@@ -1111,10 +1111,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.448
         right = 517810
         closure = 3  # ClosedClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is False, "Test Case 15 Failed: Expected False, but got True"
         print_and_log("Test Case 15 Passed: Expected False, got False")
 
@@ -1123,10 +1123,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46000000.448
         right = -5178090.9
         closure = 3  # ClosedClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is True, "Test Case 16 Failed: Expected True, but got False"
         print_and_log("Test Case 16 Passed: Expected True, got True")
 
@@ -1139,10 +1139,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.448
         right = 1.275
         closure = 0  # OpenOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is True, "Test Case 17 Failed: Expected True, but got False"
         print_and_log("Test Case 17 Passed: Expected True, got True")
 
@@ -1150,10 +1150,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.449
         right = 1.276
         closure = 0  # OpenOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is True, "Test Case 18 Failed: Expected True, but got False"
         print_and_log("Test Case 18 Passed: Expected True, got True")
 
@@ -1162,10 +1162,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.449
         right = 1.275
         closure = 1  # OpenClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is True, "Test Case 19 Failed: Expected True, but got False"
         print_and_log("Test Case 19 Passed: Expected True, got True")
 
@@ -1174,10 +1174,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46000000.448
         right = -100000.275
         closure = 1  # OpenClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is False, "Test Case 20 Failed: Expected False, but got True"
         print_and_log("Test Case 20 Passed: Expected False, got False")
 
@@ -1186,10 +1186,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.448
         right = 1.276
         closure = 2  # ClosedOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is True, "Test Case 21 Failed: Expected True, but got False"
         print_and_log("Test Case 21 Passed: Expected True, got True")
 
@@ -1198,10 +1198,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -460000.448
         right = -100000.275
         closure = 2  # ClosedOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is False, "Test Case 22 Failed: Expected False, but got True"
         print_and_log("Test Case 22 Passed: Expected False, got False")
 
@@ -1210,10 +1210,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.448
         right = 1.275
         closure = 3  # ClosedClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is True, "Test Case 23 Failed: Expected True, but got False"
         print_and_log("Test Case 23 Passed: Expected True, got True")
 
@@ -1222,10 +1222,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.448
         right = 1.274
         closure = 3  # ClosedClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is True, "Test Case 24 Failed: Expected True, but got False"
         print_and_log("Test Case 24 Passed: Expected True, got True")
 
@@ -1237,10 +1237,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.448
         right = 1.276
         closure = 0  # OpenOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is False, "Test Case 25 Failed: Expected False, but got True"
         print_and_log("Test Case 25 Passed: Expected False, got False")
 
@@ -1249,10 +1249,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.449
         right = 1.276
         closure = 0  # OpenOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is False, "Test Case 26 Failed: Expected False, but got True"
         print_and_log("Test Case 26 Passed: Expected False, got False")
 
@@ -1261,10 +1261,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.449
         right = 1.275
         closure = 1  # OpenClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is False, "Test Case 27 Failed: Expected False, but got True"
         print_and_log("Test Case 27 Passed: Expected False, got False")
 
@@ -1273,10 +1273,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -4600000.448
         right = -100000.275
         closure = 1  # OpenClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is True, "Test Case 28 Failed: Expected True, but got False"
         print_and_log("Test Case 28 Passed: Expected True, got True")
 
@@ -1285,10 +1285,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.448
         right = 1.276
         closure = 2  # ClosedOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is False, "Test Case 29 Failed: Expected False, but got True"
         print_and_log("Test Case 29 Passed: Expected False, got False")
 
@@ -1297,10 +1297,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.448
         right = 1.275
         closure = 2  # ClosedOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is False, "Test Case 30 Failed: Expected False, but got True"
         print_and_log("Test Case 30 Passed: Expected False, got False")
 
@@ -1309,10 +1309,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -46.448
         right = 1.275
         closure = 3  # ClosedClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is False, "Test Case 31 Failed: Expected False, but got True"
         print_and_log("Test Case 31 Passed: Expected False, got False")
 
@@ -1321,10 +1321,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         left = -4600000.447
         right = -100000.275
         closure = 3  # ClosedClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=self.data_dictionary,
-                                                          closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=self.data_dictionary,
+                                                    closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is True, "Test Case 32 Failed: Expected True, but got False"
         print_and_log("Test Case 32 Passed: Expected True, got True")
 
@@ -1338,10 +1338,10 @@ class ContractExternalDatasetTests(unittest.TestCase):
         closure = 0  # OpenOpen
         expected_exception = ValueError
         with self.assertRaises(expected_exception):
-            self.pre_post.check_interval_range_float(left_margin=left0, right_margin=right0,
-                                                              data_dictionary=self.data_dictionary,
-                                                              closure_type=Closure(closure),
-                                                              belong_op=Belong(belong_op))
+            self.pre_post.check_interval_range(left_margin=left0, right_margin=right0,
+                                               data_dictionary=self.data_dictionary,
+                                               closure_type=Closure(closure),
+                                               belong_op=Belong(belong_op))
         print_and_log("Test Case 0 Passed: Expected ValueError, got ValueError")
 
 

@@ -1055,10 +1055,10 @@ class PrePostSimpleTest(unittest.TestCase):
         closure_type = 3  # ClosedClosed
         belong_op = 0  # Belong
         field = 'c1'
-        result = self.pre_post.check_interval_range_float(left_margin=leftMargin, right_margin=rightMargin,
-                                                          data_dictionary=data_dictionary,
-                                                          closure_type=Closure(closure_type),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=leftMargin, right_margin=rightMargin,
+                                                    data_dictionary=data_dictionary,
+                                                    closure_type=Closure(closure_type),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is True, "Test Case 1 Failed: Expected True, but got False"
         print_and_log("Test Case 1 Passed: Expected True, got True")
 
@@ -1071,10 +1071,10 @@ class PrePostSimpleTest(unittest.TestCase):
         closure_type = 1  # OpenClosed
         belong_op = 0  # Belong
         field = 'c1'
-        result = self.pre_post.check_interval_range_float(left_margin=leftMargin, right_margin=rightMargin,
-                                                          data_dictionary=data_dictionary,
-                                                          closure_type=Closure(closure_type),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=leftMargin, right_margin=rightMargin,
+                                                    data_dictionary=data_dictionary,
+                                                    closure_type=Closure(closure_type),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is True, "Test Case 2 Failed: Expected True, but got False"
         print_and_log("Test Case 2 Passed: Expected True, got True")
         print_and_log("")
@@ -1097,10 +1097,10 @@ class PrePostSimpleTest(unittest.TestCase):
         closure = 0  # OpenOpen
         expected_exception = ValueError
         with self.assertRaises(expected_exception):
-            self.pre_post.check_interval_range_float(left_margin=left0, right_margin=right0,
-                                                     data_dictionary=data_dictionary,
-                                                     closure_type=Closure(closure),
-                                                     belong_op=Belong(belong_op))
+            self.pre_post.check_interval_range(left_margin=left0, right_margin=right0,
+                                               data_dictionary=data_dictionary,
+                                               closure_type=Closure(closure),
+                                               belong_op=Belong(belong_op))
         print_and_log("Test Case 0 Passed: Expected ValueError, got ValueError")
 
         # Example 1.1 of checkIntervalRangeFloat
@@ -1108,9 +1108,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0, 2.9, 5, 25.3, 4, 67.5, 0, 0.5, None, None],
                                              'c2': [0, 0, 0.3, 1.4, 0.3, 5, 0, 0, None, None]})
         closure = 0  # OpenOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is True, "Test Case 1.1 Failed: Expected True, but got False"
         print_and_log("Test Case 1.1 Passed: Expected True, got True")
 
@@ -1119,9 +1119,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0.1, 2.9, 5, 25.3, 4, 67.5, 42, 0.5, None, None],
                                              'c2': [7, 15, 0.3, 1.4, 0.3, 5, 7.0, 8, None, None]})
         closure = 0  # OpenOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is True, "Test Case 2.1 Failed: Expected True, but got False"
         print_and_log("Test Case 2.1 Passed: Expected True, got True")
 
@@ -1130,9 +1130,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0.01, 2.9, 5, 25.3, 4, 67.5, 42, 0.5, None, None],
                                              'c2': [7, 15, 0.3, 1.4, 0.3, 5, 70.4, 8, None, None]})
         closure = 1  # OpenClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is True, "Test Case 3 Failed: Expected True, but got False"
         print_and_log("Test Case 3 Passed: Expected True, got True")
 
@@ -1141,9 +1141,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0.01, 2.9, 5, 25.3, 4, 67.5, 42, 0.5, None, None],
                                              'c2': [7, 15, 0.3, 1.4, 0.3, 5, 70.5, 8, None, None]})
         closure = 1  # OpenClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is True, "Test Case 4 Failed: Expected True, but got False"
         print_and_log("Test Case 4 Passed: Expected True, got True")
 
@@ -1152,9 +1152,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0.0, 2.9, 5, 25.3, 4, 67.5, 42, 0.5, None, None],
                                              'c2': [7, 15, 0.3, 1.4, 0.3, 5, 70.3, 8, None, None]})
         closure = 2  # ClosedOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is True, "Test Case 5 Failed: Expected True, but got False"
         print_and_log("Test Case 5 Passed: Expected True, got True")
 
@@ -1163,9 +1163,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [209.0, 209, 5209, 255.3, 444, 673.5, 422, 122.5, None, None],
                                              'c2': [7209, 155, 209.3, 242.4, 555.3, 544, 703.4, 823, None, None]})
         closure = 2  # ClosedOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is False, "Test Case 6 Failed: Expected False, but got True"
         print_and_log("Test Case 6 Passed: Expected False, got False")
 
@@ -1174,9 +1174,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0.0, 2.9, 5, 25.3, 4, 67.5, 42, 0.5, None, None],
                                              'c2': [7, 15, 0.3, 1.4, 0.3, 5, 70.4, 8, None, None]})
         closure = 3  # ClosedClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is True, "Test Case 7 Failed: Expected True, but got False"
         print_and_log("Test Case 7 Passed: Expected True, got True")
 
@@ -1185,9 +1185,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [-220.0, -2.9, -5, 725.3, -0.001, 767.5, -42, -0.5, None, None],
                                              'c2': [-7, -15, -0.3, -1.4, -0.3, -5, 770.4001, -8, None, None]})
         closure = 3  # ClosedClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is False, "Test Case 8 Failed: Expected False, but got True"
         print_and_log("Test Case 8 Passed: Expected False, got False")
 
@@ -1199,9 +1199,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0, 2.9, 5, 25.3, 4, 67.5, 0, 0.5, None, None],
                                              'c2': [0, 0, 0.3, 1.4, 0.3, 5, 0, 0, None, None]})
         closure = 0  # OpenOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is False, "Test Case 9 Failed: Expected False, but got True"
         print_and_log("Test Case 9 Passed: Expected False, got False")
 
@@ -1210,9 +1210,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0.1, 2.9, 5, 25.3, 4, 67.5, 42, 0.5, None, None],
                                              'c2': [7, 15, 0.3, 1.4, 0.3, 5, 7.0, 8, None, None]})
         closure = 0  # OpenOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is False, "Test Case 10 Failed: Expected False, but got True"
         print_and_log("Test Case 10 Passed: Expected False, got False")
 
@@ -1221,9 +1221,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [-0.01, 662.9, 665, 625.3, 664, 767.5, 842, 990.5, None, None],
                                              'c2': [-7, -15, -0.3, -1.4, -0.3, -5, -70.4, -8, None, None]})
         closure = 1  # OpenClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is True, "Test Case 11 Failed: Expected True, but got False"
         print_and_log("Test Case 11 Passed: Expected True, got True")
 
@@ -1232,9 +1232,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0.01, 2.9, 5, 25.3, 4, 67.5, 42, 0.5, None, None],
                                              'c2': [7, 15, 0.3, 1.4, 0.3, 5, 70.5, 8, None, None]})
         closure = 1  # OpenClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is False, "Test Case 12 Failed: Expected False, but got True"
         print_and_log("Test Case 12 Passed: Expected False, got False")
 
@@ -1243,9 +1243,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0.0, 2.9, 5, 25.3, 4, 67.5, 42, 0.5, None, None],
                                              'c2': [7, 15, 0.3, 1.4, 0.3, 5, 70.3, 8, None, None]})
         closure = 2  # ClosedOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is False, "Test Case 13 Failed: Expected False, but got True"
         print_and_log("Test Case 13 Passed: Expected False, got False")
 
@@ -1254,9 +1254,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [220.0, 222.9, -5, -25.3, -4, -67.5, -42, -0.5, None, None],
                                              'c2': [887, 715, 770.3, 771.4, -0.3, -5, -70.4, -8, None, None]})
         closure = 2  # ClosedOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is True, "Test Case 14 Failed: Expected True, but got False"
         print_and_log("Test Case 14 Passed: Expected True, got True")
 
@@ -1265,9 +1265,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0.0, 2.9, 5, 25.3, 4, 67.5, 42, 0.5, None, None],
                                              'c2': [7, 15, 0.3, 1.4, 0.3, 5, 70.4, 8, None, None]})
         closure = 3  # ClosedClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is False, "Test Case 15 Failed: Expected False, but got True"
         print_and_log("Test Case 15 Passed: Expected False, got False")
 
@@ -1276,9 +1276,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0.0, 2.9, 5, 25.3, 0.001, 67.5, 42, 0.5, None, None],
                                              'c2': [7, 15, 0.3, 1.4, 0.3, 5, 70.4001, 8, None, None]})
         closure = 3  # ClosedClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op))
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op))
         assert result is False, "Test Case 16 Failed: Expected False, but got True"
         print_and_log("Test Case 16 Passed: Expected False, got False")
 
@@ -1292,9 +1292,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0, 2.9, 5, 25.3, 4, 67.5, 0, 0.5, None, None],
                                              'c2': [0, 0, 0.3, 1.4, 0.3, 5, 0, 0, None, None]})
         closure = 0  # OpenOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is True, "Test Case 17 Failed: Expected True, but got False"
         print_and_log("Test Case 17 Passed: Expected True, got True")
 
@@ -1303,9 +1303,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0.1, 2.9, 5, 25.3, 4, 67.5, 42, 0.5, None, None],
                                              'c2': [7, 15, 0.3, 1.4, 0.3, 5, 7.0, 8, None, None]})
         closure = 0  # OpenOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is True, "Test Case 18 Failed: Expected True, but got False"
         print_and_log("Test Case 18 Passed: Expected True, got True")
 
@@ -1314,9 +1314,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0.01, 2.9, 5, 25.3, 4, 67.5, 42, 0.5, None, None],
                                              'c2': [7, 15, 0.3, 1.4, 0.3, 5, 70.4, 8, None, None]})
         closure = 1  # OpenClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is True, "Test Case 19 Failed: Expected True, but got False"
         print_and_log("Test Case 19 Passed: Expected True, got True")
 
@@ -1325,9 +1325,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [-0.01, -2.9, -5, -25.3, -4, -67.5, -42, -0.5, None, None],
                                              'c2': [-7, -15, -0.3, -1.4, -0.3, -5, -70.5, -8, None, None]})
         closure = 1  # OpenClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is False, "Test Case 20 Failed: Expected False, but got True"
         print_and_log("Test Case 20 Passed: Expected False, got False")
 
@@ -1336,9 +1336,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0.0, -2.9, 5, 25.3, 4, 67.5, 42, 0.5, None, None],
                                              'c2': [7, 15, 0.3, 1.4, 0.3, 5, 70.3, 8, None, None]})
         closure = 2  # ClosedOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is True, "Test Case 21 Failed: Expected True, but got False"
         print_and_log("Test Case 21 Passed: Expected True, got True")
 
@@ -1346,9 +1346,9 @@ class PrePostSimpleTest(unittest.TestCase):
         # Check that the data in the whole dictionary belongs to the interval [0, 70.4)
         data_dictionary = pd.DataFrame(data={'c2': [97, 158, 70.4, None, 90.3]})
         closure = 2  # ClosedOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is False, "Test Case 22 Failed: Expected False, but got True"
         print_and_log("Test Case 22 Passed: Expected False, got False")
 
@@ -1357,9 +1357,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0.0, -2.9, 5, 25.3, 4, 67.5, 42, 0.5, None, None],
                                              'c2': [7, 15, 0.3, 1.4, 0.3, 5, 70.4, 8, None, None]})
         closure = 3  # ClosedClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is True, "Test Case 23 Failed: Expected True, but got False"
         print_and_log("Test Case 23 Passed: Expected True, got True")
 
@@ -1367,9 +1367,9 @@ class PrePostSimpleTest(unittest.TestCase):
         # Check that the data in the whole dictionary belongs to the interval [0, 70.4]
         data_dictionary = pd.DataFrame(data={'c2': [-7, -15, -0.3, -1.4, -0.3, -5, 70.4001, -8, None, None]})
         closure = 3  # ClosedClosed
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is False, "Test Case 24 Failed: Expected False, but got True"
         print_and_log("Test Case 24 Passed: Expected False, got False")
 
@@ -1381,9 +1381,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [1, 2.9, 5, 25.3, 4, 67.5, 3, 0.5, None, None],
                                              'c2': [0, 0, 0.3, 1.4, 0.3, 5, 0, 0, None, None]})
         closure = 0  # OpenOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is False, "Test Case 25 Failed: Expected False, but got True"
         print_and_log("Test Case 25 Passed: Expected False, got False")
 
@@ -1392,9 +1392,9 @@ class PrePostSimpleTest(unittest.TestCase):
         data_dictionary = pd.DataFrame(data={'c1': [0.0, -2.9, -5, -25.3, -4,- 67.5, -42, -0.5, 70.4, None],
                                              'c2': [-7, -15, -0.3, -1.4, -0.3, -5, -7.0, -8, None, None]})
         closure = 0  # OpenOpen
-        result = self.pre_post.check_interval_range_float(left_margin=left, right_margin=right,
-                                                          data_dictionary=data_dictionary, closure_type=Closure(closure),
-                                                          belong_op=Belong(belong_op), field=field)
+        result = self.pre_post.check_interval_range(left_margin=left, right_margin=right,
+                                                    data_dictionary=data_dictionary, closure_type=Closure(closure),
+                                                    belong_op=Belong(belong_op), field=field)
         assert result is True, "Test Case 26 Failed: Expected True, but got False"
         print_and_log("Test Case 26 Passed: Expected True, got True")
 
