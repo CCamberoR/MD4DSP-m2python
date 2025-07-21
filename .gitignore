@@ -47,3 +47,5 @@ logs/
 
 # Avoid updating .github/ directory files
 /.github/workflows/*.yml
+.github/workflows/*.yml
+.github/workflows/python-app.yml
