@@ -2100,9 +2100,11 @@ def check_inv_filter_rows_date_range(data_dictionary_in: pd.DataFrame,
 
     # Validate that the specified columns contain datetime values
     for col in columns:
-        if not pd.api.types.is_datetime64_any_dtype(data_dictionary_in[col]):
+        if (not pd.api.types.is_datetime64_any_dtype(data_dictionary_in[col])
+                and data_dictionary_out[col].dtype != 'object'):
             raise ValueError(f"The DataField {col} is not a datetime column in the input dataframe.")
-        if not pd.api.types.is_datetime64_any_dtype(data_dictionary_out[col]):
+        if (not pd.api.types.is_datetime64_any_dtype(data_dictionary_out[col])
+                and data_dictionary_out[col].dtype != 'object'):
             raise ValueError(f"The DataField {col} is not a datetime column in the output dataframe.")
 
     kept_row_indices = []

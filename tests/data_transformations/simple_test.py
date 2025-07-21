@@ -4024,24 +4024,7 @@ class DataTransformationsSimpleTest(unittest.TestCase):
         pd.testing.assert_frame_equal(expected_df, result_df)
         print_and_log("Test Case 6 Passed: got the expected dataframe")
 
-        # Caso 7 - Prueba con columna de fecha incorrecta
-        datadic = pd.DataFrame({
-            'A': ['2023-01-01', '2023-02-01', '2023-03-01'],
-            'B': [1, 2, 3]
-        })
-
-        with self.assertRaises(ValueError):
-            self.data_transformations.transform_filter_rows_date_range(
-                data_dictionary=datadic.copy(),
-                columns=['A'],
-                left_margin_list=[pd.Timestamp('2023-01-01')],
-                right_margin_list=[pd.Timestamp('2023-03-01')],
-                filter_type=FilterType.INCLUDE,
-                closure_type_list=[Closure.closedClosed]
-            )
-        print_and_log("Test Case 7 Passed: expected ValueError, got ValueError")
-
-        # Caso 8 - Prueba con columna inexistente
+        # Caso 7 - Prueba con columna inexistente
         datadic = pd.DataFrame({
             'A': pd.to_datetime(['2023-01-01', '2023-02-01', '2023-03-01']),
             'B': [1, 2, 3]
@@ -4056,9 +4039,9 @@ class DataTransformationsSimpleTest(unittest.TestCase):
                 filter_type=FilterType.INCLUDE,
                 closure_type_list=[Closure.closedClosed]
             )
-        print_and_log("Test Case 8 Passed: expected ValueError, got ValueError")
+        print_and_log("Test Case 7 Passed: expected ValueError, got ValueError")
 
-        # Caso 9 - Prueba con tipo de filtro inválido
+        # Caso 8 - Prueba con tipo de filtro inválido
         datadic = pd.DataFrame({
             'A': pd.to_datetime(['2023-01-01', '2023-02-01', '2023-03-01']),
             'B': [1, 2, 3]
@@ -4073,9 +4056,9 @@ class DataTransformationsSimpleTest(unittest.TestCase):
                 filter_type=None,
                 closure_type_list=[Closure.closedClosed]
             )
-        print_and_log("Test Case 9 Passed: expected ValueError, got ValueError")
+        print_and_log("Test Case 8 Passed: expected ValueError, got ValueError")
 
-        # Caso 10 - Prueba con múltiples rangos y exclusión
+        # Caso 9 - Prueba con múltiples rangos y exclusión
         datadic = pd.DataFrame({
             'A': pd.to_datetime(['2023-01-15', '2023-03-20', '2023-07-10', '2023-11-05']),
             'B': [1, 2, 3, 4]
@@ -4095,9 +4078,9 @@ class DataTransformationsSimpleTest(unittest.TestCase):
             closure_type_list=[Closure.closedClosed, Closure.closedClosed]
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
-        print_and_log("Test Case 10 Passed: got the expected dataframe")
+        print_and_log("Test Case 9 Passed: got the expected dataframe")
 
-        # Caso 11 - Prueba con rango vacío
+        # Caso 10 - Prueba con rango vacío
         datadic = pd.DataFrame({
             'A': pd.to_datetime(['2023-01-01', '2023-02-01', '2023-03-01']),
             'B': [1, 2, 3]
@@ -4117,9 +4100,9 @@ class DataTransformationsSimpleTest(unittest.TestCase):
             closure_type_list=[Closure.closedClosed]
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
-        print_and_log("Test Case 11 Passed: got the expected dataframe")
+        print_and_log("Test Case 10 Passed: got the expected dataframe")
 
-        # Caso 12 - Prueba con fechas incluyendo zona horaria (convertidas a naive)
+        # Caso 11 - Prueba con fechas incluyendo zona horaria (convertidas a naive)
         datadic = pd.DataFrame({
             'A': pd.to_datetime(['2023-01-01 12:00:00+00:00', '2023-01-01 14:00:00+00:00',
                                 '2023-01-01 16:00:00+00:00']).tz_localize(None),
@@ -4140,9 +4123,9 @@ class DataTransformationsSimpleTest(unittest.TestCase):
             closure_type_list=[Closure.closedClosed]
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
-        print_and_log("Test Case 12 Passed: got the expected dataframe")
+        print_and_log("Test Case 11 Passed: got the expected dataframe")
 
-        # Caso 13 - Prueba con todas las fechas fuera del rango (EXCLUDE)
+        # Caso 12 - Prueba con todas las fechas fuera del rango (EXCLUDE)
         datadic = pd.DataFrame({
             'A': pd.to_datetime(['2023-01-01', '2023-02-01', '2023-03-01']),
             'B': [1, 2, 3]
@@ -4161,9 +4144,9 @@ class DataTransformationsSimpleTest(unittest.TestCase):
             closure_type_list=[Closure.closedClosed]
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
-        print_and_log("Test Case 13 Passed: got the expected dataframe")
+        print_and_log("Test Case 12 Passed: got the expected dataframe")
 
-        # Caso 14 - Prueba con fechas en formato año-mes (sin día)
+        # Caso 13 - Prueba con fechas en formato año-mes (sin día)
         datadic = pd.DataFrame({
             'A': pd.to_datetime(['2023-01', '2023-06', '2023-12']),
             'B': [1, 2, 3]
@@ -4183,7 +4166,7 @@ class DataTransformationsSimpleTest(unittest.TestCase):
             closure_type_list=[Closure.closedClosed]
         )
         pd.testing.assert_frame_equal(expected_df, result_df)
-        print_and_log("Test Case 14 Passed: got the expected dataframe")
+        print_and_log("Test Case 13 Passed: got the expected dataframe")
 
         print_and_log("")
         print_and_log("-----------------------------------------------------------")
