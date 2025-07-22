@@ -12027,6 +12027,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
         print_and_log("Test Case 3 Passed: Expected True, got True")
 
         # Caso 4: Error - longitud desigual de listas
+        df_in_4 = self.small_batch_dataset.copy()
+        df_in_4[column] = pd.to_datetime(df_in_4[column], errors='coerce')
+        df_expected_4 = df_in_4.copy()
         print_and_log("Test Case 4: Error - Mismatched parameter list lengths")
         with self.assertRaises(ValueError):
             self.invariants.check_inv_filter_rows_date_range(
@@ -12047,18 +12050,18 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
 
         # Caso 5: INCLUDE - expected False
         print_and_log("Test Case 5: INCLUDE with incorrect expected output (False expected)")
-        df_in_6 = self.small_batch_dataset.copy()
-        df_in_6[column] = pd.to_datetime(df_in_6[column], errors='coerce')
+        df_in_5 = self.small_batch_dataset.copy()
+        df_in_5[column] = pd.to_datetime(df_in_5[column], errors='coerce')
         left = pd.Timestamp('1990-01-01')
         right = pd.Timestamp('1999-12-31')
         closure = Closure.closedClosed
 
         # deliberately wrong output
-        df_expected_6 = df_in_6.copy()
+        df_expected_5 = df_in_5.copy()
 
         result_5 = self.invariants.check_inv_filter_rows_date_range(
-            data_dictionary_in=df_in_6.copy(),
-            data_dictionary_out=df_expected_6.copy(),
+            data_dictionary_in=df_in_5.copy(),
+            data_dictionary_out=df_expected_5.copy(),
             columns=[column],
             left_margin_list=[left],
             right_margin_list=[right],
@@ -12066,18 +12069,42 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             filter_type=FilterType.INCLUDE,
             origin_function='test_sBatch_include_wrong_output'
         )
-        assert result_6 is False, "Test Case 5 Failed: Expected False for INCLUDE with wrong output"
+        assert result_5 is False, "Test Case 5 Failed: Expected False for INCLUDE with wrong output"
         print_and_log("Test Case 5 Passed: Expected False, got False")
 
         # Caso 6: EXCLUDE - expected False
         print_and_log("Test Case 6: EXCLUDE with incorrect expected output (False expected)")
-        df_in_7 = self.small_batch_dataset.copy()
-        df_in_7[column] = pd.to_datetime(df_in_7[column], errors='coerce')
+        df_in_6 = self.small_batch_dataset.copy()
+        df_in_6[column] = pd.to_datetime(df_in_6[column], errors='coerce')
         left = pd.Timestamp('2010-01-01')
         right = pd.Timestamp('2020-12-31')
         closure = Closure.closedClosed
 
-        df_expected_7 = df_in_7.copy()  # Incorrectly identical to input
+        df_expected_6 = df_in_6.copy()  # Incorrectly identical to input
+
+        result_6 = self.invariants.check_inv_filter_rows_date_range(
+            data_dictionary_in=df_in_6.copy(),
+            data_dictionary_out=df_expected_6.copy(),
+            columns=[column],
+            left_margin_list=[left],
+            right_margin_list=[right],
+            closure_type_list=[closure],
+            filter_type=FilterType.EXCLUDE,
+            origin_function='test_sBatch_exclude_wrong_output'
+        )
+        assert result_6 is False, "Test Case 6 Failed: Expected False for EXCLUDE with wrong output"
+        print_and_log("Test Case 6 Passed: Expected False, got False")
+
+        # Caso 7: INCLUDE - interval with all dates outside range (True)
+        print_and_log("Test Case 7: INCLUDE with all dates outside range (empty expected output)")
+        df_in_7 = self.small_batch_dataset.copy()
+        df_in_7[column] = pd.to_datetime(df_in_7[column], errors='coerce')
+        left = pd.Timestamp('1800-01-01')
+        right = pd.Timestamp('1800-12-31')
+        closure = Closure.closedClosed
+
+        df_expected_7 = df_in_7[df_in_7[column].apply(
+            lambda x: check_interval_condition(x, left, right, closure))].copy()
 
         result_7 = self.invariants.check_inv_filter_rows_date_range(
             data_dictionary_in=df_in_7.copy(),
@@ -12086,33 +12113,9 @@ class InvariantsExternalDatasetTests(unittest.TestCase):
             left_margin_list=[left],
             right_margin_list=[right],
             closure_type_list=[closure],
-            filter_type=FilterType.EXCLUDE,
-            origin_function='test_sBatch_exclude_wrong_output'
-        )
-        assert result_7 is False, "Test Case 6 Failed: Expected False for EXCLUDE with wrong output"
-        print_and_log("Test Case 6 Passed: Expected False, got False")
-
-        # Caso 7: INCLUDE - interval with all dates outside range (True)
-        print_and_log("Test Case 7: INCLUDE with all dates outside range (empty expected output)")
-        df_in_8 = self.small_batch_dataset.copy()
-        df_in_8[column] = pd.to_datetime(df_in_8[column], errors='coerce')
-        left = pd.Timestamp('1800-01-01')
-        right = pd.Timestamp('1800-12-31')
-        closure = Closure.closedClosed
-
-        df_expected_8 = df_in_8[df_in_8[column].apply(
-            lambda x: check_interval_condition(x, left, right, closure))].copy()
-
-        result_8 = self.invariants.check_inv_filter_rows_date_range(
-            data_dictionary_in=df_in_8.copy(),
-            data_dictionary_out=df_expected_8.copy(),
-            columns=[column],
-            left_margin_list=[left],
-            right_margin_list=[right],
-            closure_type_list=[closure],
             filter_type=FilterType.INCLUDE,
             origin_function='test_sBatch_include_empty_result'
         )
-        assert result_8 is True, "Test Case 7 Failed: Expected True for INCLUDE with empty result"
+        assert result_7 is True, "Test Case 7 Failed: Expected True for INCLUDE with empty result"
         print_and_log("Test Case 7 Passed: Expected True, got True")
 
