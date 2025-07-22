@@ -792,7 +792,8 @@ def check_suspect_date_value(data_dictionary: pd.DataFrame, min_date: str, max_d
             max_date_dt = max_date_dt.tz_localize(None)
 
     except (ValueError, TypeError) as e:
-        raise ValueError(f"Invalid min_date or max_date format. Please use a format recognizable by pandas.to_datetime. Error: {str(e)}")
+        raise ValueError(
+            f"Invalid min_date or max_date format. Please use a format recognizable by pandas.to_datetime. Error: {str(e)}")
 
     if min_date_dt > max_date_dt:
         raise ValueError("min_date cannot be greater than max_date")
@@ -929,7 +930,8 @@ def check_number_string_size(data_dictionary: pd.DataFrame, field: str = None, o
             column = data_dictionary[col_name].dropna()
             if not column.empty:
                 # Check for values between -1 and 1 (excluding -1 and 1)
-                small_numbers = (column > -1) & (column < 1) & (column != 0) # exclude zero as it's a common valid value
+                small_numbers = (column > -1) & (column < 1) & (
+                            column != 0)  # exclude zero as it's a common valid value
                 if small_numbers.any():
                     small_numbers_count = small_numbers.sum()
                     small_numbers_list = column[small_numbers].tolist()
@@ -1126,4 +1128,233 @@ def check_string_casing(data_dictionary: pd.DataFrame, field: str = None, origin
             result = check_column(col)
             if not result:
                 return result  # Return on the first smell found
+    return True
+
+
+def check_intermingled_data_type(data_dictionary: pd.DataFrame, field: str = None, origin_function: str = None) -> bool:
+    """
+    Check if columns contain intermingled data types (both numeric and text values).
+    This function detects when a column contains a mix of numeric values and text values,
+    which can affect automatic conversions, calculations, and data processing operations.
+
+    Examples of intermingled data types:
+    - "Room 12", "90 Days", "Building A"
+    - "thirty-two", 41, 28.5
+    - "N/A", 123, "Unknown"
+
+    :param data_dictionary: (pd.DataFrame) DataFrame containing the data
+    :param field: (str) Optional field to check; if None, checks all columns
+    :param origin_function: (str) Optional name of the function that called this function, for logging purposes
+
+    :return: (bool) False if intermingled data types are detected, True otherwise
+    """
+
+    def is_purely_numeric(value) -> bool:
+        """
+        Helper function to check if a value is purely numeric.
+        Returns True for integers, floats, and string representations of numbers.
+        """
+        if pd.isna(value):
+            return False
+
+        # If it's already a numeric type
+        if isinstance(value, (int, float, np.integer, np.floating)):
+            return not np.isnan(float(value))
+
+        # Convert to string and check if it represents a number
+        str_value = str(value).strip()
+        if str_value == '':
+            return False
+
+        # Check for scientific notation
+        if 'e' in str_value.lower():
+            try:
+                float(str_value)
+                return True
+            except ValueError:
+                return False
+
+        # Check for regular numbers (including negative and decimal)
+        try:
+            float(str_value)
+            return True
+        except ValueError:
+            return False
+
+    def is_date_like(value) -> bool:
+        """
+        Helper function to check if a value looks like a date.
+        Returns True for strings that look like dates (YYYY-MM-DD, DD/MM/YYYY, etc.)
+        """
+        if pd.isna(value):
+            return False
+
+        str_value = str(value).strip()
+        if str_value == '':
+            return False
+
+        # Common date patterns
+        date_patterns = [
+            r'^\d{4}-\d{1,2}-\d{1,2}$',  # YYYY-MM-DD
+            r'^\d{1,2}/\d{1,2}/\d{4}$',  # MM/DD/YYYY or DD/MM/YYYY
+            r'^\d{1,2}-\d{1,2}-\d{4}$',  # MM-DD-YYYY or DD-MM-YYYY
+            r'^\d{4}/\d{1,2}/\d{1,2}$',  # YYYY/MM/DD
+        ]
+
+        import re
+        for pattern in date_patterns:
+            if re.match(pattern, str_value):
+                return True
+
+        # Check if it's a pandas Timestamp or datetime object
+        return isinstance(value, (pd.Timestamp, np.datetime64)) or pd.api.types.is_datetime64_any_dtype(pd.Series([value]))
+
+    def is_purely_text(value) -> bool:
+        """
+        Helper function to check if a value is purely text (contains alphabetic characters).
+        Returns True for strings that contain at least one alphabetic character and are not numeric or date-like.
+        """
+        if pd.isna(value):
+            return False
+
+        str_value = str(value).strip()
+        if str_value == '':
+            return False
+
+        # Must contain at least one alphabetic character and not be purely numeric or date-like
+        return (any(c.isalpha() for c in str_value) and
+                not is_purely_numeric(value) and
+                not is_date_like(value))
+
+    def is_scientific_notation(value) -> bool:
+        """
+        Helper function to check if a value is in scientific notation format.
+        Returns True for values like 1.23e-4, 2.45E+3, etc.
+        """
+        if pd.isna(value):
+            return False
+
+        str_value = str(value).strip().lower()
+        if str_value == '':
+            return False
+
+        # Check if it contains 'e' and is a valid float
+        if 'e' in str_value:
+            try:
+                float(str_value)
+                return True
+            except ValueError:
+                return False
+        return False
+
+    def has_mixed_alphanumeric(value) -> bool:
+        """
+        Helper function to check if a single value contains both numeric and alphabetic characters.
+        Examples: "Room 12", "90 Days", "Building A1"
+        Excludes scientific notation (e.g., 1.23e-4) as these are purely numeric.
+        """
+        if pd.isna(value):
+            return False
+
+        str_value = str(value).strip()
+        if str_value == '':
+            return False
+
+        # Skip if it looks like a date
+        if is_date_like(value):
+            return False
+
+        # Skip if it's in scientific notation format
+        if is_scientific_notation(value):
+            return False
+
+        # Skip if it's purely numeric (including scientific notation)
+        if is_purely_numeric(value):
+            return False
+
+        has_alpha = any(c.isalpha() for c in str_value)
+        has_digit = any(c.isdigit() for c in str_value)
+
+        return has_alpha and has_digit
+
+    def check_column(col_name: str) -> bool:
+        """
+        Helper function to check a single column for intermingled data types.
+        """
+        column = data_dictionary[col_name].dropna()
+        if column.empty:
+            return True
+
+        # Count different types of values
+        numeric_values = []
+        text_values = []
+        mixed_values = []
+        date_like_values = []
+
+        for value in column:
+            if has_mixed_alphanumeric(value):
+                mixed_values.append(value)
+            elif is_purely_numeric(value):
+                numeric_values.append(value)
+            elif is_date_like(value):
+                date_like_values.append(value)
+            elif is_purely_text(value):
+                text_values.append(value)
+
+        # Check for intermingled data types
+        has_smell = False
+
+        # Case 1: Column contains both purely numeric and purely text values
+        if len(numeric_values) > 0 and len(text_values) > 0:
+            message = (f"Warning in function: {origin_function} - Possible data smell: DataField {col_name} "
+                      f"contains both numeric and text values. Found {len(numeric_values)} numeric values "
+                      f"and {len(text_values)} text values.")
+            print_and_log(message, level=logging.WARN)
+            print(f"DATA SMELL DETECTED: Intermingled Data Type in DataField {col_name}")
+            has_smell = True
+
+        # Case 2: Column contains date-like values mixed with pure text
+        if len(date_like_values) > 0 and len(text_values) > 0:
+            message = (f"Warning in function: {origin_function} - Possible data smell: DataField {col_name} "
+                      f"contains both date-like and text values. Found {len(date_like_values)} date-like values "
+                      f"and {len(text_values)} text values.")
+            print_and_log(message, level=logging.WARN)
+            print(f"DATA SMELL DETECTED: Intermingled Data Type in DataField {col_name}")
+            has_smell = True
+
+        # Case 3: Column contains numeric values mixed with date-like values
+        if len(numeric_values) > 0 and len(date_like_values) > 0:
+            message = (f"Warning in function: {origin_function} - Possible data smell: DataField {col_name} "
+                      f"contains both numeric and date-like values. Found {len(numeric_values)} numeric values "
+                      f"and {len(date_like_values)} date-like values.")
+            print_and_log(message, level=logging.WARN)
+            print(f"DATA SMELL DETECTED: Intermingled Data Type in DataField {col_name}")
+            has_smell = True
+
+        # Case 4: Column contains values with mixed alphanumeric characters
+        if len(mixed_values) > 0:
+            message = (f"Warning in function: {origin_function} - Possible data smell: DataField {col_name} "
+                      f"contains {len(mixed_values)} values with mixed alphanumeric characters. "
+                      f"Examples: {mixed_values[:5]}")
+            print_and_log(message, level=logging.WARN)
+            print(f"DATA SMELL DETECTED: Intermingled Data Type (Mixed Alphanumeric) in DataField {col_name}")
+            has_smell = True
+
+        return not has_smell
+
+    if field is not None:
+        if field not in data_dictionary.columns:
+            raise ValueError(f"DataField '{field}' does not exist in the DataFrame.")
+        return check_column(field)
+    else:
+        # If the DataFrame is empty, return True (no smell)
+        if data_dictionary.empty:
+            return True
+
+        # Check all columns
+        for col in data_dictionary.columns:
+            result = check_column(col)
+            if not result:
+                return result  # Return on the first smell found
+
     return True
