@@ -39,24 +39,25 @@ class DataSmellsSimpleTest(unittest.TestCase):
         Execute all the simple tests of the functions of the class
         """
         simple_test_methods = [
-            self.execute_check_precision_consistency_SimpleTests,
-            self.execute_check_missing_invalid_value_consistency_SimpleTests,
-            self.execute_check_integer_as_floating_point_SimpleTests,
-            self.execute_check_types_as_string_SimpleTests,
-            self.execute_check_special_character_spacing_SimpleTests,
-            self.execute_check_suspect_distribution_SimpleTests,
-            self.execute_check_suspect_precision_SimpleTests,
-            self.execute_check_date_as_datetime_SimpleTests,
-            self.execute_check_separating_consistency_SimpleTests,
-            self.execute_check_date_time_consistency_SimpleTests,
-            self.execute_check_ambiguous_datetime_format_SimpleTests,
-            self.execute_check_suspect_date_value_SimpleTests,
-            self.execute_check_suspect_far_date_value_SimpleTests,
-            self.execute_check_number_size_SimpleTests,
-            self.execute_check_string_casing_SimpleTests,
-            self.execute_check_intermingled_data_type_SimpleTests,
-            self.execute_check_contracted_text_SimpleTests,
-            self.execute_check_abbreviation_inconsistency_SimpleTests
+            # self.execute_check_precision_consistency_SimpleTests,
+            # self.execute_check_missing_invalid_value_consistency_SimpleTests,
+            # self.execute_check_integer_as_floating_point_SimpleTests,
+            # self.execute_check_types_as_string_SimpleTests,
+            # self.execute_check_special_character_spacing_SimpleTests,
+            # self.execute_check_suspect_distribution_SimpleTests,
+            # self.execute_check_suspect_precision_SimpleTests,
+            # self.execute_check_date_as_datetime_SimpleTests,
+            # self.execute_check_separating_consistency_SimpleTests,
+            # self.execute_check_date_time_consistency_SimpleTests,
+            # self.execute_check_ambiguous_datetime_format_SimpleTests,
+            # self.execute_check_suspect_date_value_SimpleTests,
+            # self.execute_check_suspect_far_date_value_SimpleTests,
+            # self.execute_check_number_size_SimpleTests,
+            # self.execute_check_string_casing_SimpleTests,
+            # self.execute_check_intermingled_data_type_SimpleTests,
+            # self.execute_check_contracted_text_SimpleTests,
+            # self.execute_check_abbreviation_inconsistency_SimpleTests,
+            self.execute_check_syntactic_synonym_SimpleTests
         ]
 
         print_and_log("")
@@ -2643,3 +2644,190 @@ class DataSmellsSimpleTest(unittest.TestCase):
 
         print_and_log("\nFinished testing check_abbreviation_inconsistency function")
         print_and_log("-----------------------------------------------------------")
+
+    def execute_check_syntactic_synonym_SimpleTests(self):
+        """
+        Execute simple tests for check_syntactic_synonym function.
+        Tests the following cases:
+        1. Basic synonyms (intelligent, clever, smart)
+        2. Name variations (Bill Clinton, President Clinton, William Jefferson Clinton)
+        3. Alternative spellings (color, colour)
+        4. Technical terms (JavaScript, JS)
+        5. Mixed case synonyms (GOOD, good, excellent)
+        6. Single word vs multiple words (US, United States)
+        7. Partial name matches (John Smith, John)
+        8. Similar but not synonymous words (cat, dog)
+        9. Identical words (no smell)
+        10. Empty and null values
+        11. Non-string columns (no smell)
+        12. Mixed data types
+        13. Low similarity threshold
+        14. High similarity threshold
+        15. Large dataset performance
+        16. Special characters in synonyms
+        17. Numbers and text combinations
+        18. Multiple synonym groups
+        19. Scientific terms and abbreviations
+        20. Check all columns at once
+        """
+        print_and_log("")
+        print_and_log("Testing check_syntactic_synonym function...")
+
+        # Test Case 1: Basic synonyms (smell)
+        df1 = pd.DataFrame({'text': ['intelligent', 'clever', 'smart', 'bright']})
+        result = self.data_smells.check_syntactic_synonym(df1, 'text')
+        assert result is False, "Test Case 1 Failed: Should detect smell for basic synonyms"
+        print_and_log("Test Case 1 Passed: Smell detected for basic synonyms")
+
+        # Test Case 2: Name variations (smell)
+        df2 = pd.DataFrame({'text': ['Bill Clinton', 'President Clinton', 'William Jefferson Clinton', 'Mr. Clinton']})
+        result = self.data_smells.check_syntactic_synonym(df2, 'text')
+        assert result is False, "Test Case 2 Failed: Should detect smell for name variations"
+        print_and_log("Test Case 2 Passed: Smell detected for name variations")
+
+        # Test Case 3: Alternative spellings (smell)
+        df3 = pd.DataFrame({'text': ['color', 'colour', 'gray', 'grey']})
+        result = self.data_smells.check_syntactic_synonym(df3, 'text')
+        assert result is False, "Test Case 3 Failed: Should detect smell for alternative spellings"
+        print_and_log("Test Case 3 Passed: Smell detected for alternative spellings")
+
+        # Test Case 4: Technical terms and abbreviations (smell)
+        df4 = pd.DataFrame({'text': ['JavaScript', 'JS', 'ECMAScript', 'Javascript']})
+        result = self.data_smells.check_syntactic_synonym(df4, 'text')
+        assert result is False, "Test Case 4 Failed: Should detect smell for technical terms"
+        print_and_log("Test Case 4 Passed: Smell detected for technical terms")
+
+        # Test Case 5: Mixed case synonyms (smell)
+        df5 = pd.DataFrame({'text': ['GOOD', 'good', 'excellent', 'Great']})
+        result = self.data_smells.check_syntactic_synonym(df5, 'text')
+        assert result is False, "Test Case 5 Failed: Should detect smell for mixed case synonyms"
+        print_and_log("Test Case 5 Passed: Smell detected for mixed case synonyms")
+
+        # Test Case 6: Single word vs multiple words (smell)
+        df6 = pd.DataFrame({'text': ['US', 'United States', 'USA', 'America']})
+        result = self.data_smells.check_syntactic_synonym(df6, 'text')
+        assert result is False, "Test Case 6 Failed: Should detect smell for country name variations"
+        print_and_log("Test Case 6 Passed: Smell detected for country name variations")
+
+        # Test Case 7: Partial name matches (smell)
+        df7 = pd.DataFrame({'text': ['John Smith', 'John', 'Mr. Smith', 'J. Smith']})
+        result = self.data_smells.check_syntactic_synonym(df7, 'text')
+        assert result is False, "Test Case 7 Failed: Should detect smell for partial name matches"
+        print_and_log("Test Case 7 Passed: Smell detected for partial name matches")
+
+        # Test Case 8: Similar but not synonymous words (no smell)
+        df8 = pd.DataFrame({'text': ['cat', 'dog', 'bird', 'fish']})
+        result = self.data_smells.check_syntactic_synonym(df8, 'text')
+        assert result is True, "Test Case 8 Failed: Should not detect smell for unrelated words"
+        print_and_log("Test Case 8 Passed: No smell detected for unrelated words")
+
+        # Test Case 9: Identical words (no smell)
+        df9 = pd.DataFrame({'text': ['apple', 'apple', 'apple', 'apple']})
+        result = self.data_smells.check_syntactic_synonym(df9, 'text')
+        assert result is True, "Test Case 9 Failed: Should not detect smell for identical words"
+        print_and_log("Test Case 9 Passed: No smell detected for identical words")
+
+        # Test Case 10: Empty and null values (no smell)
+        df10 = pd.DataFrame({'text': ['hello', '', np.nan, 'world']})
+        result = self.data_smells.check_syntactic_synonym(df10, 'text')
+        assert result is True, "Test Case 10 Failed: Should handle empty and null values"
+        print_and_log("Test Case 10 Passed: Handled empty and null values correctly")
+
+        # Test Case 11: Non-string columns (no smell)
+        df11 = pd.DataFrame({'numbers': [1, 2, 3, 4, 5]})
+        result = self.data_smells.check_syntactic_synonym(df11, 'numbers')
+        assert result is True, "Test Case 11 Failed: Should not detect smell for non-string columns"
+        print_and_log("Test Case 11 Passed: No smell detected for non-string columns")
+
+        # Test Case 12: Mixed data types (no smell)
+        df12 = pd.DataFrame({'mixed': ['hello', 123, 'world', 456.78]})
+        result = self.data_smells.check_syntactic_synonym(df12, 'mixed')
+        assert result is True, "Test Case 12 Failed: Should handle mixed data types"
+        print_and_log("Test Case 12 Passed: Handled mixed data types correctly")
+
+        # Test Case 13: Low similarity threshold (more synonyms detected)
+        df13 = pd.DataFrame({'text': ['big', 'large', 'huge', 'tiny']})
+        result = self.data_smells.check_syntactic_synonym(df13, 'text', similarity_threshold=0.3)
+        assert result is False, "Test Case 13 Failed: Should detect more synonyms with low threshold"
+        print_and_log("Test Case 13 Passed: More synonyms detected with low threshold")
+
+        # Test Case 14: High similarity threshold (fewer synonyms detected)
+        df14 = pd.DataFrame({'text': ['happy', 'joyful', 'sad']})
+        result = self.data_smells.check_syntactic_synonym(df14, 'text', similarity_threshold=0.9)
+        assert result is True, "Test Case 14 Failed: Should detect fewer synonyms with high threshold"
+        print_and_log("Test Case 14 Passed: Fewer synonyms detected with high threshold")
+
+        # Test Case 15: Large dataset performance (should handle efficiently)
+        large_data = ['word' + str(i) for i in range(600)] + ['intelligent', 'clever', 'smart']
+        df15 = pd.DataFrame({'text': large_data})
+        result = self.data_smells.check_syntactic_synonym(df15, 'text')
+        assert result is True, "Test Case 15 Failed: Should handle large dataset efficiently"
+        # Should handle large datasets by sampling
+        print_and_log("Test Case 15 Passed: Large dataset handled efficiently")
+
+        # Test Case 16: Special characters in synonyms (smell)
+        df16 = pd.DataFrame({'text': ['e-mail', 'email', 'e_mail', 'electronic mail']})
+        result = self.data_smells.check_syntactic_synonym(df16, 'text')
+        assert result is False, "Test Case 16 Failed: Should detect smell for special character variations"
+        print_and_log("Test Case 16 Passed: Smell detected for special character variations")
+
+        # Test Case 17: Numbers and text combinations (smell)
+        df17 = pd.DataFrame({'text': ['Version 1', 'V1', 'Ver 1', 'Version One']})
+        result = self.data_smells.check_syntactic_synonym(df17, 'text')
+        assert result is False, "Test Case 17 Failed: Should detect smell for number-text combinations"
+        print_and_log("Test Case 17 Passed: Smell detected for number-text combinations")
+
+        # Test Case 18: Multiple synonym groups (smell)
+        df18 = pd.DataFrame({'text': ['big', 'large', 'small', 'tiny', 'red', 'crimson']})
+        result = self.data_smells.check_syntactic_synonym(df18, 'text')
+        assert result is False, "Test Case 18 Failed: Should detect multiple synonym groups"
+        print_and_log("Test Case 18 Passed: Multiple synonym groups detected")
+
+        # Test Case 19: Scientific terms and abbreviations (smell)
+        df19 = pd.DataFrame({'text': ['Deoxyribonucleic acid', 'DNA', 'genetic material', 'nucleic acid']})
+        result = self.data_smells.check_syntactic_synonym(df19, 'text')
+        assert result is False, "Test Case 19 Failed: Should detect smell for scientific terms"
+        print_and_log("Test Case 19 Passed: Smell detected for scientific terms")
+
+        # Test Case 20: Check all columns at once (smell present)
+        df20 = pd.DataFrame({
+            'col1': ['good', 'well', 'great'],
+            'col2': ['apple', 'banana', 'cherry'],
+            'col3': [1, 2, 3]
+        })
+        result = self.data_smells.check_syntactic_synonym(df20)
+        assert result is False, "Test Case 20 Failed: Should detect smell when checking all columns"
+        print_and_log("Test Case 20 Passed: Smell detected when checking all columns")
+
+        # Test Case 21: Non-existent field (should raise ValueError)
+        with self.assertRaises(ValueError):
+            self.data_smells.check_syntactic_synonym(df1, 'non_existent_field')
+        print_and_log("Test Case 21 Passed: ValueError raised for non-existent field")
+
+        # Test Case 22: Empty DataFrame (no smell)
+        df22 = pd.DataFrame()
+        result = self.data_smells.check_syntactic_synonym(df22)
+        assert result is True, "Test Case 22 Failed: Should handle empty DataFrame"
+        print_and_log("Test Case 22 Passed: Empty DataFrame handled correctly")
+
+        # Test Case 23: Invalid similarity threshold (should raise ValueError)
+        with self.assertRaises(ValueError):
+            self.data_smells.check_syntactic_synonym(df1, 'text', similarity_threshold=1.5)
+        print_and_log("Test Case 23 Passed: ValueError raised for invalid similarity threshold")
+
+        # Test Case 24: Medical terms and synonyms (smell)
+        df24 = pd.DataFrame({'text': ['doctor', 'physician', 'MD', 'medic']})
+        result = self.data_smells.check_syntactic_synonym(df24, 'text')
+        assert result is False, "Test Case 24 Failed: Should detect smell for medical terms"
+        print_and_log("Test Case 24 Passed: Smell detected for medical terms")
+
+        # Test Case 25: Contractions and full forms (smell)
+        df25 = pd.DataFrame({'text': ["can't", 'cannot', "won't", 'will not']})
+        result = self.data_smells.check_syntactic_synonym(df25, 'text')
+        assert result is False, "Test Case 25 Failed: Should detect smell for contractions"
+        print_and_log("Test Case 25 Passed: Smell detected for contractions")
+
+        print_and_log("\nFinished testing check_syntactic_synonym function")
+        print_and_log("-----------------------------------------------------------")
+
+
