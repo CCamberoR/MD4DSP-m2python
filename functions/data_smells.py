@@ -1,13 +1,13 @@
+
+import re
 import logging
 import unicodedata
-import re
-
 import numpy as np
+import contractions
 import pandas as pd
-
-from helpers.auxiliar import is_time_string, is_date_string, is_datetime_string, is_float_string, is_integer_string
 from helpers.logger import print_and_log
 from helpers.enumerations import DataType
+from helpers.auxiliar import is_time_string, is_date_string, is_datetime_string, is_float_string, is_integer_string
 
 
 def check_precision_consistency(data_dictionary: pd.DataFrame, expected_decimals: int, field: str = None,
@@ -652,7 +652,7 @@ def check_separating_consistency(data_dictionary: pd.DataFrame, decimal_sep: str
             result = check_column(col)
             if not result:
                 return result  # Return on the first smell found
-        return True
+    return True
 
 
 def check_date_time_consistency(data_dictionary: pd.DataFrame, expected_type: DataType,
@@ -1201,7 +1201,6 @@ def check_intermingled_data_type(data_dictionary: pd.DataFrame, field: str = Non
             r'^\d{4}/\d{1,2}/\d{1,2}$',  # YYYY/MM/DD
         ]
 
-        import re
         for pattern in date_patterns:
             if re.match(pattern, str_value):
                 return True
@@ -1356,5 +1355,74 @@ def check_intermingled_data_type(data_dictionary: pd.DataFrame, field: str = Non
             result = check_column(col)
             if not result:
                 return result  # Return on the first smell found
+
+    return True
+
+
+def check_contracted_text(data_dictionary: pd.DataFrame, field: str = None, origin_function: str = None) -> bool:
+    """
+    Check if string columns contain contracted words or phrases using the `contractions` library.
+
+    :param data_dictionary: (pd.DataFrame) DataFrame containing the data
+    :param field: (str) Optional field to check; if None, checks all string columns
+    :param origin_function: (str) Optional name of the function that called this function, for logging purposes
+
+    :return: (bool) False if contractions are detected, True otherwise
+    """
+
+    def detect_contractions(text: str) -> list:
+        """
+        Detects contractions in the input text by comparing original and expanded tokens.
+        Returns a list of contractions found.
+        """
+        if pd.isna(text) or not isinstance(text, str) or not text.strip():
+            return []
+
+        tokens = re.findall(r"\b[\w']+\b", text)
+        return [token for token in tokens if contractions.fix(token) != token]
+
+    def check_column(col_name: str) -> bool:
+        """
+        Helper function to check a single column for contractions.
+        """
+        if not pd.api.types.is_string_dtype(data_dictionary[col_name]) and data_dictionary[col_name].dtype != 'object':
+            return True
+
+        column = data_dictionary[col_name].dropna()
+        if column.empty:
+            return True
+
+        values_with_contractions = []
+        all_contractions_found = []
+
+        for value in column:
+            contractions_in_value = detect_contractions(value)
+            if contractions_in_value:
+                values_with_contractions.append(value)
+                all_contractions_found.extend(contractions_in_value)
+
+        if values_with_contractions:
+            unique_contractions = list(set(all_contractions_found))
+            message = (f"Warning in function: {origin_function} - Possible data smell: DataField {col_name} "
+                       f"contains {len(values_with_contractions)} values with contractions. "
+                       f"Examples of contractions found: {unique_contractions[:10]}")
+            print_and_log(message, level=logging.WARN)
+            print(f"DATA SMELL DETECTED: Contracted Text in DataField {col_name}")
+            return False
+
+        return True
+
+    if field is not None:
+        if field not in data_dictionary.columns:
+            raise ValueError(f"DataField '{field}' does not exist in the DataFrame.")
+        return check_column(field)
+    else:
+        if data_dictionary.empty:
+            return True
+
+        string_fields = data_dictionary.select_dtypes(include=['object', 'string']).columns
+        for col in string_fields:
+            if not check_column(col):
+                return False
 
     return True
