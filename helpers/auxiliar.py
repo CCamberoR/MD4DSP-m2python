@@ -2,6 +2,7 @@
 import re
 import math
 import numpy as np
+import contractions
 import pandas as pd
 from typing import Union
 from datetime import datetime
@@ -330,3 +331,12 @@ def is_datetime_string(value):
         except (ValueError, TypeError):
             continue
     return False
+
+
+def normalize_text(text: str) -> str:
+    """
+    Expand contractions, lowercase, and remove punctuation.
+    """
+    text = contractions.fix(text)  # e.g., "I'd" → "I would"
+    text = re.sub(r"[^\w\s]", "", text.lower())  # Remove punctuation and lowercase
+    return text.strip()

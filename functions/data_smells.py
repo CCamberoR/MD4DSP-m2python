@@ -1,13 +1,15 @@
-
 import re
 import logging
 import unicodedata
+from collections import defaultdict
+
 import numpy as np
 import contractions
 import pandas as pd
 from helpers.logger import print_and_log
 from helpers.enumerations import DataType
-from helpers.auxiliar import is_time_string, is_date_string, is_datetime_string, is_float_string, is_integer_string
+from helpers.auxiliar import is_time_string, is_date_string, is_datetime_string, is_float_string, is_integer_string, \
+    normalize_text
 
 
 def check_precision_consistency(data_dictionary: pd.DataFrame, expected_decimals: int, field: str = None,
@@ -1424,5 +1426,211 @@ def check_contracted_text(data_dictionary: pd.DataFrame, field: str = None, orig
         for col in string_fields:
             if not check_column(col):
                 return False
+
+    return True
+
+
+def check_abbreviation_inconsistency(data_dictionary: pd.DataFrame, field: str = None,
+                                     origin_function: str = None) -> bool:
+    """
+    Detects inconsistent usage of abbreviations, acronyms, or contractions across string fields.
+
+    :param data_dictionary: DataFrame with data
+    :param field: Specific field to check; if None, all text fields are checked
+    :param origin_function: Name of calling function (for logging)
+    :return: False if inconsistencies found, True otherwise
+    """
+
+    def get_base_form(text: str) -> str:
+        """
+        Gets a more aggressive base form for comparison that handles abbreviations better.
+        """
+        if not isinstance(text, str):
+            return text
+
+        # Expand contractions first
+        expanded = contractions.fix(text)
+
+        # Remove all punctuation and convert to lowercase
+        cleaned = re.sub(r"[^\w\s]", "", expanded.lower()).strip()
+
+        # Remove extra whitespace
+        cleaned = re.sub(r'\s+', ' ', cleaned)
+
+        return cleaned
+
+    def get_abbreviation_key(text: str) -> tuple:
+        """
+        Creates a key for grouping potential abbreviations/variants.
+        Returns a tuple of (normalized_text, word_count, first_letters, vowel_removed)
+        """
+        base = get_base_form(text)
+        words = base.split()
+        word_count = len(words)
+
+        # Get first letters for acronym detection
+        first_letters = ''.join([w[0] for w in words if w]) if words else ''
+
+        # Remove vowels for consonant-based abbreviations
+        vowel_removed = re.sub(r'[aeiou]', '', base)
+
+        return (base, word_count, first_letters, vowel_removed)
+
+    def are_likely_variants_fast(key1: tuple, key2: tuple, text1: str, text2: str) -> bool:
+        """
+        Fast variant detection using pre-computed keys.
+        """
+        base1, count1, letters1, vowels1 = key1
+        base2, count2, letters2, vowels2 = key2
+
+        # Quick checks first
+        if base1 == base2:
+            return True
+
+        # Check vowel-removed forms
+        if vowels1 and vowels2 and vowels1 == vowels2:
+            return True
+
+        # Check acronym patterns (one single word vs multiple words)
+        if count1 == 1 and count2 > 1:
+            # Check if single word matches first letters or is contained
+            if (base1 == letters2[:len(base1)] if len(base1) <= len(letters2) else False) or \
+               any(base1 in word or word.startswith(base1) for word in base2.split()):
+                return True
+        elif count2 == 1 and count1 > 1:
+            # Reverse check
+            if (base2 == letters1[:len(base2)] if len(base2) <= len(letters1) else False) or \
+               any(base2 in word or word.startswith(base2) for word in base1.split()):
+                return True
+
+        # Check substring containment for longer texts
+        if len(base1) >= 3 and len(base2) >= 3:
+            if base1 in base2 or base2 in base1:
+                return True
+
+        return False
+
+    def analyze_column_optimized(col_name: str) -> bool:
+        """
+        Optimized analysis of a single column for inconsistent lexical forms.
+        """
+        column = data_dictionary[col_name].dropna()
+        if column.empty or not pd.api.types.is_string_dtype(column):
+            return True
+
+        unique_texts = list(column.unique())
+        if len(unique_texts) <= 1:
+            return True
+
+        # Limit processing for very large datasets to avoid performance issues
+        if len(unique_texts) > 1000:
+            # Sample a representative subset for analysis
+            import random
+            random.seed(42)  # For reproducible results
+            unique_texts = random.sample(unique_texts, 1000)
+
+        # Pre-compute keys for all texts
+        text_keys = {}
+        for text in unique_texts:
+            if isinstance(text, str) and text.strip():
+                text_keys[text] = get_abbreviation_key(text)
+
+        # Group texts by similar characteristics for faster comparison
+        groups_by_base = defaultdict(list)
+        groups_by_letters = defaultdict(list)
+        groups_by_vowels = defaultdict(list)
+
+        for text, key in text_keys.items():
+            base, count, letters, vowels = key
+            groups_by_base[base].append(text)
+            if letters:
+                groups_by_letters[letters].append(text)
+            if vowels:
+                groups_by_vowels[vowels].append(text)
+
+        variant_groups = []
+        processed = set()
+
+        # Check within same base groups first (exact matches after normalization)
+        for base, texts in groups_by_base.items():
+            if len(texts) > 1:
+                variant_groups.append(texts)
+                processed.update(texts)
+
+        # Check acronym patterns
+        for letters, potential_acronyms in groups_by_letters.items():
+            if len(letters) <= 5:  # Only check reasonable acronym lengths
+                for text1 in potential_acronyms:
+                    if text1 in processed:
+                        continue
+                    current_group = [text1]
+
+                    # Look for full forms that could match this acronym
+                    for text2, key2 in text_keys.items():
+                        if text2 == text1 or text2 in processed:
+                            continue
+                        if are_likely_variants_fast(text_keys[text1], key2, text1, text2):
+                            current_group.append(text2)
+
+                    if len(current_group) > 1:
+                        variant_groups.append(current_group)
+                        processed.update(current_group)
+
+        # Check vowel-removed groups
+        for vowels, texts in groups_by_vowels.items():
+            if len(texts) > 1:
+                unprocessed_texts = [t for t in texts if t not in processed]
+                if len(unprocessed_texts) > 1:
+                    variant_groups.append(unprocessed_texts)
+                    processed.update(unprocessed_texts)
+
+        # Final pass for remaining substring matches (limited scope)
+        remaining_texts = [t for t in text_keys.keys() if t not in processed]
+        if len(remaining_texts) > 1 and len(remaining_texts) <= 100:  # Only for small remaining sets
+            for i, text1 in enumerate(remaining_texts):
+                if text1 in processed:
+                    continue
+                current_group = [text1]
+
+                for text2 in remaining_texts[i+1:]:
+                    if text2 in processed:
+                        continue
+                    if are_likely_variants_fast(text_keys[text1], text_keys[text2], text1, text2):
+                        current_group.append(text2)
+
+                if len(current_group) > 1:
+                    variant_groups.append(current_group)
+                    processed.update(current_group)
+
+        # Report findings
+        if variant_groups:
+            # Limit reporting to avoid log spam
+            for group in variant_groups[:5]:  # Report only first 5 groups
+                message = (f"Warning in function: {origin_function} - Possible data smell: Inconsistent lexical forms "
+                           f"detected in DataField '{col_name}'. "
+                           f"Variants found: {group}")
+                print_and_log(message, level=logging.WARN)
+
+            if len(variant_groups) > 5:
+                message = (f"Warning in function: {origin_function} - Additional {len(variant_groups) - 5} "
+                           f"variant groups found in DataField '{col_name}'")
+                print_and_log(message, level=logging.WARN)
+
+            print(f"DATA SMELL DETECTED: Abbreviation Inconsistencies in DataField '{col_name}'")
+            return False
+
+        return True
+
+    if field:
+        if field not in data_dictionary.columns:
+            raise ValueError(f"Field '{field}' not found in DataFrame.")
+        return analyze_column_optimized(field)
+
+    if data_dictionary.empty:
+        return True
+
+    for col in data_dictionary.select_dtypes(include=["object", "string"]).columns:
+        if not analyze_column_optimized(col):
+            return False
 
     return True
