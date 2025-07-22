@@ -56,7 +56,8 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
             self.execute_check_number_size_ExternalDatasetTests,
             self.execute_check_string_casing_ExternalDatasetTests,
             self.execute_check_intermingled_data_type_ExternalDatasetTests,
-            
+            self.execute_check_contracted_text_ExternalDatasetTests,
+
         ]
 
         print_and_log("")
@@ -2224,4 +2225,170 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
 
         print_and_log("\nFinished testing check_intermingled_data_type function with Spotify Dataset")
         print_and_log("-----------------------------------------------------------")
+
+    def execute_check_contracted_text_ExternalDatasetTests(self):
+        """
+        Execute external dataset tests for check_contracted_text function.
+        Tests various scenarios with the Spotify dataset to detect contracted text patterns.
+        Implements 20 comprehensive test cases covering different contraction scenarios.
+        """
+        print_and_log("Testing check_contracted_text Function with Spotify Dataset")
+        print_and_log("")
+
+        # Create a copy of the dataset for modifications
+        test_df = self.data_dictionary.copy()
+
+        # Test 1: Check track_name field (likely has contracted forms)
+        print_and_log("\nTest 1: Check track_name field")
+        result = self.data_smells.check_contracted_text(test_df, 'track_name')
+        self.assertFalse(result, "Test Case 1 Failed: Expected smell for track_name with contracted forms")
+        print_and_log("Test Case 1 Passed: Expected smell, got smell")
+
+        # Test 2: Check track_artist field (may contain contractions)
+        print_and_log("\nTest 2: Check track_artist field")
+        result = self.data_smells.check_contracted_text(test_df, 'track_artist')
+        self.assertFalse(result, "Test Case 2 Failed: Expected smell for track_artist with contracted forms")
+        print_and_log("Test Case 2 Passed: Expected smell, got smell")
+
+        # Test 3: Create column with common contractions
+        print_and_log("\nTest 3: Check column with common contractions")
+        contractions_list = ["don't", "can't", "won't", "I'm", "you're", "we'll", "they've", "it's", "didn't", "shouldn't"]
+        # Create a list that repeats the contractions to match the DataFrame length exactly
+        repeated_contractions = (contractions_list * ((len(test_df) // len(contractions_list)) + 1))[:len(test_df)]
+        test_df['common_contractions'] = repeated_contractions
+        result = self.data_smells.check_contracted_text(test_df, 'common_contractions')
+        self.assertFalse(result, "Test Case 3 Failed: Expected smell for common contractions")
+        print_and_log("Test Case 3 Passed: Expected smell, got smell")
+
+        # Test 4: Create column with expanded forms (no contractions)
+        print_and_log("\nTest 4: Check column with expanded forms")
+        expanded_list = ["do not", "cannot", "will not", "I am", "you are", "we will", "they have", "it is", "did not", "should not"]
+        test_df['expanded_forms'] = (expanded_list * ((len(test_df) // len(expanded_list)) + 1))[:len(test_df)]
+        test_df['expanded_forms'] = test_df['expanded_forms'][:len(test_df)]
+        result = self.data_smells.check_contracted_text(test_df, 'expanded_forms')
+        self.assertTrue(result, "Test Case 4 Failed: Expected no smell for expanded forms")
+        print_and_log("Test Case 4 Passed: Expected no smell, got no smell")
+
+        # Test 5: Create column with mixed contractions and text
+        print_and_log("\nTest 5: Check mixed contractions and text")
+        mixed_text = ["I can't believe it", "This song rocks", "Don't stop the music", "Amazing track", "Won't you dance"]
+        test_df['mixed_text'] = (mixed_text * ((len(test_df) // len(mixed_text)) + 1))[:len(test_df)]
+        result = self.data_smells.check_contracted_text(test_df, 'mixed_text')
+        self.assertFalse(result, "Test Case 5 Failed: Expected smell for mixed contractions and text")
+        print_and_log("Test Case 5 Passed: Expected smell, got smell")
+
+        # Test 6: Create column with apostrophe but no contractions
+        print_and_log("\nTest 6: Check apostrophe without contractions")
+        apostrophe_text = ["John's car", "Mary's house", "The dog's bone", "Artist's album", "Singer's voice"]
+        test_df['apostrophe_text'] = (apostrophe_text * ((len(test_df) // len(apostrophe_text)) + 1))[:len(test_df)]
+        result = self.data_smells.check_contracted_text(test_df, 'apostrophe_text')
+        self.assertTrue(result, "Test Case 6 Failed: Expected no smell for possessive apostrophes")
+        print_and_log("Test Case 6 Passed: Expected no smell, got no smell")
+
+        # Test 7: Create column with informal contractions
+        print_and_log("\nTest 7: Check informal contractions")
+        informal_contractions = ["gonna", "wanna", "gotta", "kinda", "sorta", "lemme", "gimme", "dunno", "ain't", "y'all"]
+        test_df['informal_contractions'] = (informal_contractions * ((len(test_df) // len(informal_contractions)) + 1))[:len(test_df)]
+        result = self.data_smells.check_contracted_text(test_df, 'informal_contractions')
+        self.assertFalse(result, "Test Case 7 Failed: Expected smell for informal contractions")
+        print_and_log("Test Case 7 Passed: Expected smell, got smell")
+
+        # Test 8: Create column with numbers and contractions
+        print_and_log("\nTest 8: Check numbers with contractions")
+        number_contractions = ["Track #1 isn't here", "Song 2 won't play", "Album 3's the best", "Part 4 can't be found", "Volume 5 doesn't work"]
+        test_df['number_contractions'] = (number_contractions * ((len(test_df) // len(number_contractions)) + 1))[:len(test_df)]
+        result = self.data_smells.check_contracted_text(test_df, 'number_contractions')
+        self.assertFalse(result, "Test Case 8 Failed: Expected smell for numbers with contractions")
+        print_and_log("Test Case 8 Passed: Expected smell, got smell")
+
+        # Test 9: Create column with song titles containing contractions
+        print_and_log("\nTest 9: Check song titles with contractions")
+        song_titles = ["Can't Stop the Feeling", "Don't Stop Me Now", "I Can't Get No Satisfaction", "Won't Back Down", "Shouldn't Have"]
+        test_df['song_titles'] = (song_titles * ((len(test_df) // len(song_titles)) + 1))[:len(test_df)]
+        result = self.data_smells.check_contracted_text(test_df, 'song_titles')
+        self.assertFalse(result, "Test Case 9 Failed: Expected smell for song titles with contractions")
+        print_and_log("Test Case 9 Passed: Expected smell, got smell")
+
+        # Test 10: Check numeric column (should have no smell)
+        print_and_log("\nTest 10: Check numeric column")
+        result = self.data_smells.check_contracted_text(test_df, 'danceability')
+        self.assertTrue(result, "Test Case 10 Failed: Expected no smell for numeric column")
+        print_and_log("Test Case 10 Passed: Expected no smell, got no smell")
+
+        # Test 11: Create column with empty strings and NaN
+        print_and_log("\nTest 11: Check empty strings and NaN")
+        test_df['empty_nan'] = ([None, '', np.nan, None, ''] * ((len(test_df) // 5) + 1))[:len(test_df)]
+        result = self.data_smells.check_contracted_text(test_df, 'empty_nan')
+        self.assertTrue(result, "Test Case 11 Failed: Expected no smell for empty/NaN values")
+        print_and_log("Test Case 11 Passed: Expected no smell, got no smell")
+
+        # Test 12: Create column with contractions in different cases
+        print_and_log("\nTest 12: Check contractions in different cases")
+        case_contractions = ["DON'T", "Can't", "won'T", "I'M", "You'Re", "WE'LL", "they've", "IT'S", "DIDN'T", "shouldn't"]
+        test_df['case_contractions'] = (case_contractions * ((len(test_df) // len(case_contractions)) + 1))[:len(test_df)]
+        result = self.data_smells.check_contracted_text(test_df, 'case_contractions')
+        self.assertFalse(result, "Test Case 12 Failed: Expected smell for contractions in different cases")
+        print_and_log("Test Case 12 Passed: Expected smell, got smell")
+
+        # Test 13: Create column with contractions and punctuation
+        print_and_log("\nTest 13: Check contractions with punctuation")
+        punct_contractions = ["Don't!", "Can't?", "Won't...", "I'm;", "You're,", "We'll:", "They've-", "It's.", "Didn't(", "Shouldn't)"]
+        test_df['punct_contractions'] = (punct_contractions * ((len(test_df) // len(punct_contractions)) + 1))[:len(test_df)]
+        result = self.data_smells.check_contracted_text(test_df, 'punct_contractions')
+        self.assertFalse(result, "Test Case 13 Failed: Expected smell for contractions with punctuation")
+        print_and_log("Test Case 13 Passed: Expected smell, got smell")
+
+        # Test 14: Create column with song lyrics containing contractions
+        print_and_log("\nTest 14: Check song lyrics with contractions")
+        lyrics = ["I can't live without you baby", "Don't stop believing in yourself", "Won't you take me home tonight", "I'm gonna love you forever", "You're my everything always"]
+        test_df['lyrics'] = (lyrics * ((len(test_df) // len(lyrics)) + 1))[:len(test_df)]
+        result = self.data_smells.check_contracted_text(test_df, 'lyrics')
+        self.assertFalse(result, "Test Case 14 Failed: Expected smell for lyrics with contractions")
+        print_and_log("Test Case 14 Passed: Expected smell, got smell")
+
+        # Test 15: Create column with artist names containing contractions
+        print_and_log("\nTest 15: Check artist names with contractions")
+        artists = ["Guns N' Roses", "Boyz II Men", "Salt-N-Pepa", "D'Angelo", "O'Jays"]
+        test_df['artist_contractions'] = (artists * ((len(test_df) // len(artists)) + 1))[:len(test_df)]
+        result = self.data_smells.check_contracted_text(test_df, 'artist_contractions')
+        self.assertTrue(result, "Test Case 15 Failed: Expected no smell for artist names (not true contractions)")
+        print_and_log("Test Case 15 Passed: Expected no smell, got no smell")
+
+        # Test 16: Create column with multiple contractions per value
+        print_and_log("\nTest 16: Check multiple contractions per value")
+        multiple_contractions = ["I can't believe you won't help", "Don't think I'm not trying", "You're sure they've left already", "We'll see if it's working", "I'd say you're probably right"]
+        test_df['multiple_contractions'] = (multiple_contractions * ((len(test_df) // len(multiple_contractions)) + 1))[:len(test_df)]
+        result = self.data_smells.check_contracted_text(test_df, 'multiple_contractions')
+        self.assertFalse(result, "Test Case 16 Failed: Expected smell for multiple contractions per value")
+        print_and_log("Test Case 16 Passed: Expected smell, got smell")
+
+        # Test 17: Create column with text that looks like contractions but isn't
+        print_and_log("\nTest 17: Check text that looks like contractions")
+        fake_contractions = ["O'Brien", "McDonald's", "St. Mary's", "Ph.D.", "Mr. Smith's"]
+        test_df['fake_contractions'] = (fake_contractions * ((len(test_df) // len(fake_contractions)) + 1))[:len(test_df)]
+        result = self.data_smells.check_contracted_text(test_df, 'fake_contractions')
+        self.assertTrue(result, "Test Case 17 Failed: Expected no smell for fake contractions")
+        print_and_log("Test Case 17 Passed: Expected no smell, got no smell")
+
+        # Test 18: Create column with playlist names containing contractions
+        print_and_log("\nTest 18: Check playlist names with contractions")
+        playlists = ["90's Hits Don't Stop", "Can't Get Enough Rock", "Won't You Dance Tonight", "I'm Feeling Good Vibes", "You're My Favorite Songs"]
+        test_df['playlist_contractions'] = (playlists * ((len(test_df) // len(playlists)) + 1))[:len(test_df)]
+        result = self.data_smells.check_contracted_text(test_df, 'playlist_contractions')
+        self.assertFalse(result, "Test Case 18 Failed: Expected smell for playlist names with contractions")
+        print_and_log("Test Case 18 Passed: Expected smell, got smell")
+
+        # Test 19: Check all string columns at once (should detect smell)
+        print_and_log("\nTest 19: Check all string columns at once")
+        result = self.data_smells.check_contracted_text(test_df)
+        self.assertFalse(result, "Test Case 19 Failed: Expected smell when checking all string columns")
+        print_and_log("Test Case 19 Passed: Expected smell when checking all columns, got smell")
+
+        # Test 20: Create column with edge case contractions
+        print_and_log("\nTest 20: Check edge case contractions")
+        edge_cases = ["'twas the night before", "'tis the season", "rock 'n' roll", "fish 'n' chips", "ma'am and sir"]
+        test_df['edge_cases'] = (edge_cases * ((len(test_df) // len(edge_cases)) + 1))[:len(test_df)]
+        result = self.data_smells.check_contracted_text(test_df, 'edge_cases')
+        self.assertFalse(result, "Test Case 20 Failed: Expected smell for edge case contractions")
+        print_and_log("Test Case 20 Passed: Expected smell, got smell")
 

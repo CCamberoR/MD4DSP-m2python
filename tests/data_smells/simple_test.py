@@ -54,7 +54,8 @@ class DataSmellsSimpleTest(unittest.TestCase):
             self.execute_check_suspect_far_date_value_SimpleTests,
             self.execute_check_number_size_SimpleTests,
             self.execute_check_string_casing_SimpleTests,
-            self.execute_check_intermingled_data_type_SimpleTests
+            self.execute_check_intermingled_data_type_SimpleTests,
+            self.execute_check_contracted_text_SimpleTests
         ]
 
         print_and_log("")
@@ -2361,3 +2362,129 @@ class DataSmellsSimpleTest(unittest.TestCase):
         print_and_log("\nFinished testing check_intermingled_data_type function")
         print_and_log("-----------------------------------------------------------")
 
+    def execute_check_contracted_text_SimpleTests(self):
+        """
+        Execute simple tests for check_contracted_text function.
+        Tests the following cases:
+        1. Standard contractions (e.g., "don't", "I'm")
+        2. Negations (e.g., "isn't", "aren't")
+        3. Possessives (e.g., "John's", "dog's")
+        4. Plurals (e.g., "dogs", "cats")
+        5. Mixed contractions and possessives
+        6. Non-existent field
+        7. Empty DataFrame
+        8. Column with all NaN values
+        9. String column with no contractions (no smell)
+        10. Numeric column (no smell)
+        11. Date column (no smell)
+        12. Time column (no smell)
+        13. DateTime column (no smell)
+        14. Check all columns at once (smell present)
+        """
+        print_and_log("")
+        print_and_log("Testing check_contracted_text function...")
+
+        # Create test data
+        data = {
+            'standard_contractions': ["don't", "I'm", "he's", "she's", "it's"],
+            'negations': ["isn't", "aren't", "haven't", "hasn't", "won't"],
+            'possessives': ["John's", "dog's", "cat's", "child's", "woman's"],
+            'plurals': ["dogs", "cats", "children", "women", "men"],
+            'mixed_contractions_possessives': ["don't know", "I'm happy", "he's John", "she's a doctor", "it's mine"],
+            'no_contractions': ["hello", "world", "test", "data", "smell"],
+            'numbers': [1, 2, 3, 4, 5],
+            'dates': pd.date_range('2024-01-01', periods=5, freq='D'),
+            'valid_datetimes': pd.date_range('2024-01-01 01:00', periods=5, freq='H'),
+            'times': pd.date_range('2024-01-01 01:00', periods=5, freq='H')
+        }
+        df = pd.DataFrame(data)
+        empty_df = pd.DataFrame()
+
+        # Test Case 1: Standard contractions (Smell)
+        result = self.data_smells.check_contracted_text(df, 'standard_contractions')
+        assert result is False, "Test Case 1 Failed: Should detect smell for standard contractions"
+        print_and_log("Test Case 1 Passed: Smell detected for standard contractions")
+
+        # Test Case 2: Negations (Smell)
+        result = self.data_smells.check_contracted_text(df, 'negations')
+        assert result is False, "Test Case 1 Failed: Should detect smell for negations"
+        print_and_log("Test Case 2 Passed: Smell detected for negations")
+
+        # Test Case 3: Possessives (no smell)
+        result = self.data_smells.check_contracted_text(df, 'possessives')
+        assert result is True, "Test Case 3 Failed: Should not detect smell for possessives"
+        print_and_log("Test Case 3 Passed: No smell detected for possessives")
+
+        # Test Case 4: Plurals (no smell)
+        result = self.data_smells.check_contracted_text(df, 'plurals')
+        assert result is True, "Test Case 4 Failed: Should not detect smell for plurals"
+        print_and_log("Test Case 4 Passed: No smell detected for plurals")
+
+        # Test Case 5: Mixed contractions and possessives (Smell)
+        result = self.data_smells.check_contracted_text(df, 'mixed_contractions_possessives')
+        assert result is False, "Test Case 5 Failed: Should detect smell for mixed contractions and possessives"
+        print_and_log("Test Case 5 Passed: Smell detected for mixed contractions and possessives")
+
+        # Test Case 6: Non-existent field
+        with self.assertRaises(ValueError):
+            self.data_smells.check_contracted_text(df, 'non_existent_field')
+        print_and_log("Test Case 6 Passed: ValueError raised for non-existent field")
+
+        # Test Case 7: Empty DataFrame
+        result = self.data_smells.check_contracted_text(empty_df)
+        assert result is True, "Test Case 7 Failed: Should not detect smell for empty DataFrame"
+        print_and_log("Test Case 7 Passed: No smell detected for empty DataFrame")
+
+        # Test Case 8: Column with all NaN values
+        df_nan = pd.DataFrame({'text': [np.nan, np.nan, np.nan]})
+        result = self.data_smells.check_contracted_text(df_nan, 'text')
+        assert result is True, "Test Case 8 Failed: Should not detect smell for column with all NaN values"
+        print_and_log("Test Case 8 Passed: No smell detected for column with all NaN values")
+
+        # Test Case 9: String column with no contractions (no smell)
+        result = self.data_smells.check_contracted_text(df, 'no_contractions')
+        assert result is True, "Test Case 9 Failed: Should not detect smell for string column with no contractions"
+        print_and_log("Test Case 9 Passed: No smell detected for string column with no contractions")
+
+        # Test Case 10: Numeric column (no smell)
+        result = self.data_smells.check_contracted_text(df, 'numbers')
+        assert result is True, "Test Case 10 Failed: Should not detect smell for numeric column"
+        print_and_log("Test Case 10 Passed: No smell detected for numeric column")
+
+        # Test Case 11: Date column (no smell)
+        result = self.data_smells.check_contracted_text(df, 'dates')
+        assert result is True, "Test Case 11 Failed: Should not detect smell for date column"
+        print_and_log("Test Case 11 Passed: No smell detected for date column")
+
+        # Test Case 12: Time column (no smell)
+        result = self.data_smells.check_contracted_text(df, 'times')
+        assert result is True, "Test Case 12 Failed: Should not detect smell for time column"
+        print_and_log("Test Case 12 Passed: No smell detected for time column")
+
+        # Test Case 13: DateTime column (no smell)
+        result = self.data_smells.check_contracted_text(df, 'valid_datetimes')
+        assert result is True, "Test Case 13 Failed: Should not detect smell for DateTime column"
+        print_and_log("Test Case 13 Passed: No smell detected for DateTime column")
+
+        # Test Case 14: Check all columns at once (no smell detected)
+        df_mixed_all = pd.DataFrame({
+            'col1': [1, 2, 3],
+            'col2': ['a', 'b', 'c'],
+            'col3': [pd.Timestamp('2024-01-01'), np.nan, 'not_a_date']
+        })
+        result = self.data_smells.check_contracted_text(df_mixed_all)
+        assert result is True, "Test Case 14 Failed: Should not detect smell when checking all columns"
+        print_and_log("Test Case 14 Passed: No smell detected when checking all columns")
+
+        # Test Case 15: Check multiple columns with mixed data types (smell)
+        df_mixed_types = pd.DataFrame({
+            'text': ["don't", "I'm", "he's"],
+            'numbers': [1, 2, 3],
+            'dates': pd.date_range('2024-01-01', periods=3, freq='D')
+        })
+        result = self.data_smells.check_contracted_text(df_mixed_types)
+        assert result is False, "Test Case 15 Failed: Should detect smell for mixed data types with contractions"
+        print_and_log("Test Case 15 Passed: Smell detected for mixed data types with contractions")
+
+        print_and_log("\nFinished testing check_contracted_text function")
+        print_and_log("-----------------------------------------------------------")
