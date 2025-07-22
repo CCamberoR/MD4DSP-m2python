@@ -53,7 +53,8 @@ class DataSmellsSimpleTest(unittest.TestCase):
             self.execute_check_suspect_date_value_SimpleTests,
             self.execute_check_suspect_far_date_value_SimpleTests,
             self.execute_check_number_size_SimpleTests,
-            self.execute_check_string_casing_SimpleTests
+            self.execute_check_string_casing_SimpleTests,
+            self.execute_check_intermingled_data_type_SimpleTests
         ]
 
         print_and_log("")
@@ -2241,3 +2242,122 @@ class DataSmellsSimpleTest(unittest.TestCase):
 
         print_and_log("\nFinished testing check_string_casing function")
         print_and_log("-----------------------------------------------------------")
+
+    def execute_check_intermingled_data_type_SimpleTests(self):
+        """
+        Execute simple tests for check_intermingled_data_type function.
+        Tests the following cases:
+        1. Numeric column with some string values (smell)
+        2. String column with some numeric values (smell)
+        3. Date column with some string values (smell)
+        4. Mixed types in object column (no smell)
+        5. Empty DataFrame
+        6. Non-existent field
+        7. Column with all NaN values
+        8. Boolean column (no smell)
+        9. Integer column with NaN (no smell)
+        10. Float column with NaN (no smell)
+        11. String column with special characters (no smell)
+        12. Date column with valid dates (no smell)
+        13. Time column with valid times (no smell)
+        14. DateTime column with valid datetimes (no smell)
+        15. Check all columns at once (smell present)
+        """
+        print_and_log("")
+        print_and_log("Testing check_intermingled_data_type function...")
+
+        # Create test data
+        data = {
+            'numeric_with_strings': [1, 2, 'three', 4.0, '5.0'],
+            'string_with_numbers': ['one', 'two', 3, 'four', 5],
+            'date_with_strings': ['2024-01-01', 'not_a_date', '2024-12-31', '2023-10-30', 'hola que hase'],
+            'mixed_objects': [1, 'two', 3.0, 'four', None],
+            'boolean_column': [True, False, True, False, True],
+            'integer_with_nan': [1, 2, np.nan, 4, -1],
+            'float_with_nan': [1.1, 2.2, np.nan, 4.4, 54.6],
+            'special_characters': ['@', '#', '$', '%', '&'],
+            'valid_dates': pd.date_range('2024-01-01', periods=5, freq='D'),
+            'valid_datetimes': pd.date_range('2024-01-01 01:00', periods=5, freq='H')
+        }
+        df = pd.DataFrame(data)
+        empty_df = pd.DataFrame()
+
+        # Test Case 1: Numeric column with some string values (smell)
+        result = self.data_smells.check_intermingled_data_type(df, 'numeric_with_strings')
+        self.assertFalse(result)
+        print_and_log("Test Case 1 Passed: Smell detected for numeric column with strings")
+
+        # Test Case 2: String column with some numeric values (smell)
+        result = self.data_smells.check_intermingled_data_type(df, 'string_with_numbers')
+        self.assertFalse(result)
+        print_and_log("Test Case 2 Passed: Smell detected for string column with numbers")
+
+        # Test Case 3: Date column with some string values (smell)
+        result = self.data_smells.check_intermingled_data_type(df, 'date_with_strings')
+        self.assertFalse(result)
+        print_and_log("Test Case 3 Passed: Smell detected for date column with strings")
+
+        # Test Case 4: Mixed types in object column (smell is detected
+        result = self.data_smells.check_intermingled_data_type(df, 'mixed_objects')
+        self.assertFalse(result)
+        print_and_log("Test Case 4 Passed: Smell detected for mixed objects column")
+
+        # Test Case 5: Empty DataFrame
+        result = self.data_smells.check_intermingled_data_type(empty_df)
+        self.assertTrue(result)
+        print_and_log("Test Case 5 Passed: No smell for empty DataFrame")
+
+        # Test Case 6: Non-existent field
+        with self.assertRaises(ValueError):
+            self.data_smells.check_intermingled_data_type(df, 'non_existent')
+        print_and_log("Test Case 6 Passed: ValueError raised for non-existent field")
+
+        # Test Case 7: Column with all NaN values
+        df_nan = pd.DataFrame({'mixed_objects': [np.nan, np.nan, np.nan]})
+        result = self.data_smells.check_intermingled_data_type(df_nan, 'mixed_objects')
+        self.assertTrue(result)
+        print_and_log("Test Case 7 Passed: No smell for column with all NaN values")
+
+        # Test Case 8: Boolean column (no smell)
+        result = self.data_smells.check_intermingled_data_type(df, 'boolean_column')
+        self.assertTrue(result)
+        print_and_log("Test Case 8 Passed: No smell for boolean column")
+
+        # Test Case 9: Integer column with NaN (no smell)
+        result = self.data_smells.check_intermingled_data_type(df, 'integer_with_nan')
+        self.assertTrue(result)
+        print_and_log("Test Case 9 Passed: No smell for integer column with NaN")
+
+        # Test Case 10: Float column with NaN (no smell)
+        result = self.data_smells.check_intermingled_data_type(df, 'float_with_nan')
+        self.assertTrue(result)
+        print_and_log("Test Case 10 Passed: No smell for float column with NaN")
+
+        # Test Case 11: String column with special characters (no smell)
+        result = self.data_smells.check_intermingled_data_type(df, 'special_characters')
+        self.assertTrue(result)
+        print_and_log("Test Case 11 Passed: No smell for string column with special characters")
+
+        # Test Case 12: Date column with valid dates (no smell)
+        result = self.data_smells.check_intermingled_data_type(df, 'valid_dates')
+        self.assertTrue(result)
+        print_and_log("Test Case 12 Passed: No smell for date column with valid dates")
+
+        # Test Case 13: DateTime column with valid datetimes (no smell)
+        result = self.data_smells.check_intermingled_data_type(df, 'valid_datetimes')
+        self.assertTrue(result)
+        print_and_log("Test Case 13 Passed: No smell for DateTime column with valid datetimes")
+
+        # Test Case 14: Check all columns at once (smell present)
+        df_mixed_all = pd.DataFrame({
+            'col1': [1, 2, 3],
+            'col2': ['a', 'b', 'c'],
+            'col3': [pd.Timestamp('2024-01-01'), np.nan, 'not_a_date']
+        })
+        result = self.data_smells.check_intermingled_data_type(df_mixed_all)
+        self.assertFalse(result)
+        print_and_log("Test Case 14 Passed: Smell detected when checking all columns")
+
+        print_and_log("\nFinished testing check_intermingled_data_type function")
+        print_and_log("-----------------------------------------------------------")
+

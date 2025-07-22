@@ -55,6 +55,8 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
             self.execute_check_suspect_far_date_value_ExternalDatasetTests,
             self.execute_check_number_size_ExternalDatasetTests,
             self.execute_check_string_casing_ExternalDatasetTests,
+            self.execute_check_intermingled_data_type_ExternalDatasetTests,
+            
         ]
 
         print_and_log("")
@@ -1946,3 +1948,280 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
 
         print_and_log("\nFinished testing check_string_casing function with Spotify Dataset")
         print_and_log("-----------------------------------------------------------")
+
+    def execute_check_intermingled_data_type_ExternalDatasetTests(self):
+        """
+        Execute external dataset tests for check_intermingled_data_type function.
+        Tests various scenarios with the Spotify dataset to detect mixed data types within columns.
+        Uses both existing dataset columns and creates modified columns for comprehensive testing.
+        """
+        print_and_log("Testing check_intermingled_data_type Function with Spotify Dataset")
+        print_and_log("")
+
+        # Create a copy of the dataset for modifications
+        test_df = self.data_dictionary.copy()
+
+        # Test 1: Check existing numeric columns (should have no smell - homogeneous types)
+        print_and_log("\nTest 1: Check danceability field (pure numeric)")
+        result = self.data_smells.check_intermingled_data_type(test_df, 'danceability')
+        self.assertTrue(result, "Test Case 1 Failed: Expected no smell for pure numeric column")
+        print_and_log("Test Case 1 Passed: Expected no smell, got no smell")
+
+        # Test 2: Check existing string columns (should have a smell - mixed text)
+        print_and_log("\nTest 2: Check track_name field (mixed text)")
+        result = self.data_smells.check_intermingled_data_type(test_df, 'track_name')
+        self.assertFalse(result, "Test Case 2 Failed: Expected smell for pure text column")
+        print_and_log("Test Case 2 Passed: Expected smell, got smell")
+
+        # Test 3: Create column with numeric and text values mixed (should detect smell)
+        print_and_log("\nTest 3: Check mixed numeric and text values")
+        mixed_values = []
+        for i in range(len(test_df)):
+            if i % 2 == 0:
+                mixed_values.append(test_df.iloc[i]['tempo'])  # Numeric value
+            else:
+                mixed_values.append("not_a_number")  # Text value
+        test_df['mixed_numeric_text'] = mixed_values
+        result = self.data_smells.check_intermingled_data_type(test_df, 'mixed_numeric_text')
+        self.assertFalse(result, "Test Case 3 Failed: Expected smell for mixed numeric and text")
+        print_and_log("Test Case 3 Passed: Expected smell, got smell")
+
+        # Test 4: Create column with timestamps and text (like the original issue)
+        print_and_log("\nTest 4: Check datetime objects mixed with text")
+        datetime_text_values = []
+        for i in range(len(test_df)):
+            if i % 3 == 0:
+                datetime_text_values.append(pd.Timestamp('2024-01-01'))
+            elif i % 3 == 1:
+                datetime_text_values.append('not_a_date')
+            else:
+                datetime_text_values.append(np.nan)
+        test_df['datetime_text_mix'] = datetime_text_values
+        result = self.data_smells.check_intermingled_data_type(test_df, 'datetime_text_mix')
+        self.assertFalse(result, "Test Case 4 Failed: Expected smell for datetime objects mixed with text")
+        print_and_log("Test Case 4 Passed: Expected smell, got smell")
+
+        # Test 6: Create column with numeric strings and actual text
+        print_and_log("\nTest 6: Check numeric strings mixed with text")
+        test_df['numeric_string_mix'] = test_df['key'].astype(str)
+        # Replace some values with non-numeric text
+        mask = test_df.index % 5 == 0
+        test_df.loc[mask, 'numeric_string_mix'] = "unknown_key"
+        result = self.data_smells.check_intermingled_data_type(test_df, 'numeric_string_mix')
+        self.assertFalse(result, "Test Case 6 Failed: Expected smell for numeric strings mixed with text")
+        print_and_log("Test Case 6 Passed: Expected smell, got smell")
+
+        # Test 7: Check track_popularity with mixed values
+        print_and_log("\nTest 7: Check track_popularity modified with text")
+        test_df['popularity_mixed'] = test_df['track_popularity'].copy()
+        # Replace some popularity values with text descriptions
+        mask = test_df.index % 10 == 0
+        test_df.loc[mask, 'popularity_mixed'] = "very_popular"
+        result = self.data_smells.check_intermingled_data_type(test_df, 'popularity_mixed')
+        self.assertFalse(result, "Test Case 7 Failed: Expected smell for popularity mixed with text")
+        print_and_log("Test Case 7 Passed: Expected smell, got smell")
+
+        # Test 8: Create alphanumeric mixed values (single values with mixed content)
+        print_and_log("\nTest 8: Check alphanumeric mixed values")
+        alphanumeric_values = []
+        for i in range(len(test_df)):
+            if i % 3 == 0:
+                alphanumeric_values.append(f"Track_{i}")  # Mixed alphanumeric
+            elif i % 3 == 1:
+                alphanumeric_values.append(str(i))  # Pure numeric string
+            else:
+                alphanumeric_values.append("pure_text")  # Pure text
+        test_df['alphanumeric_mix'] = alphanumeric_values
+        result = self.data_smells.check_intermingled_data_type(test_df, 'alphanumeric_mix')
+        self.assertFalse(result, "Test Case 8 Failed: Expected smell for alphanumeric mixed values")
+        print_and_log("Test Case 8 Passed: Expected smell, got smell")
+
+        # Test 9: Check tempo field with some text replacements
+        print_and_log("\nTest 9: Check tempo with text replacements")
+        test_df['tempo_text_mix'] = test_df['tempo'].copy()
+        # Replace some tempo values with descriptive text
+        mask = test_df.index % 15 == 0
+        test_df.loc[mask, 'tempo_text_mix'] = "fast_tempo"
+        result = self.data_smells.check_intermingled_data_type(test_df, 'tempo_text_mix')
+        self.assertFalse(result, "Test Case 9 Failed: Expected smell for tempo mixed with text")
+        print_and_log("Test Case 9 Passed: Expected smell, got smell")
+
+        # Test 10: Create column with date strings and regular text
+        print_and_log("\nTest 10: Check date strings mixed with regular text")
+        date_text_values = []
+        for i in range(len(test_df)):
+            if i % 4 == 0:
+                date_text_values.append("2024-01-01")  # Date-like string
+            elif i % 4 == 1:
+                date_text_values.append("invalid_date")  # Regular text
+            elif i % 4 == 2:
+                date_text_values.append("2023-12-25")  # Another date-like string
+            else:
+                date_text_values.append("unknown")  # More text
+        test_df['date_text_mix'] = date_text_values
+        result = self.data_smells.check_intermingled_data_type(test_df, 'date_text_mix')
+        self.assertFalse(result, "Test Case 10 Failed: Expected smell for date strings mixed with text")
+        print_and_log("Test Case 10 Passed: Expected smell, got smell")
+
+        # Test 11: Check energy field modified with special values
+        print_and_log("\nTest 11: Check energy with special text values")
+        test_df['energy_special'] = test_df['energy'].copy()
+        # Replace some energy values with special indicators
+        mask = test_df.index % 20 == 0
+        test_df.loc[mask, 'energy_special'] = "N/A"
+        result = self.data_smells.check_intermingled_data_type(test_df, 'energy_special')
+        self.assertFalse(result, "Test Case 11 Failed: Expected smell for energy mixed with special values")
+        print_and_log("Test Case 11 Passed: Expected smell, got smell")
+
+        # Test 12: Check column with floats and integers mixed with text
+        print_and_log("\nTest 12: Check mixed numeric types with text")
+        mixed_numeric_values = []
+        for i in range(len(test_df)):
+            if i % 4 == 0:
+                mixed_numeric_values.append(test_df.iloc[i]['danceability'])  # Float
+            elif i % 4 == 1:
+                mixed_numeric_values.append(test_df.iloc[i]['key'])  # Integer
+            elif i % 4 == 2:
+                mixed_numeric_values.append(123.456)  # Another float
+            else:
+                mixed_numeric_values.append("mixed_content")  # Text
+        test_df['all_numeric_text'] = mixed_numeric_values
+        result = self.data_smells.check_intermingled_data_type(test_df, 'all_numeric_text')
+        self.assertFalse(result, "Test Case 12 Failed: Expected smell for all numeric types mixed with text")
+        print_and_log("Test Case 12 Passed: Expected smell, got smell")
+
+        # Test 13: Check pure integer column (converted key)
+        print_and_log("\nTest 13: Check pure integer column")
+        # Convert to int the column avoiding nulls
+        test_df['pure_integers'] = test_df['key'].dropna().astype(int)
+        result = self.data_smells.check_intermingled_data_type(test_df, 'pure_integers')
+        self.assertTrue(result, "Test Case 13 Failed: Expected no smell for pure integers")
+        print_and_log("Test Case 13 Passed: Expected no smell, got no smell")
+
+        # Test 14: Check pure float column 
+        print_and_log("\nTest 14: Check pure float column")
+        test_df['pure_floats'] = test_df['acousticness'].dropna().astype(float)
+        result = self.data_smells.check_intermingled_data_type(test_df, 'pure_floats')
+        self.assertTrue(result, "Test Case 14 Failed: Expected no smell for pure floats")
+        print_and_log("Test Case 14 Passed: Expected no smell, got no smell")
+
+        # Test 15: Create column mixing scientific notation strings with text
+        print_and_log("\nTest 15: Check scientific notation mixed with text")
+        sci_text_values = []
+        for i in range(len(test_df)):
+            if i % 3 == 0:
+                sci_text_values.append("1.23e-4")  # Scientific notation string
+            elif i % 3 == 1:
+                sci_text_values.append("invalid_sci")  # Regular text
+            else:
+                sci_text_values.append("2.45e+3")  # Another scientific notation
+        test_df['scientific_text'] = sci_text_values
+        result = self.data_smells.check_intermingled_data_type(test_df, 'scientific_text')
+        self.assertFalse(result, "Test Case 15 Failed: Expected smell for scientific notation mixed with text")
+        print_and_log("Test Case 15 Passed: Expected smell, got smell")
+
+        # Test 16: Check all columns at once (should detect smell due to modified columns)
+        print_and_log("\nTest 16: Check all columns at once")
+        result = self.data_smells.check_intermingled_data_type(test_df)
+        self.assertFalse(result, "Test Case 16 Failed: Expected smell when checking all columns")
+        print_and_log("Test Case 16 Passed: Expected smell when checking all columns, got smell")
+
+        # Test 17: Test with empty DataFrame
+        print_and_log("\nTest 17: Check empty DataFrame")
+        empty_df = pd.DataFrame()
+        result = self.data_smells.check_intermingled_data_type(empty_df)
+        self.assertTrue(result, "Test Case 17 Failed: Expected no smell for empty DataFrame")
+        print_and_log("Test Case 17 Passed: Expected no smell, got no smell")
+
+        # Test 18: Test with non-existent column
+        print_and_log("\nTest 18: Check non-existent column")
+        with self.assertRaises(ValueError):
+            self.data_smells.check_intermingled_data_type(test_df, 'non_existent_column')
+        print_and_log("Test Case 18 Passed: Correctly raised ValueError for non-existent column")
+
+        # Test 19: Check loudness field mixed with descriptive text
+        print_and_log("\nTest 19: Check loudness mixed with descriptive text")
+        test_df['loudness_descriptive'] = test_df['loudness'].copy()
+        # Replace some values with descriptive text
+        mask = test_df.index % 25 == 0
+        test_df.loc[mask, 'loudness_descriptive'] = "very_quiet"
+        result = self.data_smells.check_intermingled_data_type(test_df, 'loudness_descriptive')
+        self.assertFalse(result, "Test Case 19 Failed: Expected smell for loudness mixed with descriptive text")
+        print_and_log("Test Case 19 Passed: Expected smell, got smell")
+
+        # Test 20: Check mode field converted to mixed boolean-like and text
+        print_and_log("\nTest 20: Check mode converted to mixed types")
+        test_df['mode_mixed'] = test_df['mode'].copy()
+        # Replace some mode values with boolean-like text
+        mask = test_df.index % 8 == 0
+        test_df.loc[mask, 'mode_mixed'] = "major"
+        mask2 = test_df.index % 8 == 1
+        test_df.loc[mask2, 'mode_mixed'] = "minor"
+        result = self.data_smells.check_intermingled_data_type(test_df, 'mode_mixed')
+        self.assertFalse(result, "Test Case 20 Failed: Expected smell for mode mixed with text")
+        print_and_log("Test Case 20 Passed: Expected smell, got smell")
+
+        # Test 21: Original issue reproduction - timestamps with text and NaN
+        print_and_log("\nTest 21: Reproduce original issue - timestamps, text, and NaN")
+        # Create a pattern that repeats and ensure exact length match
+        pattern = [pd.Timestamp('2024-01-01'), np.nan, 'not_a_date']
+        original_issue_values = []
+        for i in range(len(test_df)):
+            original_issue_values.append(pattern[i % 3])
+        test_df['original_issue'] = original_issue_values
+        result = self.data_smells.check_intermingled_data_type(test_df, 'original_issue')
+        self.assertFalse(result, "Test Case 21 Failed: Expected smell for original issue reproduction")
+        print_and_log("Test Case 21 Passed: Expected smell, got smell - Original issue resolved!")
+
+        # Test 22: Check track_artist field (should be mixed text)
+        print_and_log("\nTest 22: Check track_artist field (mixed text)")
+        # Reset track_artist to original values for this test
+        test_df['track_artist'] = self.data_dictionary['track_artist']
+        result = self.data_smells.check_intermingled_data_type(test_df, 'track_artist')
+        self.assertFalse(result, "Test Case 22 Failed: Expected smell for track_artist mixed text")
+        print_and_log("Test Case 22 Passed: Expected smell, got smell")
+
+        # Test 23: Check speechiness field (should be pure numeric)
+        print_and_log("\nTest 23: Check speechiness field (pure numeric)")
+        result = self.data_smells.check_intermingled_data_type(test_df, 'speechiness')
+        self.assertTrue(result, "Test Case 23 Failed: Expected no smell for pure numeric speechiness")
+        print_and_log("Test Case 23 Passed: Expected no smell, got no smell")
+
+        # Test 24: Create column with only NaN values
+        print_and_log("\nTest 24: Check column with only NaN values")
+        test_df['all_nan'] = np.nan
+        result = self.data_smells.check_intermingled_data_type(test_df, 'all_nan')
+        self.assertTrue(result, "Test Case 24 Failed: Expected no smell for all NaN column")
+        print_and_log("Test Case 24 Passed: Expected no smell, got no smell")
+
+        # Test 25: Final comprehensive test with multiple data types
+        print_and_log("\nTest 25: Comprehensive mixed data types test")
+        comprehensive_values = []
+        for i in range(min(100, len(test_df))):
+            remainder = i % 6
+            if remainder == 0:
+                comprehensive_values.append(123)  # Integer
+            elif remainder == 1:
+                comprehensive_values.append(45.67)  # Float
+            elif remainder == 2:
+                comprehensive_values.append("text_value")  # Text
+            elif remainder == 3:
+                comprehensive_values.append(pd.Timestamp('2024-01-01'))  # Timestamp
+            elif remainder == 4:
+                comprehensive_values.append("2024-12-31")  # Date-like string
+            else:
+                comprehensive_values.append("Mixed123Text")  # Alphanumeric
+
+        # Extend the list to match DataFrame length
+        while len(comprehensive_values) < len(test_df):
+            comprehensive_values.extend(
+                comprehensive_values[:min(len(comprehensive_values), len(test_df) - len(comprehensive_values))])
+
+        test_df['comprehensive_mix'] = comprehensive_values[:len(test_df)]
+        result = self.data_smells.check_intermingled_data_type(test_df, 'comprehensive_mix')
+        self.assertFalse(result, "Test Case 25 Failed: Expected smell for comprehensive mixed types")
+        print_and_log("Test Case 25 Passed: Expected smell, got smell - Comprehensive test successful!")
+
+        print_and_log("\nFinished testing check_intermingled_data_type function with Spotify Dataset")
+        print_and_log("-----------------------------------------------------------")
+
