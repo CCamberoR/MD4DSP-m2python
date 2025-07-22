@@ -1,4 +1,5 @@
 import re
+import nltk
 import logging
 import unicodedata
 from collections import defaultdict
@@ -6,6 +7,8 @@ from collections import defaultdict
 import numpy as np
 import contractions
 import pandas as pd
+from nltk.corpus import wordnet
+from nltk.stem import WordNetLemmatizer
 from helpers.logger import print_and_log
 from helpers.enumerations import DataType
 from helpers.auxiliar import is_time_string, is_date_string, is_datetime_string, is_float_string, is_integer_string, \
@@ -1634,3 +1637,223 @@ def check_abbreviation_inconsistency(data_dictionary: pd.DataFrame, field: str =
             return False
 
     return True
+
+
+def check_syntactic_synonym(data_dictionary: pd.DataFrame, field: str = None,
+                            similarity_threshold: float = 0.8, origin_function: str = None) -> bool:
+    """
+    Detects syntactic synonyms in string fields - values that are syntactically different
+    but semantically similar (e.g., aliases, nicknames, pseudonyms).
+
+    This function identifies data values that have the same semantic meaning but different
+    syntactic representations, such as
+    - Synonyms: (intelligent, clever, smart)
+    - Name variations: (Bill Clinton, President Clinton, William Jefferson Clinton)
+    - Alternative spellings or forms of the same concept
+
+    Uses NLTK's WordNet to compute semantic similarity between words and applies various
+    text normalization techniques to identify potential synonyms.
+
+    :param data_dictionary: (pd.DataFrame) DataFrame containing the data
+    :param field: (str) Optional field to check; if None, checks all string fields
+    :param similarity_threshold: (float) Threshold for semantic similarity (0.0 to 1.0)
+    :param origin_function: (str) Optional name of the function that called this function, for logging purposes
+
+    :return: (bool) False if syntactic synonyms are detected, True otherwise
+    """
+    # Validate similarity threshold
+    if not isinstance(similarity_threshold, (int, float)) or not 0.0 <= similarity_threshold <= 1.0:
+        raise ValueError("similarity_threshold must be a number between 0.0 and 1.0")
+
+    # Download required NLTK data if not already present
+    try:
+        nltk.data.find('corpora/wordnet')
+    except LookupError:
+        nltk.download('wordnet', quiet=True)
+
+    try:
+        nltk.data.find('corpora/omw-1.4')
+    except LookupError:
+        nltk.download('omw-1.4', quiet=True)
+
+    try:
+        nltk.data.find('taggers/averaged_perceptron_tagger')
+    except LookupError:
+        nltk.download('averaged_perceptron_tagger', quiet=True)
+
+    lemmatizer = WordNetLemmatizer()
+
+    def get_wordnet_pos(word):
+        """
+        Map POS tag to first character lemmatizer.lemmatize() accepts
+        """
+        try:
+            tag = nltk.pos_tag([word])[0][1][0].upper()
+            tag_dict = {"J": wordnet.ADJ, "N": wordnet.NOUN, "V": wordnet.VERB, "R": wordnet.ADV}
+            return tag_dict.get(tag, wordnet.NOUN)
+        except:
+            return wordnet.NOUN
+
+    def get_semantic_similarity(word1: str, word2: str) -> float:
+        """
+        Calculate semantic similarity between two words using WordNet synsets.
+        Returns a similarity score between 0.0 and 1.0.
+        """
+        if not word1 or not word2 or word1 == word2:
+            return 1.0 if word1 == word2 else 0.0
+
+        # Get WordNet synsets for both words
+        synsets1 = wordnet.synsets(word1)
+        synsets2 = wordnet.synsets(word2)
+
+        if not synsets1 or not synsets2:
+            return 0.0
+
+        # Calculate maximum similarity between all synset pairs
+        max_similarity = 0.0
+        for synset1 in synsets1:
+            for synset2 in synsets2:
+                # Use path similarity which works well for synonym detection
+                similarity = synset1.path_similarity(synset2)
+                if similarity is not None:
+                    max_similarity = max(max_similarity, similarity)
+
+        return max_similarity
+
+    def get_text_similarity(text1: str, text2: str) -> float:
+        """
+        Calculate overall similarity between two text strings by analyzing individual words.
+        """
+        norm1 = normalize_text(text1)
+        norm2 = normalize_text(text2)
+
+        if not norm1 or not norm2:
+            return 0.0
+
+        if norm1 == norm2:
+            return 1.0
+
+        words1 = norm1.split()
+        words2 = norm2.split()
+
+        if not words1 or not words2:
+            return 0.0
+
+        # For single words, use direct semantic similarity
+        if len(words1) == 1 and len(words2) == 1:
+            return get_semantic_similarity(words1[0], words2[0])
+
+        # For multi-word expressions, check various combinations
+        similarities = []
+
+        # Check if one text is contained in the other (for name variations)
+        if any(word in words2 for word in words1) or any(word in words1 for word in words2):
+            similarities.append(0.7)  # High similarity for partial matches
+
+        # Check word-by-word semantic similarity
+        for word1 in words1:
+            word_similarities = []
+            for word2 in words2:
+                sim = get_semantic_similarity(word1, word2)
+                if sim > 0.3:  # Only consider meaningful similarities
+                    word_similarities.append(sim)
+
+            if word_similarities:
+                similarities.append(max(word_similarities))
+
+        # Check lemmatized forms
+        lemmatized1 = [lemmatizer.lemmatize(word, get_wordnet_pos(word)) for word in words1]
+        lemmatized2 = [lemmatizer.lemmatize(word, get_wordnet_pos(word)) for word in words2]
+
+        common_lemmas = set(lemmatized1) & set(lemmatized2)
+        if common_lemmas:
+            similarities.append(0.8)  # High similarity for common lemmatized forms
+
+        return max(similarities) if similarities else 0.0
+
+    def check_column(col_name: str) -> bool:
+        """
+        Check a single column for syntactic synonyms.
+        """
+        # Only check string/object columns
+        if not pd.api.types.is_string_dtype(data_dictionary[col_name]) and data_dictionary[col_name].dtype != 'object':
+            return True
+
+        column = data_dictionary[col_name].dropna()
+        if column.empty:
+            return True
+
+        unique_values = list(column.unique())
+        if len(unique_values) <= 1:
+            return True
+
+        # Limit processing for very large datasets to avoid performance issues
+        if len(unique_values) > 500:
+            import random
+            random.seed(42)  # For reproducible results
+            unique_values = random.sample(unique_values, 500)
+
+        synonym_groups = []
+        processed = set()
+
+        for i, value1 in enumerate(unique_values):
+            if value1 in processed or not isinstance(value1, str) or not value1.strip():
+                continue
+
+            current_group = [value1]
+
+            for j, value2 in enumerate(unique_values[i + 1:], i + 1):
+                if value2 in processed or not isinstance(value2, str) or not value2.strip():
+                    continue
+
+                # Skip if values are identical
+                if value1 == value2:
+                    continue
+
+                # Calculate similarity
+                similarity = get_text_similarity(value1, value2)
+                # print("Sintax similarity between '{}' and '{}': {:.2f}".format(value1, value2, similarity))
+
+                if similarity >= similarity_threshold:
+                    current_group.append(value2)
+
+            if len(current_group) > 1:
+                synonym_groups.append(current_group)
+                processed.update(current_group)
+
+        # Report findings
+        if synonym_groups:
+            for group in synonym_groups[:5]:  # Report only first 5 groups to avoid log spam
+                message = (f"Warning in function: {origin_function} - Possible data smell: Syntactic synonyms "
+                           f"detected in DataField '{col_name}'. "
+                           f"Semantically similar values found: {group}")
+                print_and_log(message, level=logging.WARN)
+
+            if len(synonym_groups) > 5:
+                message = (f"Warning in function: {origin_function} - Additional {len(synonym_groups) - 5} "
+                           f"synonym groups found in DataField '{col_name}'")
+                print_and_log(message, level=logging.WARN)
+
+            print(f"DATA SMELL DETECTED: Syntactic Synonyms in DataField '{col_name}'")
+            return False
+
+        return True
+
+    if field is not None:
+        if field not in data_dictionary.columns:
+            raise ValueError(f"DataField '{field}' does not exist in the DataFrame.")
+        return check_column(field)
+    else:
+        # If DataFrame is empty, return True (no smell)
+        if data_dictionary.empty:
+            return True
+
+        # Check all string/object columns
+        string_fields = data_dictionary.select_dtypes(include=['object', 'string']).columns
+        for col in string_fields:
+            result = check_column(col)
+            if not result:
+                return result  # Return on the first smell found
+
+    return True
+

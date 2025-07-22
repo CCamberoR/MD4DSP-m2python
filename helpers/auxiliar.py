@@ -335,8 +335,17 @@ def is_datetime_string(value):
 
 def normalize_text(text: str) -> str:
     """
-    Expand contractions, lowercase, and remove punctuation.
+    Normalize text for better comparison by removing punctuation,
+    converting to lowercase, and handling contractions.
     """
-    text = contractions.fix(text)  # e.g., "I'd" → "I would"
-    text = re.sub(r"[^\w\s]", "", text.lower())  # Remove punctuation and lowercase
-    return text.strip()
+    if pd.isna(text) or not isinstance(text, str):
+        return ""
+
+    # Expand contractions
+    text = contractions.fix(text)
+    # Remove punctuation and special characters, keep only alphanumeric and spaces
+    text = re.sub(r'[^a-zA-Z0-9\s]', ' ', text)
+    # Convert to lowercase and normalize whitespace
+    text = re.sub(r'\s+', ' ', text.lower().strip())
+
+    return text
