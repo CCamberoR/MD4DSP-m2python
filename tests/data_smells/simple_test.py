@@ -55,7 +55,8 @@ class DataSmellsSimpleTest(unittest.TestCase):
             self.execute_check_number_size_SimpleTests,
             self.execute_check_string_casing_SimpleTests,
             self.execute_check_intermingled_data_type_SimpleTests,
-            self.execute_check_contracted_text_SimpleTests
+            self.execute_check_contracted_text_SimpleTests,
+            self.execute_check_abbreviation_inconsistency_SimpleTests
         ]
 
         print_and_log("")
@@ -2487,4 +2488,158 @@ class DataSmellsSimpleTest(unittest.TestCase):
         print_and_log("Test Case 15 Passed: Smell detected for mixed data types with contractions")
 
         print_and_log("\nFinished testing check_contracted_text function")
+        print_and_log("-----------------------------------------------------------")
+
+    def execute_check_abbreviation_inconsistency_SimpleTests(self):
+        """
+        Execute simple tests for check_abbreviation_inconsistency function.
+        Tests the following cases:
+        1. Inconsistent abbreviations (e.g., "USA", "U.S.A.", "United States")
+        2. Inconsistent contractions (e.g., "don't", "do not")
+        3. Inconsistent acronyms (e.g., "FBI", "F.B.I.")
+        4. Mixed case abbreviations (e.g., "API", "api", "Api")
+        5. Punctuation variations (e.g., "Mr.", "Mr", "Mister")
+        6. Company name variations (e.g., "Inc.", "Inc", "Incorporated")
+        7. Technical term variations (e.g., "JavaScript", "JS")
+        8. Medical abbreviations (e.g., "Dr.", "Doctor")
+        9. Time abbreviations (e.g., "AM", "a.m.", "morning")
+        10. Unit abbreviations (e.g., "kg", "kilogram")
+        11. Consistent text (no smell)
+        12. Non-existent field
+        13. Empty DataFrame
+        14. Column with all NaN values
+        15. Non-string column (no smell)
+        16. Single value column (no smell)
+        17. Check all columns at once (smell present)
+        18. Mixed inconsistent formats
+        19. Numeric strings with text
+        20. Complex abbreviation patterns
+        """
+        print_and_log("")
+        print_and_log("Testing check_abbreviation_inconsistency function...")
+
+        # Test Case 1: Inconsistent abbreviations
+        df1 = pd.DataFrame({'text': ['USA', 'U.S.A.', 'United States', 'US']})
+        result = self.data_smells.check_abbreviation_inconsistency(df1, 'text')
+        assert result is False, "Test Case 1 Failed: Should detect smell for inconsistent abbreviations"
+        print_and_log("Test Case 1 Passed: Smell detected for inconsistent abbreviations")
+
+        # Test Case 2: Inconsistent contractions
+        df2 = pd.DataFrame({'text': ["don't", "do not", "dont"]})
+        result = self.data_smells.check_abbreviation_inconsistency(df2, 'text')
+        assert result is False, "Test Case 2 Failed: Should detect smell for inconsistent contractions"
+        print_and_log("Test Case 2 Passed: Smell detected for inconsistent contractions")
+
+        # Test Case 3: Inconsistent acronyms
+        df3 = pd.DataFrame({'text': ['FBI', 'F.B.I.', 'Federal Bureau of Investigation']})
+        result = self.data_smells.check_abbreviation_inconsistency(df3, 'text')
+        assert result is False, "Test Case 3 Failed: Should detect smell for inconsistent acronyms"
+        print_and_log("Test Case 3 Passed: Smell detected for inconsistent acronyms")
+
+        # Test Case 4: Mixed case abbreviations
+        df4 = pd.DataFrame({'text': ['API', 'api', 'Api', 'A.P.I.']})
+        result = self.data_smells.check_abbreviation_inconsistency(df4, 'text')
+        assert result is False, "Test Case 4 Failed: Should detect smell for mixed case abbreviations"
+        print_and_log("Test Case 4 Passed: Smell detected for mixed case abbreviations")
+
+        # Test Case 5: Punctuation variations
+        df5 = pd.DataFrame({'text': ['Mr.', 'Mr', 'Mister']})
+        result = self.data_smells.check_abbreviation_inconsistency(df5, 'text')
+        assert result is False, "Test Case 5 Failed: Should detect smell for punctuation variations"
+        print_and_log("Test Case 5 Passed: Smell detected for punctuation variations")
+
+        # Test Case 6: Company name variations
+        df6 = pd.DataFrame({'text': ['Inc.', 'Inc', 'Incorporated', 'Corporation']})
+        result = self.data_smells.check_abbreviation_inconsistency(df6, 'text')
+        assert result is False, "Test Case 6 Failed: Should detect smell for company name variations"
+        print_and_log("Test Case 6 Passed: Smell detected for company name variations")
+
+        # Test Case 7: Technical term variations
+        df7 = pd.DataFrame({'text': ['JavaScript', 'JS', 'js', 'Javascript']})
+        result = self.data_smells.check_abbreviation_inconsistency(df7, 'text')
+        assert result is False, "Test Case 7 Failed: Should detect smell for technical term variations"
+        print_and_log("Test Case 7 Passed: Smell detected for technical term variations")
+
+        # Test Case 8: Medical abbreviations
+        df8 = pd.DataFrame({'text': ['Dr.', 'Doctor', 'DR', 'dr.']})
+        result = self.data_smells.check_abbreviation_inconsistency(df8, 'text')
+        assert result is False, "Test Case 8 Failed: Should detect smell for medical abbreviations"
+        print_and_log("Test Case 8 Passed: Smell detected for medical abbreviations")
+
+        # Test Case 9: Time abbreviations
+        df9 = pd.DataFrame({'text': ['AM', 'a.m.', 'morning', 'A.M.']})
+        result = self.data_smells.check_abbreviation_inconsistency(df9, 'text')
+        assert result is False, "Test Case 9 Failed: Should detect smell for time abbreviations"
+        print_and_log("Test Case 9 Passed: Smell detected for time abbreviations")
+
+        # Test Case 10: Unit abbreviations
+        df10 = pd.DataFrame({'text': ['kg', 'kilogram', 'KG', 'Kg']})
+        result = self.data_smells.check_abbreviation_inconsistency(df10, 'text')
+        assert result is False, "Test Case 10 Failed: Should detect smell for unit abbreviations"
+        print_and_log("Test Case 10 Passed: Smell detected for unit abbreviations")
+
+        # Test Case 11: Consistent text (no smell)
+        df11 = pd.DataFrame({'text': ['apple', 'banana', 'cherry', 'date']})
+        result = self.data_smells.check_abbreviation_inconsistency(df11, 'text')
+        assert result is True, "Test Case 11 Failed: Should not detect smell for consistent text"
+        print_and_log("Test Case 11 Passed: No smell detected for consistent text")
+
+        # Test Case 12: Non-existent field
+        with self.assertRaises(ValueError):
+            self.data_smells.check_abbreviation_inconsistency(df11, 'non_existent_field')
+        print_and_log("Test Case 12 Passed: ValueError raised for non-existent field")
+
+        # Test Case 13: Empty DataFrame
+        df13 = pd.DataFrame()
+        result = self.data_smells.check_abbreviation_inconsistency(df13)
+        assert result is True, "Test Case 13 Failed: Should not detect smell for empty DataFrame"
+        print_and_log("Test Case 13 Passed: No smell detected for empty DataFrame")
+
+        # Test Case 14: Column with all NaN values
+        df14 = pd.DataFrame({'text': [np.nan, np.nan, np.nan]})
+        result = self.data_smells.check_abbreviation_inconsistency(df14, 'text')
+        assert result is True, "Test Case 14 Failed: Should not detect smell for column with all NaN values"
+        print_and_log("Test Case 14 Passed: No smell detected for column with all NaN values")
+
+        # Test Case 15: Non-string column (no smell)
+        df15 = pd.DataFrame({'numbers': [1, 2, 3, 4, 5]})
+        result = self.data_smells.check_abbreviation_inconsistency(df15, 'numbers')
+        assert result is True, "Test Case 15 Failed: Should not detect smell for non-string column"
+        print_and_log("Test Case 15 Passed: No smell detected for non-string column")
+
+        # Test Case 16: Single value column (no smell)
+        df16 = pd.DataFrame({'text': ['same_value', 'same_value', 'same_value']})
+        result = self.data_smells.check_abbreviation_inconsistency(df16, 'text')
+        assert result is True, "Test Case 16 Failed: Should not detect smell for single value column"
+        print_and_log("Test Case 16 Passed: No smell detected for single value column")
+
+        # Test Case 17: Check all columns at once (smell present)
+        df17 = pd.DataFrame({
+            'col1': ['USA', 'U.S.A.', 'United States'],
+            'col2': ['apple', 'banana', 'cherry'],
+            'col3': [1, 2, 3]
+        })
+        result = self.data_smells.check_abbreviation_inconsistency(df17)
+        assert result is False, "Test Case 17 Failed: Should detect smell when checking all columns"
+        print_and_log("Test Case 17 Passed: Smell detected when checking all columns")
+
+        # Test Case 18: Mixed inconsistent formats
+        df18 = pd.DataFrame({'text': ["can't", "cannot", "can not", "cant"]})
+        result = self.data_smells.check_abbreviation_inconsistency(df18, 'text')
+        assert result is False, "Test Case 18 Failed: Should detect smell for mixed inconsistent formats"
+        print_and_log("Test Case 18 Passed: Smell detected for mixed inconsistent formats")
+
+        # Test Case 19: Numeric strings with text
+        df19 = pd.DataFrame({'text': ['1st', 'first', '1ST', 'First']})
+        result = self.data_smells.check_abbreviation_inconsistency(df19, 'text')
+        assert result is False, "Test Case 19 Failed: Should detect smell for numeric strings with text"
+        print_and_log("Test Case 19 Passed: Smell detected for numeric strings with text")
+
+        # Test Case 20: Complex abbreviation patterns
+        df20 = pd.DataFrame({'text': ['e.g.', 'eg', 'for example', 'E.G.', 'e.g', 'eg.']})
+        result = self.data_smells.check_abbreviation_inconsistency(df20, 'text')
+        assert result is False, "Test Case 20 Failed: Should detect smell for complex abbreviation patterns"
+        print_and_log("Test Case 20 Passed: Smell detected for complex abbreviation patterns")
+
+        print_and_log("\nFinished testing check_abbreviation_inconsistency function")
         print_and_log("-----------------------------------------------------------")

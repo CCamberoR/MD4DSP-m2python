@@ -57,6 +57,7 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
             self.execute_check_string_casing_ExternalDatasetTests,
             self.execute_check_intermingled_data_type_ExternalDatasetTests,
             self.execute_check_contracted_text_ExternalDatasetTests,
+            self.execute_check_abbreviation_inconsistency_ExternalDatasetTests,
 
         ]
 
@@ -2392,3 +2393,191 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
         self.assertFalse(result, "Test Case 20 Failed: Expected smell for edge case contractions")
         print_and_log("Test Case 20 Passed: Expected smell, got smell")
 
+    def execute_check_abbreviation_inconsistency_ExternalDatasetTests(self):
+        """
+        Execute external dataset tests for check_abbreviation_inconsistency function.
+        Tests various scenarios with the Spotify dataset to detect inconsistent usage of abbreviations, 
+        acronyms, or contractions across string fields.
+        Implements 20 comprehensive test cases covering different abbreviation inconsistency scenarios.
+        """
+        print_and_log("Testing check_abbreviation_inconsistency Function with Spotify Dataset")
+        print_and_log("")
+
+        # Create a copy of the dataset for modifications
+        test_df = self.data_dictionary.copy()
+
+        # Test 1: Check track_name field (likely has abbreviation inconsistencies)
+        print_and_log("\nTest 1: Check track_name field")
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'track_name')
+        self.assertFalse(result, "Test Case 1 Failed: Expected smell for track_name with abbreviation inconsistencies")
+        print_and_log("Test Case 1 Passed: Expected smell, got smell")
+
+        # Test 2: Check track_artist field (may contain abbreviation inconsistencies)
+        print_and_log("\nTest 2: Check track_artist field")
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'track_artist')
+        self.assertFalse(result, "Test Case 2 Failed: Expected smell for track_artist with abbreviation inconsistencies")
+        print_and_log("Test Case 2 Passed: Expected smell, got smell")
+
+        # Test 3: Create column with common abbreviations vs full forms
+        print_and_log("\nTest 3: Check common abbreviations vs full forms")
+        abbrev_full = ["USA", "United States of America", "UK", "United Kingdom", "Dr", "Doctor", 
+                      "Prof", "Professor", "St", "Street", "Ave", "Avenue", "NYC", "New York City", 
+                      "LA", "Los Angeles", "FBI", "Federal Bureau of Investigation"]
+        # Create a list that repeats the abbreviations to match the DataFrame length exactly
+        repeated_abbrevs = (abbrev_full * ((len(test_df) // len(abbrev_full)) + 1))[:len(test_df)]
+        test_df['abbrev_full_forms'] = repeated_abbrevs
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'abbrev_full_forms')
+        self.assertFalse(result, "Test Case 3 Failed: Expected smell for abbreviation vs full form inconsistencies")
+        print_and_log("Test Case 3 Passed: Expected smell, got smell")
+
+        # Test 4: Create column with consistent abbreviations (no inconsistencies)
+        print_and_log("\nTest 4: Check consistent abbreviations")
+        consistent_abbrevs = ["USA", "USA", "USA", "USA", "USA", "UK", "UK", "UK", "UK", "UK"]
+        test_df['consistent_abbrevs'] = (consistent_abbrevs * ((len(test_df) // len(consistent_abbrevs)) + 1))[:len(test_df)]
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'consistent_abbrevs')
+        self.assertTrue(result, "Test Case 4 Failed: Expected no smell for consistent abbreviations")
+        print_and_log("Test Case 4 Passed: Expected no smell, got no smell")
+
+        # Test 5: Create column with music-related abbreviations
+        print_and_log("\nTest 5: Check music-related abbreviations")
+        music_abbrevs = ["R&B", "Rhythm and Blues", "DJ", "Disc Jockey", "LP", "Long Play", 
+                        "EP", "Extended Play", "CD", "Compact Disc", "MP3", "MPEG Audio Layer III",
+                        "feat", "featuring", "vs", "versus", "w/", "with", "etc", "et cetera"]
+        test_df['music_abbrevs'] = (music_abbrevs * ((len(test_df) // len(music_abbrevs)) + 1))[:len(test_df)]
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'music_abbrevs')
+        self.assertFalse(result, "Test Case 5 Failed: Expected smell for music abbreviation inconsistencies")
+        print_and_log("Test Case 5 Passed: Expected smell, got smell")
+
+        # Test 6: Create column with genre abbreviations
+        print_and_log("\nTest 6: Check genre abbreviations")
+        genre_abbrevs = ["EDM", "Electronic Dance Music", "Hip Hop", "Hip-Hop", "R&B", "Rhythm & Blues",
+                        "Pop", "Popular Music", "Rock", "Rock and Roll", "Jazz", "Jazz Music",
+                        "Alt", "Alternative", "Indie", "Independent", "Prog", "Progressive"]
+        test_df['genre_abbrevs'] = (genre_abbrevs * ((len(test_df) // len(genre_abbrevs)) + 1))[:len(test_df)]
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'genre_abbrevs')
+        self.assertFalse(result, "Test Case 6 Failed: Expected smell for genre abbreviation inconsistencies")
+        print_and_log("Test Case 6 Passed: Expected smell, got smell")
+
+        # Test 7: Create column with time-related abbreviations
+        print_and_log("\nTest 7: Check time-related abbreviations")
+        time_abbrevs = ["AM", "ante meridiem", "PM", "post meridiem", "min", "minutes", "sec", "seconds",
+                       "hr", "hour", "hrs", "hours", "yr", "year", "yrs", "years", "Jan", "January"]
+        test_df['time_abbrevs'] = (time_abbrevs * ((len(test_df) // len(time_abbrevs)) + 1))[:len(test_df)]
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'time_abbrevs')
+        self.assertFalse(result, "Test Case 7 Failed: Expected smell for time abbreviation inconsistencies")
+        print_and_log("Test Case 7 Passed: Expected smell, got smell")
+
+        # Test 8: Create column with technology abbreviations
+        print_and_log("\nTest 8: Check technology abbreviations")
+        tech_abbrevs = ["AI", "Artificial Intelligence", "ML", "Machine Learning", "API", "Application Programming Interface",
+                       "URL", "Uniform Resource Locator", "HTML", "HyperText Markup Language", "CSS", "Cascading Style Sheets",
+                       "JS", "JavaScript", "DB", "Database", "UI", "User Interface", "UX", "User Experience"]
+        test_df['tech_abbrevs'] = (tech_abbrevs * ((len(test_df) // len(tech_abbrevs)) + 1))[:len(test_df)]
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'tech_abbrevs')
+        self.assertFalse(result, "Test Case 8 Failed: Expected smell for technology abbreviation inconsistencies")
+        print_and_log("Test Case 8 Passed: Expected smell, got smell")
+
+        # Test 9: Create column with artist name abbreviations
+        print_and_log("\nTest 9: Check artist name abbreviations")
+        artist_abbrevs = ["MJ", "Michael Jackson", "JT", "Justin Timberlake", "BTS", "Bangtan Sonyeondan",
+                         "JLo", "Jennifer Lopez", "P!nk", "Pink", "50 Cent", "Fifty Cent",
+                         "Eminem", "Marshall Mathers", "Jay-Z", "Jay Z", "B.B. King", "BB King"]
+        test_df['artist_abbrevs'] = (artist_abbrevs * ((len(test_df) // len(artist_abbrevs)) + 1))[:len(test_df)]
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'artist_abbrevs')
+        self.assertFalse(result, "Test Case 9 Failed: Expected smell for artist name abbreviation inconsistencies")
+        print_and_log("Test Case 9 Passed: Expected smell, got smell")
+
+        # Test 10: Check numeric column (should have no smell)
+        print_and_log("\nTest 10: Check numeric column")
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'danceability')
+        self.assertTrue(result, "Test Case 10 Failed: Expected no smell for numeric column")
+        print_and_log("Test Case 10 Passed: Expected no smell, got no smell")
+
+        # Test 11: Create column with empty strings and NaN
+        print_and_log("\nTest 11: Check empty strings and NaN")
+        test_df['empty_nan'] = ([None, '', np.nan, None, ''] * ((len(test_df) // 5) + 1))[:len(test_df)]
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'empty_nan')
+        self.assertTrue(result, "Test Case 11 Failed: Expected no smell for empty/NaN values")
+        print_and_log("Test Case 11 Passed: Expected no smell, got no smell")
+
+        # Test 12: Create column with abbreviations in different cases
+        print_and_log("\nTest 12: Check abbreviations in different cases")
+        case_abbrevs = ["usa", "USA", "Usa", "uSa", "uk", "UK", "Uk", "uK", "fbi", "FBI"]
+        test_df['case_abbrevs'] = (case_abbrevs * ((len(test_df) // len(case_abbrevs)) + 1))[:len(test_df)]
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'case_abbrevs')
+        self.assertFalse(result, "Test Case 12 Failed: Expected smell for abbreviations in different cases")
+        print_and_log("Test Case 12 Passed: Expected smell, got smell")
+
+        # Test 13: Create column with abbreviations and punctuation variations
+        print_and_log("\nTest 13: Check abbreviations with punctuation variations")
+        punct_abbrevs = ["U.S.A.", "USA", "U.S.A", "U S A", "Dr.", "Dr", "Prof.", "Prof", "St.", "St"]
+        test_df['punct_abbrevs'] = (punct_abbrevs * ((len(test_df) // len(punct_abbrevs)) + 1))[:len(test_df)]
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'punct_abbrevs')
+        self.assertFalse(result, "Test Case 13 Failed: Expected smell for abbreviations with punctuation variations")
+        print_and_log("Test Case 13 Passed: Expected smell, got smell")
+
+        # Test 14: Create column with record label abbreviations
+        print_and_log("\nTest 14: Check record label abbreviations")
+        label_abbrevs = ["UMG", "Universal Music Group", "SME", "Sony Music Entertainment", "WMG", "Warner Music Group",
+                        "EMI", "Electric and Musical Industries", "BMG", "Bertelsmann Music Group", "Def Jam", "Def Jam Recordings",
+                        "Atlantic", "Atlantic Records", "Columbia", "Columbia Records", "Capitol", "Capitol Records"]
+        test_df['label_abbrevs'] = (label_abbrevs * ((len(test_df) // len(label_abbrevs)) + 1))[:len(test_df)]
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'label_abbrevs')
+        self.assertFalse(result, "Test Case 14 Failed: Expected smell for record label abbreviation inconsistencies")
+        print_and_log("Test Case 14 Passed: Expected smell, got smell")
+
+        # Test 15: Create column with instrument abbreviations
+        print_and_log("\nTest 15: Check instrument abbreviations")
+        instrument_abbrevs = ["gtr", "guitar", "bass", "bass guitar", "kbd", "keyboard", "drms", "drums",
+                             "vox", "vocals", "sax", "saxophone", "tpt", "trumpet", "vln", "violin", "pno", "piano"]
+        test_df['instrument_abbrevs'] = (instrument_abbrevs * ((len(test_df) // len(instrument_abbrevs)) + 1))[:len(test_df)]
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'instrument_abbrevs')
+        self.assertFalse(result, "Test Case 15 Failed: Expected smell for instrument abbreviation inconsistencies")
+        print_and_log("Test Case 15 Passed: Expected smell, got smell")
+
+        # Test 16: Create column with geographic abbreviations
+        print_and_log("\nTest 16: Check geographic abbreviations")
+        geo_abbrevs = ["CA", "California", "NY", "New York", "TX", "Texas", "FL", "Florida",
+                      "IL", "Illinois", "PA", "Pennsylvania", "OH", "Ohio", "GA", "Georgia", "NC", "North Carolina"]
+        test_df['geo_abbrevs'] = (geo_abbrevs * ((len(test_df) // len(geo_abbrevs)) + 1))[:len(test_df)]
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'geo_abbrevs')
+        self.assertFalse(result, "Test Case 16 Failed: Expected smell for geographic abbreviation inconsistencies")
+        print_and_log("Test Case 16 Passed: Expected smell, got smell")
+
+        # Test 17: Create column with month abbreviations
+        print_and_log("\nTest 17: Check month abbreviations")
+        month_abbrevs = ["Jan", "January", "Feb", "February", "Mar", "March", "Apr", "April",
+                        "May", "May", "Jun", "June", "Jul", "July", "Aug", "August", "Sep", "September"]
+        test_df['month_abbrevs'] = (month_abbrevs * ((len(test_df) // len(month_abbrevs)) + 1))[:len(test_df)]
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'month_abbrevs')
+        self.assertFalse(result, "Test Case 17 Failed: Expected smell for month abbreviation inconsistencies")
+        print_and_log("Test Case 17 Passed: Expected smell, got smell")
+
+        # Test 18: Create column with playlist abbreviations
+        print_and_log("\nTest 18: Check playlist abbreviations")
+        playlist_abbrevs = ["Top 40 Hits", "Top Forty Hits", "Best of 2000s", "Best of Two Thousands",
+                           "90s Rock", "Nineties Rock", "80s Pop", "Eighties Pop", "Hip Hop Classics", "Hip-Hop Classics",
+                           "R&B Hits", "Rhythm and Blues Hits", "Electronic Dance Music", "EDM", "Alternative Rock", "Alt Rock"]
+        test_df['playlist_abbrevs'] = (playlist_abbrevs * ((len(test_df) // len(playlist_abbrevs)) + 1))[:len(test_df)]
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'playlist_abbrevs')
+        self.assertFalse(result, "Test Case 18 Failed: Expected smell for playlist abbreviation inconsistencies")
+        print_and_log("Test Case 18 Passed: Expected smell, got smell")
+
+        # Test 19: Check all string columns at once (should detect smell)
+        print_and_log("\nTest 19: Check all string columns at once")
+        result = self.data_smells.check_abbreviation_inconsistency(test_df)
+        self.assertFalse(result, "Test Case 19 Failed: Expected smell when checking all string columns")
+        print_and_log("Test Case 19 Passed: Expected smell when checking all columns, got smell")
+
+        # Test 20: Create column with mixed abbreviation styles
+        print_and_log("\nTest 20: Check mixed abbreviation styles")
+        mixed_abbrevs = ["ft.", "feat", "featuring", "w/", "with", "vs.", "versus", "v.", "v", 
+                        "&", "and", "etc.", "etc", "et cetera", "e.g.", "eg", "for example",
+                        "i.e.", "ie", "that is", "Mr.", "Mr", "Mister"]
+        test_df['mixed_abbrevs'] = (mixed_abbrevs * ((len(test_df) // len(mixed_abbrevs)) + 1))[:len(test_df)]
+        result = self.data_smells.check_abbreviation_inconsistency(test_df, 'mixed_abbrevs')
+        self.assertFalse(result, "Test Case 20 Failed: Expected smell for mixed abbreviation styles")
+        print_and_log("Test Case 20 Passed: Expected smell, got smell")
+
+        print_and_log("\nFinished testing check_abbreviation_inconsistency function with Spotify Dataset")
+        print_and_log("-----------------------------------------------------------")
