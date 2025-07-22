@@ -1433,8 +1433,8 @@ def check_contracted_text(data_dictionary: pd.DataFrame, field: str = None, orig
     return True
 
 
-def check_abbreviation_inconsistency(data_dictionary: pd.DataFrame, field: str = None,
-                                     origin_function: str = None) -> bool:
+def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = None,
+                                   origin_function: str = None) -> bool:
     """
     Detects inconsistent usage of abbreviations, acronyms, or contractions across string fields.
 
@@ -1453,10 +1453,8 @@ def check_abbreviation_inconsistency(data_dictionary: pd.DataFrame, field: str =
 
         # Expand contractions first
         expanded = contractions.fix(text)
-
         # Remove all punctuation and convert to lowercase
         cleaned = re.sub(r"[^\w\s]", "", expanded.lower()).strip()
-
         # Remove extra whitespace
         cleaned = re.sub(r'\s+', ' ', cleaned)
 
@@ -1624,9 +1622,9 @@ def check_abbreviation_inconsistency(data_dictionary: pd.DataFrame, field: str =
 
         return True
 
-    if field:
+    if field is not None:
         if field not in data_dictionary.columns:
-            raise ValueError(f"Field '{field}' not found in DataFrame.")
+            raise ValueError(f"DataField '{field}' does not exist in the DataFrame.")
         return analyze_column_optimized(field)
 
     if data_dictionary.empty:
@@ -1845,6 +1843,283 @@ def check_syntactic_synonym(data_dictionary: pd.DataFrame, field: str = None,
         return check_column(field)
     else:
         # If DataFrame is empty, return True (no smell)
+        if data_dictionary.empty:
+            return True
+
+        # Check all string/object columns
+        string_fields = data_dictionary.select_dtypes(include=['object', 'string']).columns
+        for col in string_fields:
+            result = check_column(col)
+            if not result:
+                return result  # Return on the first smell found
+
+    return True
+
+
+def check_ambiguous_value(data_dictionary: pd.DataFrame, field: str = None,
+                         ambiguity_threshold: float = 0.8, origin_function: str = None) -> bool:
+    """
+    Detects ambiguous values in string fields that could have multiple meanings depending on context.
+    This function identifies values that represent abbreviations, homonyms, acronyms, or ambiguous contexts
+    that could lead to misinterpretation or confusion in data analysis.
+
+    The function uses dynamic analysis to detect potential ambiguities by:
+    1. Analyzing value patterns and distributions
+    2. Detecting potential abbreviations through length and character patterns
+    3. Identifying homonymous patterns through contextual analysis
+    4. Finding mixed usage patterns that suggest multiple meanings
+    5. Detecting acronym-like patterns and their potential expansions
+
+    Examples of ambiguous values that would be detected:
+    - Abbreviations: "Dr" (doctor vs. drive), "St" (street vs. saint)
+    - Homonyms: "express" (fast vs. show thoughts), "address" (speak to vs. location)
+    - Geographic ambiguity: "Miami" appearing with different contexts
+    - Context-dependent terms: Mixed usage patterns suggesting multiple meanings
+
+    :param data_dictionary: (pd.DataFrame) DataFrame containing the data
+    :param field: (str) Optional field to check; if None, checks all string fields
+    :param ambiguity_threshold: (float) Threshold for ambiguity detection sensitivity (0.0 to 1.0)
+    :param origin_function: (str) Optional name of the function that called this function, for logging purposes
+
+    :return: (bool) False if ambiguous values are detected, True otherwise
+    """
+
+    # Validate ambiguity threshold
+    if not isinstance(ambiguity_threshold, (int, float)) or not 0.0 <= ambiguity_threshold <= 1.0:
+        raise ValueError("ambiguity_threshold must be a number between 0.0 and 1.0")
+
+    def analyze_text_patterns(text: str) -> dict:
+        """
+        Analyze text patterns to identify potential ambiguity indicators.
+        Returns a dictionary with pattern analysis results.
+        """
+        if not isinstance(text, str) or not text.strip():
+            return {'is_potential_abbreviation': False, 'is_short_form': False,
+                   'has_mixed_case': False, 'word_count': 0, 'char_types': set()}
+
+        text = text.strip()
+        patterns = {
+            'is_potential_abbreviation': False,
+            'is_short_form': len(text) <= 4 and text.isalpha(),
+            'has_mixed_case': any(c.isupper() for c in text) and any(c.islower() for c in text),
+            'word_count': len(text.split()),
+            'char_types': set(),
+            'has_punctuation': bool(re.search(r'[^\w\s]', text)),
+            'is_alphanumeric': text.replace(' ', '').isalnum(),
+            'contains_numbers': any(c.isdigit() for c in text)
+        }
+
+        # Analyze character types
+        for char in text:
+            if char.isalpha():
+                patterns['char_types'].add('alpha')
+            elif char.isdigit():
+                patterns['char_types'].add('digit')
+            elif char.isspace():
+                patterns['char_types'].add('space')
+            else:
+                patterns['char_types'].add('punct')
+
+        # Detect potential abbreviation patterns
+        if len(text) <= 5 and text.replace('.', '').replace(' ', '').isalpha():
+            # Short alphabetic strings could be abbreviations
+            patterns['is_potential_abbreviation'] = True
+        elif re.match(r'^[A-Z]{2,5}$', text):
+            # All uppercase 2-5 characters
+            patterns['is_potential_abbreviation'] = True
+        elif re.match(r'^[A-Za-z]\.([A-Za-z]\.)*$', text):
+            # Pattern like "U.S.A." or "Ph.D."
+            patterns['is_potential_abbreviation'] = True
+
+        return patterns
+
+    def detect_contextual_ambiguity(values: list, value_patterns: dict) -> dict:
+        """
+        Detect contextual ambiguity by analyzing value distributions and patterns.
+        """
+        ambiguity_indicators = {
+            'potential_abbreviations': [],
+            'mixed_length_patterns': False,
+            'context_variation_patterns': [],
+            'homonym_candidates': [],
+            'acronym_expansion_pairs': []
+        }
+
+        # Group values by length and pattern
+        length_groups = defaultdict(list)
+        pattern_groups = defaultdict(list)
+
+        for value in values:
+            if isinstance(value, str) and value.strip():
+                length_groups[len(value.strip())].append(value)
+                patterns = value_patterns.get(value, {})
+
+                # Group by pattern characteristics
+                pattern_key = (
+                    patterns.get('is_potential_abbreviation', False),
+                    patterns.get('word_count', 0),
+                    patterns.get('has_mixed_case', False)
+                )
+                pattern_groups[pattern_key].append(value)
+
+        # Detect mixed length patterns (could indicate abbreviations vs full forms)
+        if len(length_groups) > 1:
+            lengths = list(length_groups.keys())
+            min_len, max_len = min(lengths), max(lengths)
+            if max_len > min_len * 2:  # Significant length variation
+                ambiguity_indicators['mixed_length_patterns'] = True
+
+                # Look for potential abbreviation-expansion pairs
+                short_values = [v for l, vals in length_groups.items() if l <= 4 for v in vals]
+                long_values = [v for l, vals in length_groups.items() if l > 4 for v in vals]
+
+                for short_val in short_values:
+                    for long_val in long_values:
+                        if detect_abbreviation_relationship(short_val, long_val):
+                            ambiguity_indicators['acronym_expansion_pairs'].append((short_val, long_val))
+
+        # Detect potential abbreviations
+        for value, patterns in value_patterns.items():
+            if patterns.get('is_potential_abbreviation', False):
+                ambiguity_indicators['potential_abbreviations'].append(value)
+
+        # Detect potential homonyms (same spelling, potentially different contexts)
+        value_frequencies = defaultdict(int)
+        for value in values:
+            if isinstance(value, str):
+                normalized = value.lower().strip()
+                value_frequencies[normalized] += 1
+
+        # Look for values that appear with consistent frequency (might indicate multiple meanings)
+        for normalized_value, frequency in value_frequencies.items():
+            if frequency > 1:
+                original_values = [v for v in values if isinstance(v, str) and v.lower().strip() == normalized_value]
+                if len(set(original_values)) > 1:  # Same normalized form, different original forms
+                    ambiguity_indicators['homonym_candidates'].extend(original_values)
+
+        return ambiguity_indicators
+
+    def detect_abbreviation_relationship(short_val: str, long_val: str) -> bool:
+        """
+        Detect if there's a potential abbreviation relationship between two values.
+        """
+        if not isinstance(short_val, str) or not isinstance(long_val, str):
+            return False
+
+        short_clean = re.sub(r'[^\w]', '', short_val.upper())
+        long_clean = long_val.upper()
+
+        if len(short_clean) < 2 or len(long_clean) < len(short_clean):
+            return False
+
+        # Check if short form matches first letters of words in long form
+        long_words = re.findall(r'\b\w+', long_clean)
+        if len(long_words) >= len(short_clean):
+            first_letters = ''.join(word[0] for word in long_words[:len(short_clean)])
+            if first_letters == short_clean:
+                return True
+
+        # Check if short form is contained in long form
+        if short_clean in long_clean.replace(' ', ''):
+            return True
+
+        # Check consonant pattern matching (removing vowels)
+        short_consonants = re.sub(r'[AEIOU]', '', short_clean)
+        long_consonants = re.sub(r'[AEIOU]', '', long_clean.replace(' ', ''))
+
+        if len(short_consonants) >= 2 and short_consonants in long_consonants:
+            return True
+
+        return False
+
+    def calculate_ambiguity_score(ambiguity_indicators: dict, total_unique_values: int) -> float:
+        """
+        Calculate an ambiguity score based on detected indicators.
+        """
+        score = 0.0
+
+        # Weight different types of ambiguity indicators
+        if ambiguity_indicators['potential_abbreviations']:
+            score += len(ambiguity_indicators['potential_abbreviations']) / total_unique_values * 0.3
+
+        if ambiguity_indicators['mixed_length_patterns']:
+            score += 0.25
+
+        if ambiguity_indicators['acronym_expansion_pairs']:
+            score += len(ambiguity_indicators['acronym_expansion_pairs']) / total_unique_values * 0.4
+
+        if ambiguity_indicators['homonym_candidates']:
+            score += len(set(ambiguity_indicators['homonym_candidates'])) / total_unique_values * 0.2
+
+        # Cap the score at 1.0
+        return min(score, 1.0)
+
+    def check_column(col_name: str) -> bool:
+        """
+        Check a single column for ambiguous values.
+        """
+        # Only check string/object columns
+        if not pd.api.types.is_string_dtype(data_dictionary[col_name]) and data_dictionary[col_name].dtype != 'object':
+            return True
+
+        column = data_dictionary[col_name].dropna()
+        if column.empty:
+            return True
+
+        unique_values = list(column.unique())
+        if len(unique_values) <= 1:
+            return True
+
+        # Limit processing for very large datasets to avoid performance issues
+        if len(unique_values) > 1000:
+            import random
+            random.seed(42)  # For reproducible results
+            unique_values = random.sample(unique_values, 1000)
+
+        # Analyze patterns for each value
+        value_patterns = {}
+        for value in unique_values:
+            if isinstance(value, str):
+                value_patterns[value] = analyze_text_patterns(value)
+
+        # Detect contextual ambiguity
+        ambiguity_indicators = detect_contextual_ambiguity(unique_values, value_patterns)
+
+        # Calculate ambiguity score
+        ambiguity_score = calculate_ambiguity_score(ambiguity_indicators, len(unique_values))
+
+        # Report findings if ambiguity score exceeds threshold
+        if ambiguity_score >= ambiguity_threshold:
+            message_parts = [
+                f"Warning in function: {origin_function} - Possible data smell: Ambiguous values detected in DataField '{col_name}' (ambiguity score: {ambiguity_score:.3f})."
+            ]
+
+            if ambiguity_indicators['potential_abbreviations']:
+                message_parts.append(f"Potential abbreviations: {ambiguity_indicators['potential_abbreviations'][:5]}")
+
+            if ambiguity_indicators['acronym_expansion_pairs']:
+                pairs_str = [f"'{pair[0]}' -> '{pair[1]}'" for pair in ambiguity_indicators['acronym_expansion_pairs'][:3]]
+                message_parts.append(f"Potential abbreviation-expansion pairs: {pairs_str}")
+
+            if ambiguity_indicators['homonym_candidates']:
+                message_parts.append(f"Potential homonyms: {list(set(ambiguity_indicators['homonym_candidates']))[:5]}")
+
+            if ambiguity_indicators['mixed_length_patterns']:
+                message_parts.append("Mixed length patterns detected (suggesting abbreviations and full forms)")
+
+            full_message = " ".join(message_parts)
+            print_and_log(full_message, level=logging.WARN)
+            print(f"DATA SMELL DETECTED: Ambiguous Values in DataField '{col_name}'")
+            return False
+
+        return True
+
+    if field is not None:
+        if field not in data_dictionary.columns:
+            raise ValueError(f"DataField '{field}' does not exist in the DataFrame.")
+        return check_column(field)
+    else:
+        # If the DataFrame is empty, return True (no smell)
         if data_dictionary.empty:
             return True
 
