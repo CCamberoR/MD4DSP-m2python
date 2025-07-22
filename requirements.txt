@@ -1,10 +1,10 @@
 # This file may be used to create an environment using:
 # $ conda create --name <env> --file <this file>
 # platform: linux-64
+
+tqdm~=4.67.1
+pypmml~=1.5.6
+scikit-learn~=1.7.1
 pandas~=2.1.4
 numpy~=1.26.3
-tqdm
-pyarrow
-h5py
-pypmml
-scikit-learn
+contractions~=0.1.73
