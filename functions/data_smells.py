@@ -66,7 +66,7 @@ def check_precision_consistency(data_dictionary: pd.DataFrame, expected_decimals
             if num_unique_decimals > 1:
                 # Case 2: Inconsistent decimal places
                 print_and_log(
-                    f"Warning in function: {origin_function} - Possible data smell: DataField {field} has "
+                    f"Warning in function: {origin_function} - DATA SMELL DETECTED: Precision Inconsistency: DataField {field} has "
                     f"inconsistent number of decimal places. Found {num_unique_decimals}"
                     f"different decimal lengths.", level=logging.WARN)
                 print(f"DATA SMELL DETECTED: Precision Inconsistency in DataField {field}")
@@ -74,7 +74,7 @@ def check_precision_consistency(data_dictionary: pd.DataFrame, expected_decimals
             elif num_unique_decimals == 1 and unique_decimals[0] != expected_decimals:
                 # Case 3: Wrong number of decimals
                 print_and_log(
-                    f"Warning in function: {origin_function} - Possible data smell: DataField {field} has "
+                    f"Warning in function: {origin_function} - DATA SMELL DETECTED: Precision Inconsistency: DataField {field} has "
                     f"{unique_decimals[0]} decimal places but {expected_decimals} were"
                     f"expected.", level=logging.WARN)
                 print(f"DATA SMELL DETECTED: Precision Inconsistency in DataField {field}")
@@ -123,7 +123,7 @@ def check_missing_invalid_value_consistency(data_dictionary: pd.DataFrame, missi
         undefined_values = unique_values.intersection(common_set) - missing_invalid_set
 
         if undefined_values:
-            message = (f"Warning in function: {origin_function} - Possible data smell: The missing or invalid "
+            message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Missing or Invalid Value Inconsistency: The missing or invalid "
                        f"values {list(undefined_values)} in the dataField {field_name} "
                        f"do not align with the definitions in the data model: {list(missing_invalid_set)}")
             print_and_log(message, level=logging.WARN)
@@ -158,7 +158,7 @@ def check_integer_as_floating_point(data_dictionary: pd.DataFrame, field: str = 
             if not column.empty:
                 # Check if all values in the column are integers
                 if np.all((column.values == np.floor(column.values))):
-                    message = (f"Warning in function: {origin_function} - Possible data smell: DataField '{col_name}' "
+                    message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Integer as Floating Point: DataField '{col_name}' "
                                f"may be an integer disguised as a float.")
                     print_and_log(message, level=logging.WARN)
                     print(f"DATA SMELL DETECTED: Integer as Floating Point in DataField {col_name}")
@@ -210,31 +210,31 @@ def check_types_as_string(data_dictionary: pd.DataFrame, field: str,
 
         # Detect if the original column is numeric (int or float)
         if pd.api.types.is_integer_dtype(col_dtype) or values.apply(is_integer_string).all():
-            print_and_log(f"Warning in function: {origin_function} - Possible data smell: all values in "
+            print_and_log(f"Warning in function: {origin_function} - DATA SMELL DETECTED: Integer as String: all values in "
                           f"DataField {field} are of type Integer, but the DataField is defined as "
                           f"String in the data model", level=logging.WARN)
             print(f"DATA SMELL DETECTED: Integer as String in DataField {field}")
             return False
         elif pd.api.types.is_float_dtype(col_dtype) or values.apply(is_float_string).all():
-            print_and_log(f"Warning in function: {origin_function} - Possible data smell: all values in "
+            print_and_log(f"Warning in function: {origin_function} - DATA SMELL DETECTED: Float as String: all values in "
                           f"DataField {field} are of type Float, but the DataField is defined as "
                           f"String in the data model", level=logging.WARN)
             print(f"DATA SMELL DETECTED: Float as String in DataField {field}")
             return False
         elif values.apply(is_time_string).all():
-            print_and_log(f"Warning in function: {origin_function} - Possible data smell: all values in "
+            print_and_log(f"Warning in function: {origin_function} - DATA SMELL DETECTED: Time as String: all values in "
                           f"DataField {field} are of type Time, but the DataField is defined as "
                           f"String in the data model", level=logging.WARN)
             print(f"DATA SMELL DETECTED: Time as String in DataField {field}")
             return False
         elif values.apply(is_date_string).all():
-            print_and_log(f"Warning in function: {origin_function} - Possible data smell: all values in "
+            print_and_log(f"Warning in function: {origin_function} - DATA SMELL DETECTED: Date as String: all values in "
                           f"DataField {field} are of type Date, but the DataField is defined as "
                           f"String in the data model", level=logging.WARN)
             print(f"DATA SMELL DETECTED: Date as String in DataField {field}")
             return False
         elif values.apply(is_datetime_string).all():
-            print_and_log(f"Warning in function: {origin_function} - Possible data smell: all values in "
+            print_and_log(f"Warning in function: {origin_function} - DATA SMELL DETECTED: DateTime as String: all values in "
                           f"DataField {field} are of type DateTime, but the DataField is defined as "
                           f"String in the data model", level=logging.WARN)
             print(f"DATA SMELL DETECTED: DateTime as String in DataField {field}")
@@ -269,7 +269,7 @@ def check_types_as_string(data_dictionary: pd.DataFrame, field: str,
         if checker is None:
             raise ValueError(f"Unknown expected_type '{expected_type}' for DataField '{field}'")
         if not checker(values):
-            print_and_log(f"Warning in function: {origin_function} - Possible data smell: Expected data "
+            print_and_log(f"Warning in function: {origin_function} - DATA SMELL DETECTED: Type Mismatch: Expected data "
                           f"for DataField {field} is {expected_type.name}, "
                           f"but got {col_dtype.name}", level=logging.WARN)
             print(f"Warning: Type mismatch in DataField {field} (expected {expected_type.name}, got {col_dtype.name})")
@@ -316,7 +316,7 @@ def check_special_character_spacing(data_dictionary: pd.DataFrame, field: str = 
                     # Limit the number of examples shown to avoid overly long messages
                     examples_to_show = list(problematic_values[:5])
 
-                    message = (f"Warning in function: {origin_function} - Possible data smell: the values "
+                    message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Special Character/Spacing: the values "
                                f"in {col_name} contain accents, extra spaces, or special "
                                f"characters that do not align with the recommended data format for string operations. "
                                f"Examples of problematic values: {examples_to_show}")
@@ -371,7 +371,7 @@ def check_suspect_precision(data_dictionary: pd.DataFrame, field: str = None, or
                     continue
                 try:
                     if v != float(format(v, 'g')):
-                        print_and_log(f"Warning in function: {origin_function} - Possible data smell: "
+                        print_and_log(f"Warning in function: {origin_function} - DATA SMELL DETECTED: Suspect Precision: "
                                       f"The dataField {col_name} contains "
                                       f"non-significant digits: {v} -> {float(format(v, 'g'))}", level=logging.WARN)
                         print(f"DATA SMELL DETECTED: Suspect Precision in DataField {col_name}")
@@ -425,7 +425,7 @@ def check_suspect_distribution(data_dictionary: pd.DataFrame, min_value: float, 
                 # Check if any values are outside the defined range
                 out_of_range = (column < min_value) | (column > max_value)
                 if out_of_range.any():
-                    message = (f"Warning in function: {origin_function} - Possible data smell: The range of values of "
+                    message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Suspect Distribution: The range of values of "
                                f"dataField {col_name} do not align with the definitions in the data-model")
                     print_and_log(message, level=logging.WARN)
                     print(f"DATA SMELL DETECTED: Suspect Distribution in DataField {col_name}")
@@ -478,7 +478,7 @@ def check_date_as_datetime(data_dictionary: pd.DataFrame, field: str = None, ori
         # Check if all times are 00:00:00.000000 in their respective timezone
         if np.all((column.dt.hour == 0) & (column.dt.minute == 0) & (column.dt.second == 0) & (
                 column.dt.microsecond == 0)):
-            message = (f"Warning in function: {origin_function} - Possible data smell: the values in {col_name} appear "
+            message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Date as DateTime: the values in {col_name} appear "
                        f"to be date, but the expected type in the data model is dateTime")
             print_and_log(message, level=logging.WARN)
             print(f"DATA SMELL DETECTED: Date as DateTime in DataField {col_name}")
@@ -617,7 +617,7 @@ def check_separating_consistency(data_dictionary: pd.DataFrame, decimal_sep: str
                     # It's valid to have numbers without thousands separator
                     if decimal_sep in mantissa and not is_valid_number_format(val, decimal_sep, ''):
                         print_and_log(
-                            f"Warning in function: {origin_function} - Possible data smell: invalid decimal format in "
+                            f"Warning in function: {origin_function} - DATA SMELL DETECTED: Invalid Decimal Format: invalid decimal format in "
                             f"value {val} of dataField {col_name}",
                             level=logging.WARN)
                         print(f"DATA SMELL DETECTED: Invalid Decimal Format in DataField {col_name}")
@@ -626,7 +626,7 @@ def check_separating_consistency(data_dictionary: pd.DataFrame, decimal_sep: str
 
                 if not is_valid_number_format(val, decimal_sep, thousands_sep):
                     print_and_log(
-                        f"Warning in function: {origin_function} - Possible data smell: invalid number format or "
+                        f"Warning in function: {origin_function} - DATA SMELL DETECTED: Invalid Number Format: invalid number format or "
                         f"wrong separators in value {val} of dataField {col_name}",
                         level=logging.WARN)
                     print(f"DATA SMELL DETECTED: Invalid Number Format in DataField {col_name}")
@@ -636,7 +636,7 @@ def check_separating_consistency(data_dictionary: pd.DataFrame, decimal_sep: str
                 # Without thousand separator, verify a decimal format is correct
                 if used_seps - {decimal_sep}:  # If there are separators different from decimal
                     print_and_log(
-                        f"Warning in function: {origin_function} - Possible data smell: wrong decimal separator used "
+                        f"Warning in function: {origin_function} - DATA SMELL DETECTED: Wrong Decimal Separator: wrong decimal separator used "
                         f"in value {val} of dataField {col_name}",
                         level=logging.WARN)
                     print(f"DATA SMELL DETECTED: Wrong Decimal Separator in DataField {col_name}")
@@ -644,7 +644,7 @@ def check_separating_consistency(data_dictionary: pd.DataFrame, decimal_sep: str
 
                 if decimal_sep in mantissa and not is_valid_number_format(val, decimal_sep, ''):
                     print_and_log(
-                        f"Warning in function: {origin_function} - Possible data smell: invalid decimal format in value {val} of dataField {col_name}",
+                        f"Warning in function: {origin_function} - DATA SMELL DETECTED: Invalid Decimal Format: invalid decimal format in value {val} of dataField {col_name}",
                         level=logging.WARN)
                     print(f"DATA SMELL DETECTED: Invalid Decimal Format in DataField {col_name}")
                     return False
@@ -713,7 +713,7 @@ def check_date_time_consistency(data_dictionary: pd.DataFrame, expected_type: Da
                             (col_data.dt.microsecond == 0)).all()
 
             if has_time:
-                message = (f"Warning in function: {origin_function} - Possible data smell: The format of date of "
+                message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Date/Time Format Inconsistency: The format of date of "
                            f"dataField {col_name} do not align with the definitions in "
                            f"the data-model (contains time information)")
                 print_and_log(message, level=logging.WARN)
@@ -725,10 +725,16 @@ def check_date_time_consistency(data_dictionary: pd.DataFrame, expected_type: Da
     if field is not None:
         return check_column(field)
     else:
+        # If DataFrame is empty, return True (no smell)
+        if data_dictionary.empty:
+            return True
         # Check all datetime columns
         datetime_fields = data_dictionary.select_dtypes(include=['datetime64[ns]', 'datetime64[ns, UTC]']).columns
-        results = [check_column(col) for col in datetime_fields]
-        return all(results)
+        for col in datetime_fields:
+            result = check_column(col)
+            if not result:
+                return result  # Return on the first smell found
+        return True
 
 
 def check_ambiguous_datetime_format(data_dictionary: pd.DataFrame, field: str = None,
@@ -757,7 +763,7 @@ def check_ambiguous_datetime_format(data_dictionary: pd.DataFrame, field: str = 
                 twelve_hour_indicators = str_values.str.contains(
                     r'\b(?:1[0-2]|0?[1-9]):[0-5][0-9]\s*(?:AM|PM|am|pm|a\.m\.|p\.m\.)', regex=True, na=False).any()
                 if has_am_pm or twelve_hour_indicators:
-                    message = (f"Warning in function: {origin_function} - Possible data smell: The format of date "
+                    message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Ambiguous Date/Time Format: The format of date "
                                f"of dataField {col_name} is represented in 12-hour clock format")
                     print_and_log(message, level=logging.WARN)
                     print(f"DATA SMELL DETECTED: Ambiguous Date/Time Format in DataField {col_name}")
@@ -779,77 +785,6 @@ def check_ambiguous_datetime_format(data_dictionary: pd.DataFrame, field: str = 
             if not result:
                 return result  # Return on the first smell found
 
-    return True
-
-
-def check_suspect_date_value(data_dictionary: pd.DataFrame, min_date: str, max_date: str,
-                             field: str = None, origin_function: str = None) -> bool:
-    """
-    Checks if date/datetime fields have values outside the range defined in the data model.
-    If so, logs a warning indicating a possible data smell.
-
-    :param data_dictionary: (pd.DataFrame) DataFrame containing the data
-    :param min_date: (str) Minimum date allowed (e.g., 'YYYY-MM-DD')
-    :param max_date: (str) Maximum date allowed (e.g., 'YYYY-MM-DD')
-    :param field: (str) Optional field to check; if None, checks all datetime fields
-    :param origin_function: (str) Optional name of the function that called this function, for logging purposes
-
-    :return: (bool) False if a smell is detected, True otherwise.
-    """
-    try:
-        # Parse dates without timezone handling first, then convert to naive
-        min_date_dt = pd.to_datetime(min_date)
-        max_date_dt = pd.to_datetime(max_date)
-
-        # Convert timezone-aware datetime to naive if needed
-        if hasattr(min_date_dt, 'tz') and min_date_dt.tz is not None:
-            min_date_dt = min_date_dt.tz_localize(None)
-        if hasattr(max_date_dt, 'tz') and max_date_dt.tz is not None:
-            max_date_dt = max_date_dt.tz_localize(None)
-
-    except (ValueError, TypeError) as e:
-        raise ValueError(
-            f"Invalid min_date or max_date format. Please use a format recognizable by pandas.to_datetime. Error: {str(e)}")
-
-    if min_date_dt > max_date_dt:
-        raise ValueError("min_date cannot be greater than max_date")
-
-    def check_column(col_name):
-        # Only check datetime columns
-        if pd.api.types.is_datetime64_any_dtype(data_dictionary[col_name]):
-            column = data_dictionary[col_name].dropna()
-            if column.empty:
-                return True
-
-            # If the column is timezone-aware, convert to naive for comparison to avoid errors
-            if column.dt.tz is not None:
-                column = column.dt.tz_localize(None)
-
-            # Check if any values are outside the defined range
-            out_of_range = (column < min_date_dt) | (column > max_date_dt)
-            if out_of_range.any():
-                message = (f"Warning in function: {origin_function} - Possible data smell: The range of date of "
-                           f"dataField {col_name} do not align with the definitions in the data-model")
-                print_and_log(message, level=logging.WARN)
-                print(f"DATA SMELL DETECTED: Suspect Date Value in DataField {col_name}")
-                return False
-        return True
-
-    if field is not None:
-        if field not in data_dictionary.columns:
-            raise ValueError(f"DataField '{field}' does not exist in the DataFrame.")
-        return check_column(field)
-    else:
-        # If DataFrame is empty, return True (no smell)
-        if data_dictionary.empty:
-            return True
-        # Check all datetime columns
-        datetime_fields = data_dictionary.select_dtypes(
-            include=['datetime64[ns]', 'datetime64[ns, UTC]', 'datetime']).columns
-        for col in datetime_fields:
-            result = check_column(col)
-            if not result:
-                return result  # Return on the first smell found
     return True
 
 
@@ -893,7 +828,7 @@ def check_suspect_far_date_value(data_dictionary: pd.DataFrame, field: str = Non
                 # Get the actual far dates for better context
                 far_dates_list = column[far_dates].dt.strftime('%Y-%m-%d').tolist()
                 message = (
-                    f"Warning in function: {origin_function} - Possible data smell: Found {far_dates_count} dates in "
+                    f"Warning in function: {origin_function} - DATA SMELL DETECTED: Suspect Far Date Value: Found {far_dates_count} dates in "
                     f"dataField {col_name} that are more than {YEARS_THRESHOLD} years away from current date. "
                     f"Far dates found: {far_dates_list}")
                 print_and_log(message, level=logging.WARN)
@@ -952,7 +887,7 @@ def check_number_string_size(data_dictionary: pd.DataFrame, field: str = None, o
                     small_numbers_count = small_numbers.sum()
                     small_numbers_list = column[small_numbers].tolist()
                     message = (
-                        f"Warning in function: {origin_function} - Possible data smell: Found {small_numbers_count} "
+                        f"Warning in function: {origin_function} - DATA SMELL DETECTED: Small Number: Found {small_numbers_count} "
                         f"small values (between -1 and 1) in dataField {col_name}. "
                         f"Small numbers found: {small_numbers_list}")
                     print_and_log(message, level=logging.WARN)
@@ -965,7 +900,7 @@ def check_number_string_size(data_dictionary: pd.DataFrame, field: str = None, o
                     large_numbers_count = large_numbers.sum()
                     large_numbers_list = column[large_numbers].tolist()
                     message = (
-                        f"Warning in function: {origin_function} - Possible data smell: Found {large_numbers_count} "
+                        f"Warning in function: {origin_function} - DATA SMELL DETECTED: Long Data Value: Found {large_numbers_count} "
                         f"very large values in dataField {col_name}. "
                         f"Large numbers found: {large_numbers_list}")
                     print_and_log(message, level=logging.WARN)
@@ -987,7 +922,7 @@ def check_number_string_size(data_dictionary: pd.DataFrame, field: str = None, o
                             small_count = small_scientific.sum()
                             small_list = scientific_values[small_scientific].tolist()
                             message = (
-                                f"Warning in function: {origin_function} - Possible data smell: Found {small_count} "
+                                f"Warning in function: {origin_function} - DATA SMELL DETECTED: Small Number in Scientific Notation: Found {small_count} "
                                 f"small values in scientific notation in dataField {col_name}. "
                                 f"Small values found: {small_list}")
                             print_and_log(message, level=logging.WARN)
@@ -1000,7 +935,7 @@ def check_number_string_size(data_dictionary: pd.DataFrame, field: str = None, o
                             large_count = large_scientific.sum()
                             large_list = scientific_values[large_scientific].tolist()
                             message = (
-                                f"Warning in function: {origin_function} - Possible data smell: Found {large_count} "
+                                f"Warning in function: {origin_function} - DATA SMELL DETECTED: Long Data Value in Scientific Notation: Found {large_count} "
                                 f"large values in scientific notation in dataField {col_name}. "
                                 f"Large values found: {large_list}")
                             print_and_log(message, level=logging.WARN)
@@ -1016,7 +951,7 @@ def check_number_string_size(data_dictionary: pd.DataFrame, field: str = None, o
                     long_strings_count = long_strings.sum()
                     long_strings_list = column[long_strings].tolist()
                     message = (
-                        f"Warning in function: {origin_function} - Possible data smell: Found {long_strings_count} "
+                        f"Warning in function: {origin_function} - DATA SMELL DETECTED: Long Data Value: Found {long_strings_count} "
                         f"very long text values in dataField {col_name}. "
                         f"Long values found: {long_strings_list}")
                     print_and_log(message, level=logging.WARN)
@@ -1099,7 +1034,7 @@ def check_string_casing(data_dictionary: pd.DataFrame, field: str = None, origin
             variations = [v for v in unique_values
                           if isinstance(v, str) and v.lower() == value.lower() and v != value]
             if variations:
-                message = (f"Warning in function: {origin_function} - Possible data smell: Found inconsistent "
+                message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Casing Inconsistency: Found inconsistent "
                            f"capitalization for the same value in dataField {col_name}. "
                            f"Variations found: {[value] + variations}")
                 print_and_log(message, level=logging.WARN)
@@ -1109,7 +1044,7 @@ def check_string_casing(data_dictionary: pd.DataFrame, field: str = None, origin
         # 2. Check for an unusual mixed case within values
         mixed_case_values = [v for v in unique_values if isinstance(v, str) and is_mixed_case(v)]
         if mixed_case_values:
-            message = (f"Warning in function: {origin_function} - Possible data smell: Found values with "
+            message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Unusual Mixed Case: Found values with "
                        f"unusual mixed case patterns in dataField {col_name}. "
                        f"Examples: {mixed_case_values[:5]}")
             print_and_log(message, level=logging.WARN)
@@ -1121,7 +1056,7 @@ def check_string_casing(data_dictionary: pd.DataFrame, field: str = None, origin
             sentence_case_values = [v for v in unique_values if isinstance(v, str) and is_sentence_case(v)]
             if 0 < len(sentence_case_values) < len(unique_values):
                 # Some values follow a sentence case while others don't
-                message = (f"Warning in function: {origin_function} - Possible data smell: Inconsistent "
+                message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Inconsistent Sentence Casing: Inconsistent "
                            f"sentence casing in dataField {col_name}. Some values follow sentence case "
                            f"while others don't.")
                 print_and_log(message, level=logging.WARN)
@@ -1321,7 +1256,7 @@ def check_intermingled_data_type(data_dictionary: pd.DataFrame, field: str = Non
 
         # Case 1: Column contains both purely numeric and purely text values
         if len(numeric_values) > 0 and len(text_values) > 0:
-            message = (f"Warning in function: {origin_function} - Possible data smell: DataField {col_name} "
+            message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Intermingled Data Type: DataField {col_name} "
                       f"contains both numeric and text values. Found {len(numeric_values)} numeric values "
                       f"and {len(text_values)} text values.")
             print_and_log(message, level=logging.WARN)
@@ -1330,7 +1265,7 @@ def check_intermingled_data_type(data_dictionary: pd.DataFrame, field: str = Non
 
         # Case 2: Column contains date-like values mixed with pure text
         if len(date_like_values) > 0 and len(text_values) > 0:
-            message = (f"Warning in function: {origin_function} - Possible data smell: DataField {col_name} "
+            message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Intermingled Data Type: DataField {col_name} "
                       f"contains both date-like and text values. Found {len(date_like_values)} date-like values "
                       f"and {len(text_values)} text values.")
             print_and_log(message, level=logging.WARN)
@@ -1339,7 +1274,7 @@ def check_intermingled_data_type(data_dictionary: pd.DataFrame, field: str = Non
 
         # Case 3: Column contains numeric values mixed with date-like values
         if len(numeric_values) > 0 and len(date_like_values) > 0:
-            message = (f"Warning in function: {origin_function} - Possible data smell: DataField {col_name} "
+            message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Intermingled Data Type: DataField {col_name} "
                       f"contains both numeric and date-like values. Found {len(numeric_values)} numeric values "
                       f"and {len(date_like_values)} date-like values.")
             print_and_log(message, level=logging.WARN)
@@ -1348,7 +1283,7 @@ def check_intermingled_data_type(data_dictionary: pd.DataFrame, field: str = Non
 
         # Case 4: Column contains values with mixed alphanumeric characters
         if len(mixed_values) > 0:
-            message = (f"Warning in function: {origin_function} - Possible data smell: DataField {col_name} "
+            message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Intermingled Data Type (Mixed Alphanumeric): DataField {col_name} "
                       f"contains {len(mixed_values)} values with mixed alphanumeric characters. "
                       f"Examples: {mixed_values[:5]}")
             print_and_log(message, level=logging.WARN)
@@ -1419,7 +1354,7 @@ def check_contracted_text(data_dictionary: pd.DataFrame, field: str = None, orig
 
         if values_with_contractions:
             unique_contractions = list(set(all_contractions_found))
-            message = (f"Warning in function: {origin_function} - Possible data smell: DataField {col_name} "
+            message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Contracted Text: DataField {col_name} "
                        f"contains {len(values_with_contractions)} values with contractions. "
                        f"Examples of contractions found: {unique_contractions[:10]}")
             print_and_log(message, level=logging.WARN)
@@ -1618,7 +1553,7 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
         if variant_groups:
             # Limit reporting to avoid log spam
             for group in variant_groups[:5]:  # Report only first 5 groups
-                message = (f"Warning in function: {origin_function} - Possible data smell: Inconsistent lexical forms "
+                message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Abbreviation Inconsistency: Inconsistent lexical forms "
                            f"detected in DataField '{col_name}'. "
                            f"Variants found: {group}")
                 print_and_log(message, level=logging.WARN)
@@ -1833,7 +1768,7 @@ def check_syntactic_synonym(data_dictionary: pd.DataFrame, field: str = None,
         # Report findings
         if synonym_groups:
             for group in synonym_groups[:5]:  # Report only first 5 groups to avoid log spam
-                message = (f"Warning in function: {origin_function} - Possible data smell: Syntactic synonyms "
+                message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Syntactic Synonyms: "
                            f"detected in DataField '{col_name}'. "
                            f"Semantically similar values found: {group}")
                 print_and_log(message, level=logging.WARN)
@@ -2102,7 +2037,7 @@ def check_ambiguous_value(data_dictionary: pd.DataFrame, field: str = None,
         # Report findings if ambiguity score exceeds threshold
         if ambiguity_score >= ambiguity_threshold:
             message_parts = [
-                f"Warning in function: {origin_function} - Possible data smell: Ambiguous values detected in DataField '{col_name}' (ambiguity score: {ambiguity_score:.3f})."
+                f"Warning in function: {origin_function} - DATA SMELL DETECTED: Ambiguous values detected in DataField '{col_name}' (ambiguity score: {ambiguity_score:.3f})."
             ]
 
             if ambiguity_indicators['potential_abbreviations']:
