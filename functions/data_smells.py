@@ -280,7 +280,7 @@ def check_types_as_string(data_dictionary: pd.DataFrame, field: str,
 def check_special_character_spacing(data_dictionary: pd.DataFrame, field: str = None,
                                     origin_function: str = None) -> bool:
     """
-    Checks if string columns contain accents, uppercase letters, extra spaces, or special characters
+    Checks if string columns contain accents, extra spaces, or special characters
     that do not align with the recommended data format for string operations.
 
     :param data_dictionary: (pd.DataFrame) DataFrame containing the data
@@ -291,14 +291,14 @@ def check_special_character_spacing(data_dictionary: pd.DataFrame, field: str = 
     """
 
     def clean_text(text):
-        """Helper function to clean text by removing accents, special characters, extra spaces and converting to lowercase"""
+        """Helper function to clean text by removing accents, special characters, and extra spaces (preserving case)"""
         if pd.isna(text) or text == '':
             return text
         # Convert to string in case it's not
         text = str(text)
-        # Remove accents, special characters, normalize spaces and convert to lowercase
+        # Remove accents and special characters, normalize spaces but preserve case
         return re.sub(r'\s+', ' ', re.sub(r'[^A-Za-z0-9\s]', '', ''.join(
-            [c for c in unicodedata.normalize('NFD', text) if unicodedata.category(c) != 'Mn'])).lower()).strip()
+            [c for c in unicodedata.normalize('NFD', text) if unicodedata.category(c) != 'Mn']))).strip()
 
     def check_column(col_name):
         # Only check string columns
@@ -309,10 +309,21 @@ def check_special_character_spacing(data_dictionary: pd.DataFrame, field: str = 
                 cleaned_values = column.apply(clean_text)
 
                 # Check if any value changed after cleaning (indicating the presence of special chars, spaces, etc.)
-                if not (column == cleaned_values).all():
+                changed_mask = (column != cleaned_values)
+                if changed_mask.any():
+                    # Get the values that changed (have problems)
+                    problematic_values = column[changed_mask].unique()
+                    # Limit the number of examples shown to avoid overly long messages
+                    examples_to_show = list(problematic_values[:5])
+
                     message = (f"Warning in function: {origin_function} - Possible data smell: the values "
-                               f"in {col_name} contain accents, uppercase letters, extra spaces, or special "
-                               f"characters that do not align with the recommended data format for string operations.")
+                               f"in {col_name} contain accents, extra spaces, or special "
+                               f"characters that do not align with the recommended data format for string operations. "
+                               f"Examples of problematic values: {examples_to_show}")
+
+                    if len(problematic_values) > 5:
+                        message += f" (and {len(problematic_values) - 5} more values)"
+
                     print_and_log(message, level=logging.WARN)
                     print(f"DATA SMELL DETECTED: Special Character/Spacing in DataField {col_name}")
                     return False
