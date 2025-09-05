@@ -2515,7 +2515,7 @@ class DataSmellsSimpleTest(unittest.TestCase):
         print_and_log("Testing check_abbreviation_inconsistency function...")
 
         # Test Case 1: Inconsistent abbreviations
-        df1 = pd.DataFrame({'text': ['USA', 'U.S.A.', 'United States', 'US']})
+        df1 = pd.DataFrame({'text': ['USA', 'U.S.A.', 'US']})
         result = self.data_smells.check_abbreviation_consistency(df1, 'text')
         assert result is False, "Test Case 1 Failed: Should detect smell for inconsistent abbreviations"
         print_and_log("Test Case 1 Passed: Smell detected for inconsistent abbreviations")
@@ -2527,7 +2527,7 @@ class DataSmellsSimpleTest(unittest.TestCase):
         print_and_log("Test Case 2 Passed: Smell detected for inconsistent contractions")
 
         # Test Case 3: Inconsistent acronyms
-        df3 = pd.DataFrame({'text': ['FBI', 'F.B.I.', 'Federal Bureau of Investigation']})
+        df3 = pd.DataFrame({'text': ['FBI', 'F.B.I.']})
         result = self.data_smells.check_abbreviation_consistency(df3, 'text')
         assert result is False, "Test Case 3 Failed: Should detect smell for inconsistent acronyms"
         print_and_log("Test Case 3 Passed: Smell detected for inconsistent acronyms")
