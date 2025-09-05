@@ -426,8 +426,32 @@ def check_suspect_distribution(data_dictionary: pd.DataFrame, min_value: float, 
                 # Check if any values are outside the defined range
                 out_of_range = (column < min_value) | (column > max_value)
                 if out_of_range.any():
+                    # Get detailed information about the out-of-range values
+                    out_of_range_values = column[out_of_range]
+                    actual_min = column.min()
+                    actual_max = column.max()
+                    count_out_of_range = out_of_range.sum()
+                    total_values = len(column)
+                    percentage_out_of_range = (count_out_of_range / total_values) * 100
+
+                    # Get examples of out-of-range values (up to 5 examples)
+                    examples = out_of_range_values.head(5).tolist()
+
+                    # Determine if values are below min, above max, or both
+                    below_min = (column < min_value).sum()
+                    above_max = (column > max_value).sum()
+
+                    range_details = []
+                    if below_min > 0:
+                        range_details.append(f"{below_min} values below minimum ({min_value})")
+                    if above_max > 0:
+                        range_details.append(f"{above_max} values above maximum ({max_value})")
+
                     message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Suspect Distribution: The range of values of "
-                               f"dataField {col_name} do not align with the definitions in the data-model")
+                               f"dataField {col_name} do not align with the definitions in the data-model. "
+                               f"Expected range: [{min_value}, {max_value}], but found actual range: [{actual_min}, {actual_max}]. "
+                               f"Out-of-range violations: {count_out_of_range}/{total_values} values ({percentage_out_of_range:.1f}%) - "
+                               f"{', '.join(range_details)}. Examples of violating values: {examples}")
                     print_and_log(message, level=logging.WARN)
                     print(f"DATA SMELL DETECTED: Suspect Distribution in DataField {col_name}")
                     return False
