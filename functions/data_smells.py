@@ -1507,7 +1507,7 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
     def get_abbreviation_key(text: str) -> tuple:
         """
         Creates a key for grouping potential abbreviations/variants.
-        Returns a tuple of (normalized_text, word_count, first_letters, vowel_removed)
+        Returns a tuple of (normalized_text, word_count, first_letters)
         """
         base = get_base_form(text)
         words = base.split()
@@ -1516,24 +1516,17 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
         # Get first letters for acronym detection
         first_letters = ''.join([w[0] for w in words if w]) if words else ''
 
-        # Remove vowels for consonant-based abbreviations
-        vowel_removed = re.sub(r'[aeiou]', '', base)
-
-        return (base, word_count, first_letters, vowel_removed)
+        return (base, word_count, first_letters)
 
     def are_likely_variants_fast(key1: tuple, key2: tuple, text1: str, text2: str) -> bool:
         """
         Fast variant detection using pre-computed keys.
         """
-        base1, count1, letters1, vowels1 = key1
-        base2, count2, letters2, vowels2 = key2
+        base1, count1, letters1 = key1
+        base2, count2, letters2 = key2
 
         # Quick checks first
         if base1 == base2:
-            return True
-
-        # Check vowel-removed forms
-        if vowels1 and vowels2 and vowels1 == vowels2:
             return True
 
         # Check acronym patterns (one single word vs multiple words)
@@ -1583,15 +1576,12 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
         # Group texts by similar characteristics for faster comparison
         groups_by_base = defaultdict(list)
         groups_by_letters = defaultdict(list)
-        groups_by_vowels = defaultdict(list)
 
         for text, key in text_keys.items():
-            base, count, letters, vowels = key
+            base, count, letters = key
             groups_by_base[base].append(text)
             if letters:
                 groups_by_letters[letters].append(text)
-            if vowels:
-                groups_by_vowels[vowels].append(text)
 
         variant_groups = []
         processed = set()
@@ -1621,14 +1611,6 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
                         variant_groups.append(current_group)
                         processed.update(current_group)
 
-        # Check vowel-removed groups
-        for vowels, texts in groups_by_vowels.items():
-            if len(texts) > 1:
-                unprocessed_texts = [t for t in texts if t not in processed]
-                if len(unprocessed_texts) > 1:
-                    variant_groups.append(unprocessed_texts)
-                    processed.update(unprocessed_texts)
-
         # Final pass for remaining substring matches (limited scope)
         remaining_texts = [t for t in text_keys.keys() if t not in processed]
         if len(remaining_texts) > 1 and len(remaining_texts) <= 100:  # Only for small remaining sets
@@ -1651,7 +1633,7 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
         if variant_groups:
             # Limit reporting to avoid log spam
             for group in variant_groups[:5]:  # Report only first 5 groups
-                message = (f"Warning in function: {origin_function} - Possible data smell: Inconsistent lexical forms "
+                message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Abbreviation Inconsistencies: Inconsistent lexical forms "
                            f"detected in DataField '{col_name}'. "
                            f"Variants found: {group}")
                 print_and_log(message, level=logging.WARN)
