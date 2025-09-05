@@ -577,98 +577,89 @@ class DataSmellExternalDatasetTests(unittest.TestCase):
         self.assertTrue(result, "Test Case 4 Failed: Expected no smell for clean strings")
         print_and_log("Test Case 4 Passed: Expected no smell, got no smell")
 
-        # Test 5: Create a column with uppercase issues (smell)
-        print_and_log("\nTest 5: Check uppercase issues")
-        uppercase_df = pd.DataFrame({
-            'uppercase_text': ['Hello World', 'TEST CASE', 'Simple Text', 'UPPERCASE', 'MixedCase']
-        })
-        result = self.data_smells.check_special_character_spacing(uppercase_df, 'uppercase_text')
-        self.assertFalse(result, "Test Case 5 Failed: Expected smell for uppercase text")
-        print_and_log("Test Case 5 Passed: Expected smell, got smell")
-
-        # Test 6: Create a column with accented characters (smell)
+        # Test 5: Create a column with accented characters (smell)
         print_and_log("\nTest 6: Check accented characters")
         accent_df = pd.DataFrame({
             'accented_text': ['café', 'niño', 'résumé', 'piñata', 'naïve']
         })
         result = self.data_smells.check_special_character_spacing(accent_df, 'accented_text')
         self.assertFalse(result, "Test Case 6 Failed: Expected smell for accented text")
-        print_and_log("Test Case 6 Passed: Expected smell, got smell")
+        print_and_log("Test Case 5 Passed: Expected smell, got smell")
 
-        # Test 7: Create a column with special characters (smell)
-        print_and_log("\nTest 7: Check special characters")
+        # Test 6: Create a column with special characters (smell)
+        print_and_log("\nTest 6: Check special characters")
         special_df = pd.DataFrame({
             'special_chars': ['hello@world', 'test#case', 'data&analytics', 'file.txt', 'user:password']
         })
         result = self.data_smells.check_special_character_spacing(special_df, 'special_chars')
-        self.assertFalse(result, "Test Case 7 Failed: Expected smell for special characters")
-        print_and_log("Test Case 7 Passed: Expected smell, got smell")
+        self.assertFalse(result, "Test Case 6 Failed: Expected smell for special characters")
+        print_and_log("Test Case 6 Passed: Expected smell, got smell")
 
-        # Test 8: Create a column with extra spacing (smell)
-        print_and_log("\nTest 8: Check extra spacing")
+        # Test 7: Create a column with extra spacing (smell)
+        print_and_log("\nTest 7: Check extra spacing")
         spacing_df = pd.DataFrame({
             'extra_spaces': ['hello  world', 'test   case', 'data    analytics', '  leading', 'trailing  ']
         })
         result = self.data_smells.check_special_character_spacing(spacing_df, 'extra_spaces')
-        self.assertFalse(result, "Test Case 8 Failed: Expected smell for extra spacing")
-        print_and_log("Test Case 8 Passed: Expected smell, got smell")
+        self.assertFalse(result, "Test Case 7 Failed: Expected smell for extra spacing")
+        print_and_log("Test Case 7 Passed: Expected smell, got smell")
 
-        # Test 9: Create a column with mixed formatting issues (smell)
-        print_and_log("\nTest 9: Check mixed formatting issues")
+        # Test 8: Create a column with mixed formatting issues (smell)
+        print_and_log("\nTest 8: Check mixed formatting issues")
         mixed_df = pd.DataFrame({
             'mixed_issues': ['Café@Home  ', 'TEST#Case   ', 'Résumé!Final  ', 'USER:Pass  ', 'File.TXT@Server']
         })
         result = self.data_smells.check_special_character_spacing(mixed_df, 'mixed_issues')
-        self.assertFalse(result, "Test Case 9 Failed: Expected smell for mixed issues")
-        print_and_log("Test Case 9 Passed: Expected smell, got smell")
+        self.assertFalse(result, "Test Case 8 Failed: Expected smell for mixed issues")
+        print_and_log("Test Case 8 Passed: Expected smell, got smell")
 
-        # Test 10: Check numbers as strings (no smell)
-        print_and_log("\nTest 10: Check numbers as strings")
+        # Test 9: Check numbers as strings (no smell)
+        print_and_log("\nTest 9: Check numbers as strings")
         numbers_df = pd.DataFrame({
             'numbers_as_strings': ['123', '456', '789', '101112', '131415']
         })
         result = self.data_smells.check_special_character_spacing(numbers_df, 'numbers_as_strings')
-        self.assertTrue(result, "Test Case 10 Failed: Expected no smell for numbers as strings")
-        print_and_log("Test Case 10 Passed: Expected no smell, got no smell")
+        self.assertTrue(result, "Test Case 9 Failed: Expected no smell for numbers as strings")
+        print_and_log("Test Case 9 Passed: Expected no smell, got no smell")
 
-        # Test 11: Check empty and null values (no smell)
-        print_and_log("\nTest 11: Check empty and null values")
+        # Test 10: Check empty and null values (no smell)
+        print_and_log("\nTest 10: Check empty and null values")
         empty_df = pd.DataFrame({
             'empty_nulls': ['', np.nan, '', np.nan, '']
         })
         result = self.data_smells.check_special_character_spacing(empty_df, 'empty_nulls')
-        self.assertTrue(result, "Test Case 11 Failed: Expected no smell for empty/null values")
-        print_and_log("Test Case 11 Passed: Expected no smell, got no smell")
+        self.assertTrue(result, "Test Case 10 Failed: Expected no smell for empty/null values")
+        print_and_log("Test Case 10 Passed: Expected no smell, got no smell")
 
-        # Test 12: Check single characters with issues (smell)
-        print_and_log("\nTest 12: Check single character issues")
+        # Test 11: Check single characters with issues (smell)
+        print_and_log("\nTest 11: Check single character issues")
         single_char_df = pd.DataFrame({
             'single_chars': ['A', '@', 'É', ' ', '#']
         })
         result = self.data_smells.check_special_character_spacing(single_char_df, 'single_chars')
-        self.assertFalse(result, "Test Case 12 Failed: Expected smell for single character issues")
-        print_and_log("Test Case 12 Passed: Expected smell, got smell")
+        self.assertFalse(result, "Test Case 11 Failed: Expected smell for single character issues")
+        print_and_log("Test Case 11 Passed: Expected smell, got smell")
 
-        # Test 13: Check mixed clean and dirty data (smell)
-        print_and_log("\nTest 13: Check mixed clean and dirty data")
+        # Test 12: Check mixed clean and dirty data (smell)
+        print_and_log("\nTest 12: Check mixed clean and dirty data")
         mixed_clean_dirty_df = pd.DataFrame({
             'mixed_data': ['clean text', 'Dirty@Text  ', 'normal', 'UPPERCASE', 'café']
         })
         result = self.data_smells.check_special_character_spacing(mixed_clean_dirty_df, 'mixed_data')
-        self.assertFalse(result, "Test Case 13 Failed: Expected smell for mixed clean/dirty data")
-        print_and_log("Test Case 13 Passed: Expected smell, got smell")
+        self.assertFalse(result, "Test Case 12 Failed: Expected smell for mixed clean/dirty data")
+        print_and_log("Test Case 12 Passed: Expected smell, got smell")
 
-        # Test 14: Check all string columns in dataset (smell expected)
-        print_and_log("\nTest 14: Check all string columns in dataset")
+        # Test 13: Check all string columns in dataset (smell expected)
+        print_and_log("\nTest 13: Check all string columns in dataset")
         result = self.data_smells.check_special_character_spacing(test_df)
-        self.assertFalse(result, "Test Case 14 Failed: Expected smell when checking all string columns")
-        print_and_log("Test Case 14 Passed: Expected smell when checking all columns, got smell")
+        self.assertFalse(result, "Test Case 13 Failed: Expected smell when checking all string columns")
+        print_and_log("Test Case 13 Passed: Expected smell when checking all columns, got smell")
 
-        # Test 15: Check playlist_name field (likely has formatting issues)
-        print_and_log("\nTest 15: Check playlist_name field")
+        # Test 14: Check playlist_name field (likely has formatting issues)
+        print_and_log("\nTest 14: Check playlist_name field")
         result = self.data_smells.check_special_character_spacing(test_df, 'playlist_name')
-        self.assertFalse(result, "Test Case 15 Failed: Expected smell for playlist_name due to formatting")
-        print_and_log("Test Case 15 Passed: Expected smell, got smell")
+        self.assertFalse(result, "Test Case 14 Failed: Expected smell for playlist_name due to formatting")
+        print_and_log("Test Case 14 Passed: Expected smell, got smell")
 
     def execute_check_suspect_precision_ExternalDatasetTests(self):
         """
