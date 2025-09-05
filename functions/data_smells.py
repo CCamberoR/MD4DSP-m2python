@@ -4,6 +4,7 @@ import logging
 import unicodedata
 from collections import defaultdict
 
+import random
 import numpy as np
 import contractions
 import pandas as pd
@@ -1460,7 +1461,7 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
     :param data_dictionary: DataFrame with data
     :param field: Specific field to check; if None, all text fields are checked
     :param origin_function: Name of calling function (for logging)
-    :return: False if inconsistencies found, True otherwise
+    :return: False if inconsistencies are found, True otherwise
     """
 
     def get_base_form(text: str) -> str:
@@ -1472,7 +1473,7 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
 
         # Expand contractions first
         expanded = contractions.fix(text)
-        # Remove all punctuation and convert to lowercase
+        # Remove all punctuation and convert to the lowercase
         cleaned = re.sub(r"[^\w\s]", "", expanded.lower()).strip()
         # Remove extra whitespace
         cleaned = re.sub(r'\s+', ' ', cleaned)
@@ -1530,9 +1531,9 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
 
         return False
 
-    def analyze_column_optimized(col_name: str) -> bool:
+    def analyze_abbreviation_consistencies_column(col_name: str) -> bool:
         """
-        Optimized analysis of a single column for inconsistent lexical forms.
+        Analyzes a single column for abbreviation inconsistencies.
         """
         column = data_dictionary[col_name].dropna()
         if column.empty or not pd.api.types.is_string_dtype(column):
@@ -1545,7 +1546,6 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
         # Limit processing for very large datasets to avoid performance issues
         if len(unique_texts) > 1000:
             # Sample a representative subset for analysis
-            import random
             random.seed(42)  # For reproducible results
             unique_texts = random.sample(unique_texts, 1000)
 
@@ -1571,7 +1571,7 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
         variant_groups = []
         processed = set()
 
-        # Check within same base groups first (exact matches after normalization)
+        # Check within the same base groups first (exact matches after normalization)
         for base, texts in groups_by_base.items():
             if len(texts) > 1:
                 variant_groups.append(texts)
@@ -1624,24 +1624,19 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
 
         # Report findings
         if variant_groups:
-            # Filter out groups that are just uppercase acronyms that are minor variations of each other
+            # Detect groups that contain identical acronyms (inconsistency)
             def _is_acronym_token(s: str) -> bool:
                 return isinstance(s, str) and bool(re.match(r'^[A-Z]{2,6}$', s.strip()))
 
-            def _acronym_group_is_similar(group: list) -> bool:
-                if not group or not all(_is_acronym_token(t) for t in group):
+            def _has_identical_acronyms(group: list) -> bool:
+                if not group or len(group) < 2:
                     return False
-                sets = [set(t) for t in group]
-                for i in range(len(sets)):
-                    for j in range(i + 1, len(sets)):
-                        inter = len(sets[i] & sets[j])
-                        union = len(sets[i] | sets[j])
-                        jacc = inter / union if union else 0.0
-                        if jacc < 0.6:  # if any pair is not similar enough, not a trivial variation
-                            return False
-                return True
+                acronyms_in_group = [t for t in group if _is_acronym_token(t)]
+                # If there are identical acronyms in the group, it's an inconsistency
+                return len(acronyms_in_group) > 1 and len(set(acronyms_in_group)) < len(acronyms_in_group)
 
-            filtered_variant_groups = [g for g in variant_groups if not _acronym_group_is_similar(g)]
+            # Keep groups that have identical acronyms (these are inconsistencies we want to report)
+            filtered_variant_groups = [g for g in variant_groups if _has_identical_acronyms(g)]
 
             if filtered_variant_groups:
                 # Limit reporting to avoid log spam
@@ -1664,13 +1659,13 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
     if field is not None:
         if field not in data_dictionary.columns:
             raise ValueError(f"DataField '{field}' does not exist in the DataFrame.")
-        return analyze_column_optimized(field)
+        return analyze_abbreviation_consistencies_column(field)
 
     if data_dictionary.empty:
         return True
 
     for col in data_dictionary.select_dtypes(include=["object", "string"]).columns:
-        if not analyze_column_optimized(col):
+        if not analyze_abbreviation_consistencies_column(col):
             return False
 
     return True
@@ -1808,7 +1803,7 @@ def check_syntactic_synonym(data_dictionary: pd.DataFrame, field: str = None,
 
         return max(similarities) if similarities else 0.0
 
-    def check_column(col_name: str) -> bool:
+    def check_syntactic_synonyms_column(col_name: str) -> bool:
         """
         Check a single column for syntactic synonyms.
         """
@@ -1826,7 +1821,6 @@ def check_syntactic_synonym(data_dictionary: pd.DataFrame, field: str = None,
 
         # Limit processing for very large datasets to avoid performance issues
         if len(unique_values) > 500:
-            import random
             random.seed(42)  # For reproducible results
             unique_values = random.sample(unique_values, 500)
 
@@ -1860,24 +1854,19 @@ def check_syntactic_synonym(data_dictionary: pd.DataFrame, field: str = None,
 
         # Report findings
         if synonym_groups:
-            # Filter out groups that are just uppercase acronyms that are minor variations of each other
+            # Detect groups that contain identical acronyms (inconsistency)
             def _is_acronym_token(s: str) -> bool:
                 return isinstance(s, str) and bool(re.match(r'^[A-Z]{2,6}$', s.strip()))
 
-            def _acronym_group_is_similar(group: list) -> bool:
-                if not group or not all(_is_acronym_token(t) for t in group):
+            def _has_identical_acronyms(group: list) -> bool:
+                if not group or len(group) < 2:
                     return False
-                sets = [set(t) for t in group]
-                for i in range(len(sets)):
-                    for j in range(i + 1, len(sets)):
-                        inter = len(sets[i] & sets[j])
-                        union = len(sets[i] | sets[j])
-                        jacc = inter / union if union else 0.0
-                        if jacc < 0.6:  # if any pair is not similar enough, not a trivial variation
-                            return False
-                return True
+                acronyms_in_group = [t for t in group if _is_acronym_token(t)]
+                # If there are identical acronyms in the group, it's an inconsistency
+                return len(acronyms_in_group) > 1 and len(set(acronyms_in_group)) < len(acronyms_in_group)
 
-            filtered_synonym_groups = [g for g in synonym_groups if not _acronym_group_is_similar(g)]
+            # Keep groups that have identical acronyms (these are inconsistencies we want to report)
+            filtered_synonym_groups = [g for g in synonym_groups if _has_identical_acronyms(g)]
 
             if filtered_synonym_groups:
                 for group in filtered_synonym_groups[:5]:  # Report only first 5 groups to avoid log spam
@@ -1899,7 +1888,7 @@ def check_syntactic_synonym(data_dictionary: pd.DataFrame, field: str = None,
     if field is not None:
         if field not in data_dictionary.columns:
             raise ValueError(f"DataField '{field}' does not exist in the DataFrame.")
-        return check_column(field)
+        return check_syntactic_synonyms_column(field)
     else:
         # If DataFrame is empty, return True (no smell)
         if data_dictionary.empty:
@@ -1908,7 +1897,7 @@ def check_syntactic_synonym(data_dictionary: pd.DataFrame, field: str = None,
         # Check all string/object columns
         string_fields = data_dictionary.select_dtypes(include=['object', 'string']).columns
         for col in string_fields:
-            result = check_column(col)
+            result = check_syntactic_synonyms_column(col)
             if not result:
                 return result  # Return on the first smell found
 
@@ -2131,7 +2120,6 @@ def check_ambiguous_value(data_dictionary: pd.DataFrame, field: str = None,
 
         # Limit processing for very large datasets to avoid performance issues
         if len(unique_values) > 1000:
-            import random
             random.seed(42)  # For reproducible results
             unique_values = random.sample(unique_values, 1000)
 
@@ -2190,4 +2178,3 @@ def check_ambiguous_value(data_dictionary: pd.DataFrame, field: str = None,
                 return result  # Return on the first smell found
 
     return True
-
