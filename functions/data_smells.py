@@ -1570,6 +1570,7 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
         # Limit processing for very large datasets to avoid performance issues
         if len(unique_texts) > 1000:
             # Sample a representative subset for analysis
+            import random
             random.seed(42)  # For reproducible results
             unique_texts = random.sample(unique_texts, 1000)
 
@@ -1595,7 +1596,7 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
         variant_groups = []
         processed = set()
 
-        # Check within the same base groups first (exact matches after normalization)
+        # Check within same base groups first (exact matches after normalization)
         for base, texts in groups_by_base.items():
             if len(texts) > 1:
                 variant_groups.append(texts)
@@ -1636,7 +1637,7 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
                     continue
                 current_group = [text1]
 
-                for text2 in remaining_texts[i+1:]:
+                for text2 in remaining_texts[i + 1:]:
                     if text2 in processed:
                         continue
                     if are_likely_variants_fast(text_keys[text1], text_keys[text2], text1, text2):
@@ -1648,35 +1649,20 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
 
         # Report findings
         if variant_groups:
-            # Detect groups that contain identical acronyms (inconsistency)
-            def _is_acronym_token(s: str) -> bool:
-                return isinstance(s, str) and bool(re.match(r'^[A-Z]{2,6}$', s.strip()))
+            # Limit reporting to avoid log spam
+            for group in variant_groups[:5]:  # Report only first 5 groups
+                message = (f"Warning in function: {origin_function} - Possible data smell: Inconsistent lexical forms "
+                           f"detected in DataField '{col_name}'. "
+                           f"Variants found: {group}")
+                print_and_log(message, level=logging.WARN)
 
-            def _has_identical_acronyms(group: list) -> bool:
-                if not group or len(group) < 2:
-                    return False
-                acronyms_in_group = [t for t in group if _is_acronym_token(t)]
-                # If there are identical acronyms in the group, it's an inconsistency
-                return len(acronyms_in_group) > 1 and len(set(acronyms_in_group)) < len(acronyms_in_group)
+            if len(variant_groups) > 5:
+                message = (f"Warning in function: {origin_function} - Additional {len(variant_groups) - 5} "
+                           f"variant groups found in DataField '{col_name}'")
+                print_and_log(message, level=logging.WARN)
 
-            # Keep groups that have identical acronyms (these are inconsistencies we want to report)
-            filtered_variant_groups = [g for g in variant_groups if _has_identical_acronyms(g)]
-
-            if filtered_variant_groups:
-                # Limit reporting to avoid log spam
-                for group in filtered_variant_groups[:5]:  # Report only first 5 groups
-                    message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Abbreviation Inconsistency: Inconsistent lexical forms "
-                               f"detected in DataField '{col_name}'. "
-                               f"Variants found: {group}")
-                    print_and_log(message, level=logging.WARN)
-
-                if len(filtered_variant_groups) > 5:
-                    message = (f"Warning in function: {origin_function} - Additional {len(filtered_variant_groups) - 5} "
-                               f"variant groups found in DataField '{col_name}'")
-                    print_and_log(message, level=logging.WARN)
-
-                print(f"DATA SMELL DETECTED: Abbreviation Inconsistencies in DataField '{col_name}'")
-                return False
+            print(f"DATA SMELL DETECTED: Abbreviation Inconsistencies in DataField '{col_name}'")
+            return False
 
         return True
 
