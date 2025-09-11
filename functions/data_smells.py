@@ -1634,16 +1634,16 @@ def check_abbreviation_consistency(data_dictionary: pd.DataFrame, field: str = N
             # Limit reporting to avoid log spam
             for group in variant_groups[:5]:  # Report only first 5 groups
                 message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Abbreviation Inconsistencies: Inconsistent lexical forms "
-                           f"detected in DataField '{col_name}'. "
+                           f"detected in DataField {col_name}. "
                            f"Variants found: {group}")
                 print_and_log(message, level=logging.WARN)
 
             if len(variant_groups) > 5:
                 message = (f"Warning in function: {origin_function} - Additional {len(variant_groups) - 5} "
-                           f"variant groups found in DataField '{col_name}'")
+                           f"variant groups found in DataField {col_name}")
                 print_and_log(message, level=logging.WARN)
 
-            print(f"DATA SMELL DETECTED: Abbreviation Inconsistencies in DataField '{col_name}'")
+            print(f"DATA SMELL DETECTED: Abbreviation Inconsistencies in DataField {col_name}")
             return False
 
         return True
@@ -1869,16 +1869,16 @@ def check_syntactic_synonym(data_dictionary: pd.DataFrame, field: str = None,
             if filtered_synonym_groups:
                 for group in filtered_synonym_groups[:5]:  # Report only first 5 groups to avoid log spam
                     message = (f"Warning in function: {origin_function} - DATA SMELL DETECTED: Syntactic Synonyms: "
-                               f"detected in DataField '{col_name}'. "
+                               f"detected in DataField {col_name}. "
                                f"Semantically similar values found: {group}")
                     print_and_log(message, level=logging.WARN)
 
                 if len(filtered_synonym_groups) > 5:
                     message = (f"Warning in function: {origin_function} - Additional {len(filtered_synonym_groups) - 5} "
-                               f"synonym groups found in DataField '{col_name}'")
+                               f"synonym groups found in DataField {col_name}")
                     print_and_log(message, level=logging.WARN)
 
-                print(f"DATA SMELL DETECTED: Syntactic Synonyms in DataField '{col_name}'")
+                print(f"DATA SMELL DETECTED: Syntactic Synonyms in DataField {col_name}")
                 return False
 
         return True
@@ -2136,7 +2136,7 @@ def check_ambiguous_value(data_dictionary: pd.DataFrame, field: str = None,
         # Report findings if ambiguity score exceeds threshold
         if ambiguity_score >= ambiguity_threshold:
             message_parts = [
-                f"Warning in function: {origin_function} - DATA SMELL DETECTED: Ambiguous values detected in DataField '{col_name}' (ambiguity score: {ambiguity_score:.3f})."
+                f"Warning in function: {origin_function} - DATA SMELL DETECTED: Ambiguous values detected in DataField {col_name} (ambiguity score: {ambiguity_score:.3f})."
             ]
 
             if ambiguity_indicators['potential_abbreviations']:
@@ -2154,7 +2154,7 @@ def check_ambiguous_value(data_dictionary: pd.DataFrame, field: str = None,
 
             full_message = " ".join(message_parts)
             print_and_log(full_message, level=logging.WARN)
-            print(f"DATA SMELL DETECTED: Ambiguous Values in DataField '{col_name}'")
+            print(f"DATA SMELL DETECTED: Ambiguous Values in DataField {col_name}")
             return False
 
         return True
