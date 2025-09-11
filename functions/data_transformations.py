@@ -1339,7 +1339,7 @@ def transform_math_operation(data_dictionary: pd.DataFrame, math_op: MathOperato
         if is_field_first and is_field_second:
             if (data_dictionary_copy[second_operand] == 0).any():
                 warnings.warn(
-                    f"Division by zero encountered in DataField '{second_operand}'. Result will be NaN where divisor is 0.")
+                    f"Division by zero encountered in DataField {second_operand}. Result will be NaN where divisor is 0.")
             data_dictionary_copy[field_out] = data_dictionary_copy[first_operand] / data_dictionary_copy[second_operand]
             data_dictionary_copy[field_out] = data_dictionary_copy[field_out].replace([np.inf, -np.inf], np.nan)
         elif is_field_first and not is_field_second:
@@ -1351,7 +1351,7 @@ def transform_math_operation(data_dictionary: pd.DataFrame, math_op: MathOperato
         elif not is_field_first and is_field_second:
             if (data_dictionary_copy[second_operand] == 0).any():
                 warnings.warn(
-                    f"Division by zero encountered in DataField '{second_operand}'. Result will be NaN where divisor is 0.")
+                    f"Division by zero encountered in DataField {second_operand}. Result will be NaN where divisor is 0.")
             data_dictionary_copy[field_out] = first_operand / data_dictionary_copy[second_operand]
             data_dictionary_copy[field_out] = data_dictionary_copy[field_out].replace([np.inf, -np.inf], np.nan)
         elif not is_field_first and not is_field_second:
