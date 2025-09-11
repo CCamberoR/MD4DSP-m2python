@@ -1795,7 +1795,7 @@ def check_syntactic_synonym(data_dictionary: pd.DataFrame, field: str = None,
 
         return max(similarities) if similarities else 0.0
 
-    def check_syntactic_synonyms_column(col_name: str) -> bool:
+    def check_column(col_name: str) -> bool:
         """
         Check a single column for syntactic synonyms.
         """
@@ -1813,6 +1813,7 @@ def check_syntactic_synonym(data_dictionary: pd.DataFrame, field: str = None,
 
         # Limit processing for very large datasets to avoid performance issues
         if len(unique_values) > 500:
+            import random
             random.seed(42)  # For reproducible results
             unique_values = random.sample(unique_values, 500)
 
@@ -1846,19 +1847,24 @@ def check_syntactic_synonym(data_dictionary: pd.DataFrame, field: str = None,
 
         # Report findings
         if synonym_groups:
-            # Detect groups that contain identical acronyms (inconsistency)
+            # Filter out groups that are just uppercase acronyms that are minor variations of each other
             def _is_acronym_token(s: str) -> bool:
                 return isinstance(s, str) and bool(re.match(r'^[A-Z]{2,6}$', s.strip()))
 
-            def _has_identical_acronyms(group: list) -> bool:
-                if not group or len(group) < 2:
+            def _acronym_group_is_similar(group: list) -> bool:
+                if not group or not all(_is_acronym_token(t) for t in group):
                     return False
-                acronyms_in_group = [t for t in group if _is_acronym_token(t)]
-                # If there are identical acronyms in the group, it's an inconsistency
-                return len(acronyms_in_group) > 1 and len(set(acronyms_in_group)) < len(acronyms_in_group)
+                sets = [set(t) for t in group]
+                for i in range(len(sets)):
+                    for j in range(i + 1, len(sets)):
+                        inter = len(sets[i] & sets[j])
+                        union = len(sets[i] | sets[j])
+                        jacc = inter / union if union else 0.0
+                        if jacc < 0.6:  # if any pair is not similar enough, not a trivial variation
+                            return False
+                return True
 
-            # Keep groups that have identical acronyms (these are inconsistencies we want to report)
-            filtered_synonym_groups = [g for g in synonym_groups if _has_identical_acronyms(g)]
+            filtered_synonym_groups = [g for g in synonym_groups if not _acronym_group_is_similar(g)]
 
             if filtered_synonym_groups:
                 for group in filtered_synonym_groups[:5]:  # Report only first 5 groups to avoid log spam
@@ -1880,7 +1886,7 @@ def check_syntactic_synonym(data_dictionary: pd.DataFrame, field: str = None,
     if field is not None:
         if field not in data_dictionary.columns:
             raise ValueError(f"DataField '{field}' does not exist in the DataFrame.")
-        return check_syntactic_synonyms_column(field)
+        return check_column(field)
     else:
         # If DataFrame is empty, return True (no smell)
         if data_dictionary.empty:
@@ -1889,7 +1895,7 @@ def check_syntactic_synonym(data_dictionary: pd.DataFrame, field: str = None,
         # Check all string/object columns
         string_fields = data_dictionary.select_dtypes(include=['object', 'string']).columns
         for col in string_fields:
-            result = check_syntactic_synonyms_column(col)
+            result = check_column(col)
             if not result:
                 return result  # Return on the first smell found
 
